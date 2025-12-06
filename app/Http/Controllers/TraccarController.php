@@ -34,6 +34,18 @@ class TraccarController extends Controller
         // return view('pages.traccars.index');
     }
 
+    public function getObjects()
+    {
+        $url = "https://www.speedotrack.pro/api/api.php?ver=1.0&api=mobile&key=767C31DD0734097600A75E0712FF7C5F&cmd=USER_GET_OBJECTS&page=1&rows=500";
+
+        $response = file_get_contents($url);
+
+        return response($response)
+            ->header('Content-Type', 'application/json')
+            ->header('Access-Control-Allow-Origin', '*');
+    }
+
+
     public function webSocket()
     {        
         $customer_id = auth()->user()->customer_id;

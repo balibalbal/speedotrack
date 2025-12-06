@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/vehiclebygroup/{groupId}', [ReportController::class, 'getVehicleByGroup']); 
     Route::get('/get-nearby-vehicles', [TraccarController::class, 'getNearestVehicles']);
     Route::get('/get-traccar-data', [TraccarController::class, 'getData']);
+    Route::get('/api/objects', [TrackingController::class, 'getObjects']);
     Route::get('/realtime', [TraccarController::class, 'webSocket']);
     Route::get('/get-traccar-hso', [HsoMonitoringController::class, 'getDataHso']);    
     Route::get('/report-last-position', [ReportController::class, 'tampilkanListPosisiAkhir']);

@@ -87,7 +87,7 @@
 // =============================
 // KONFIGURASI
 // =============================
-const URL_API = "https://www.speedotrack.pro/api/api.php?ver=1.0&api=mobile&key=767C31DD0734097600A75E0712FF7C5F&cmd=USER_GET_OBJECTS&page=1&rows=500"; // GANTI
+const URL_API = "https://dev.speedtrack.id/api/objects"; // GANTI
 const REFRESH_INTERVAL = 5000; // 5 DETIK
 
 var map = L.map('map').setView([-6.4, 106.63], 13);
