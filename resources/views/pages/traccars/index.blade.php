@@ -98,24 +98,20 @@
     overflow: hidden !important;
 }
 
-/* Tombol kanan */
+#toggleSidebarLeft {
+    position: absolute;
+    top: 50%;
+    left: 320px; /* pojok kanan sidebar */
+    transform: translateY(-50%);
+    z-index: 99999;
+}
+
 #toggleSidebarRight {
     position: absolute;
     top: 50%;
-    left: -14px;
+    right: 320px; /* pojok kiri panel kanan */
     transform: translateY(-50%);
-    background: #2c3e50;
-    color: #fff;
-    padding: 6px 8px;
-    cursor: pointer;
-    border-radius: 5px 0 0 5px;
-    z-index: 30;
-    font-size: 14px;
-}
-
-#toggleSidebarLeft,
-#toggleSidebarRight {
-    z-index: 99999 !important;
+    z-index: 99999;
 }
 
 
@@ -132,24 +128,18 @@
 
     <div class="wrapper">
 
-        <!-- Sidebar kiri -->
-        <div id="sidebar">
-            <div id="toggleSidebarLeft" onclick="toggleSidebarLeft()">⮜</div>
-            <input type="text" id="searchInput" placeholder="Cari kendaraan..." onkeyup="filterList()">
-            <div id="list">Loading...</div>
-        </div>
+    <div id="toggleSidebarLeft" onclick="toggleSidebarLeft()">⮜</div>
 
-        <!-- MAP -->
-        <div id="map"></div>
+    <div id="sidebar"> ... </div>
 
-        <!-- Panel kanan -->
-        <div id="detailPanel">
-            <div id="toggleSidebarRight" onclick="toggleSidebarRight()">⮞</div>
-            <h3>Detail Kendaraan</h3>
-            <div id="detailContent">Klik marker atau list kendaraan...</div>
-        </div>
+    <div id="map"></div>
 
-    </div>
+    <div id="detailPanel"> ... </div>
+
+    <div id="toggleSidebarRight" onclick="toggleSidebarRight()">⮞</div>
+
+</div>
+
 
 
 
@@ -282,22 +272,21 @@ function showDetail(d) {
    COLLAPSIBLE SIDEBAR
 =============================== */
 function toggleSidebarLeft() {
-    const sb = document.getElementById("sidebar");
-    const btn = document.getElementById("toggleSidebarLeft");
-
+    let sb = document.getElementById("sidebar");
     sb.classList.toggle("hidden");
 
-    btn.innerHTML = sb.classList.contains("hidden") ? "⮞" : "⮜";
+    document.getElementById("toggleSidebarLeft").style.left =
+        sb.classList.contains("hidden") ? "0" : "320px";
 }
 
 function toggleSidebarRight() {
-    const dp = document.getElementById("detailPanel");
-    const btn = document.getElementById("toggleSidebarRight");
-
+    let dp = document.getElementById("detailPanel");
     dp.classList.toggle("hidden");
 
-    btn.innerHTML = dp.classList.contains("hidden") ? "⮜" : "⮞";
+    document.getElementById("toggleSidebarRight").style.right =
+        dp.classList.contains("hidden") ? "0" : "320px";
 }
+
 
 </script>
 
