@@ -3,85 +3,110 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
     <style>
-        body { margin:0; padding:0; }
+        html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-        .wrapper {
-            display: flex;
-            height: calc(100vh - 80px); /* menyesuaikan tinggi layout admin */
-            overflow: hidden;
-            position: relative;
-        }
+/* ===== WRAPPER FULL HEIGHT ===== */
+.wrapper {
+    position: absolute;
+    top: 56px; /* sesuaikan tinggi header admin */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    overflow: hidden;
+}
 
-        /* SIDEBAR KIRI */
-        #sidebar {
-            width: 320px;
-            background: #fff;
-            border-right: 1px solid #ddd;
-            overflow-y: auto;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-            z-index: 10;
-        }
-        #sidebar.hidden {
-            width: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
-        }
+/* ===== SIDEBAR KIRI ===== */
+#sidebar {
+    width: 320px;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+    transition: .3s;
+    position: relative;
+    z-index: 20;
+}
+#sidebar.hidden {
+    width: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
 
-        #toggleBtn {
-            background: #2c3e50;
-            color: #fff;
-            padding: 10px;
-            cursor: pointer;
-            text-align: center;
-            font-weight: bold;
-        }
+/* Tombol kiri */
+#toggleSidebarLeft {
+    position: absolute;
+    top: 50%;
+    right: -14px;
+    transform: translateY(-50%);
+    background: #2c3e50;
+    color: #fff;
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+    z-index: 30;
+    font-size: 14px;
+}
 
-        #searchInput {
-            margin: 10px;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
+/* ===== SEARCH ===== */
+#searchInput {
+    margin: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
 
-        .item {
-            padding: 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-        }
-        .item:hover {
-            background: #f5f5f5;
-        }
-        .item b {
-            font-size: 15px;
-        }
-        .item small {
-            color: #666;
-        }
+.item {
+    padding: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+.item:hover {
+    background: #f5f5f5;
+}
 
-        /* MAP TENGAH */
-        #map {
-            flex: 1;
-            z-index: 1;
-        }
+/* ===== MAP AREA ===== */
+#map {
+    flex: 1;
+    height: 100%;
+    z-index: 1;
+}
 
-        /* PANEL DETAIL KANAN */
-        #detailPanel {
-            width: 320px;
-            background: #fafafa;
-            border-left: 1px solid #ddd;
-            padding: 15px;
-            overflow-y: auto;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
-        }
+/* ===== PANEL DETAIL KANAN ===== */
+#detailPanel {
+    width: 320px;
+    background: #fafafa;
+    border-left: 1px solid #ddd;
+    padding: 15px;
+    overflow-y: auto;
+    transition: .3s;
+    position: relative;
+    z-index: 20;
+}
+#detailPanel.hidden {
+    width: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
 
-        #detailPanel h3 {
-            margin-bottom: 10px;
-            font-size: 18px;
-            font-weight: bold;
-        }
+/* Tombol kanan */
+#toggleSidebarRight {
+    position: absolute;
+    top: 50%;
+    left: -14px;
+    transform: translateY(-50%);
+    background: #2c3e50;
+    color: #fff;
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 5px 0 0 5px;
+    z-index: 30;
+    font-size: 14px;
+}
+
     </style>
 
 @endpush
@@ -94,23 +119,25 @@
 
     <div class="wrapper">
 
-    <!-- Sidebar kiri -->
-    <div id="sidebar">
-        <div id="toggleBtn" onclick="toggleSidebar()">⮜ Hide Panel</div>
-        <input type="text" id="searchInput" placeholder="Cari kendaraan..." onkeyup="filterList()">
-        <div id="list">Loading...</div>
+        <!-- Sidebar kiri -->
+        <div id="sidebar">
+            <div id="toggleSidebarLeft" onclick="toggleSidebarLeft()">⮜</div>
+            <input type="text" id="searchInput" placeholder="Cari kendaraan..." onkeyup="filterList()">
+            <div id="list">Loading...</div>
+        </div>
+
+        <!-- MAP -->
+        <div id="map"></div>
+
+        <!-- Panel kanan -->
+        <div id="detailPanel">
+            <div id="toggleSidebarRight" onclick="toggleSidebarRight()">⮞</div>
+            <h3>Detail Kendaraan</h3>
+            <div id="detailContent">Klik marker atau list kendaraan...</div>
+        </div>
+
     </div>
 
-    <!-- Peta -->
-    <div id="map"></div>
-
-    <!-- Panel detail kanan -->
-    <div id="detailPanel">
-        <h3>Detail Kendaraan</h3>
-        <div id="detailContent">Klik marker atau list kendaraan...</div>
-    </div>
-
-</div>
 
 
 </div>
@@ -241,13 +268,24 @@ function showDetail(d) {
 /* ============================
    COLLAPSIBLE SIDEBAR
 =============================== */
-function toggleSidebar() {
-    let sb = document.getElementById("sidebar");
+function toggleSidebarLeft() {
+    const sb = document.getElementById("sidebar");
+    const btn = document.getElementById("toggleSidebarLeft");
+
     sb.classList.toggle("hidden");
 
-    document.getElementById("toggleBtn").innerHTML =
-        sb.classList.contains("hidden") ? "⮞ Show Panel" : "⮜ Hide Panel";
+    btn.innerHTML = sb.classList.contains("hidden") ? "⮞" : "⮜";
 }
+
+function toggleSidebarRight() {
+    const dp = document.getElementById("detailPanel");
+    const btn = document.getElementById("toggleSidebarRight");
+
+    dp.classList.toggle("hidden");
+
+    btn.innerHTML = dp.classList.contains("hidden") ? "⮜" : "⮞";
+}
+
 </script>
 
 @endpush
