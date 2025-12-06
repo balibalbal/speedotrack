@@ -1,15 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>GPS Tracking Map</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@push('style')
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
     <style>
-        body { margin:0; font-family: Arial; }
-        #wrapper { display: flex; height: 100vh; }
-
         /* Sidebar kiri */
         #sidebar {
             width: 300px;
@@ -56,11 +49,13 @@
 
         #map { flex: 1; }
     </style>
-</head>
+@endpush
 
-<body>
+@extends('layouts.admin')
+@section('title', 'Monitoring Kendaraan')
+@section('content')
 
-<div id="wrapper">
+<div class="container-fluid"> 
 
     <!-- Sidebar kiri -->
     <div id="sidebar">
@@ -79,6 +74,10 @@
     </div>
 
 </div>
+
+@endsection
+
+@push('scripts')
 
 <script src="https://rawcdn.githack.com/bbecquet/Leaflet.RotatedMarker/master/leaflet.rotatedMarker.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -246,5 +245,4 @@ function toggleSidebar() {
 }
 
 </script>
-</body>
-</html>
+@endpush
