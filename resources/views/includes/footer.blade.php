@@ -7,7 +7,7 @@
           document.write(new Date().getFullYear());
         </script>
         
-        <a href="" target="_blank" class="footer-link fw-medium">Borneotelemetry</a>
+        <a href="" target="_blank" class="footer-link fw-medium">Speedotrack</a>
       </div>      
     </div>
   </div>

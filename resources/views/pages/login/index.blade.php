@@ -75,7 +75,7 @@
           <div class="card p-2">
             <!-- Logo -->
             <div class="app-brand justify-content-center mt-2 mb-2">
-              <img src="{{ url('backend/img/speed-track-logo-1.png') }}" class="img-fluid" style="width: 250px;">
+              <img src="{{ url('backend/img/speedotrack-logo.png') }}" class="img-fluid" style="width: 250px;">
             </div>
             <!-- /Logo -->
 
