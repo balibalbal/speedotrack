@@ -107,6 +107,14 @@
     font-size: 14px;
 }
 
+#toggleSidebarLeft,
+#toggleSidebarRight {
+    position: absolute;
+    z-index: 9999 !important; /* override semua */
+    pointer-events: auto;
+}
+
+
     </style>
 
 @endpush
