@@ -14,7 +14,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Selamat Datang di Borneotelemetry</title>
+    <title>Selamat Datang di Speedotrack</title>
 
     <meta name="description" content="" />
 
@@ -132,7 +132,7 @@
                 </div>
                 
                 <div class="mb-3">
-                  <button class="btn btn-dark d-grid w-100"><i class="mdi mdi-lock me-sm-1"></i> Sign in</button>
+                  <button class="btn btn-success d-grid w-100"><i class="mdi mdi-lock me-sm-1"></i> Sign in</button>
                 </div>
               </form>
             </div>
