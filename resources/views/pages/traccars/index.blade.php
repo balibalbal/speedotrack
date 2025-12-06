@@ -80,7 +80,7 @@
 
 </div>
 
-
+<script src="https://rawcdn.githack.com/bbecquet/Leaflet.RotatedMarker/master/leaflet.rotatedMarker.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
 
@@ -171,15 +171,33 @@ function updateMarkers(devices) {
     devices.forEach(d => {
         let latlng = [parseFloat(d.lat), parseFloat(d.lng)];
 
+        // icon langsung dari API
+        let icon = L.icon({
+            iconUrl: d.marker,
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        });
+
+        let angle = parseFloat(d.angle || d.course || d.direction || 0);
+
         if (!markers[d.imei]) {
-            // buat marker baru
-            markers[d.imei] = L.marker(latlng, { icon: getMarkerIcon(d.st) })
-                .addTo(map)
-                .on("click", () => showDetail(d));
+            // marker baru
+            markers[d.imei] = L.marker(latlng, {
+                icon: icon,
+                rotationAngle: angle,
+                rotationOrigin: "center center"
+            })
+            .addTo(map)
+            .on("click", () => showDetail(d));
+
         } else {
-            // update posisi + icon
+            // update posisi + icon + rotasi
             markers[d.imei].setLatLng(latlng);
-            markers[d.imei].setIcon(getMarkerIcon(d.st));
+            markers[d.imei].setIcon(icon);
+
+            if (!isNaN(angle)) {
+                markers[d.imei].setRotationAngle(angle);
+            }
         }
     });
 }
