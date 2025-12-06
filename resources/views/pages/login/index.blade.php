@@ -75,12 +75,12 @@
           <div class="card p-2">
             <!-- Logo -->
             <div class="app-brand justify-content-center mt-2 mb-2">
-              <img src="{{ url('backend/img/borneo-logo.png') }}" class="img-fluid" style="width: 250px;">
+              <img src="{{ url('backend/img/speed-track-logo-1.png') }}" class="img-fluid" style="width: 250px;">
             </div>
             <!-- /Logo -->
 
             <div class="card-body mt-2 justify-content-center text-center">
-              <h5 class="mb-2">Welcome to Borneotelemetry! 👋</h5>
+              <h5 class="mb-2">Welcome to Speedotrack! 👋</h5>
               <p class="mb-4">Please sign-in to your account and start the adventure</p>
 
               @if(session('pesan'))
