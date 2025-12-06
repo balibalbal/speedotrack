@@ -115,10 +115,9 @@
 
 #toggleSidebarLeft,
 #toggleSidebarRight {
-    position: absolute;
-    z-index: 9999 !important; /* override semua */
-    pointer-events: auto;
+    z-index: 99999 !important;
 }
+
 
 
     </style>
