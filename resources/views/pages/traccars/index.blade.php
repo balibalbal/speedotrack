@@ -158,6 +158,7 @@ function renderList(devices) {
             <div class="item" onclick="selectDevice('${d.imei}')">
                 <b>${d.name || d.plate_number || d.imei}</b><br>
                 Status: ${d.st}<br>
+                ${d.ststr}<br>
                 <small>${d.address}</small>
             </div>`;
     });
@@ -229,7 +230,8 @@ function showDetail(d) {
         <b>IMEI:</b> ${d.imei}<br>
         <b>Status:</b> ${d.st}<br>
         <b>Speed:</b> ${d.speed} km/h<br>
-        <b>Last Update:</b> ${d.dt_tracker}<br><br>
+        <b>Last Update:</b> ${d.dt_tracker}<br>
+        <b>Note:</b> ${d.ststr}<br><br>
         <b>Address:</b><br>${d.address}<br><br>
         <b>Latitude:</b> ${d.lat}<br>
         <b>Longitude:</b> ${d.lng}
