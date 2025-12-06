@@ -69,11 +69,17 @@
 }
 
 /* ===== MAP AREA ===== */
-#map {
+/* #map {
     flex: 1;
     height: 100%;
     z-index: 1;
+} */
+
+#map {
+    position: relative;
+    z-index: 1 !important;
 }
+
 
 /* ===== PANEL DETAIL KANAN ===== */
 #detailPanel {
