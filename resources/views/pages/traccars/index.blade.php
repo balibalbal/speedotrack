@@ -424,6 +424,9 @@
 @endsection
 
 @push('scripts')
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnjStSt0_qeuKkG-2AQiZEV7NdXckDW5Y"></script>
+<script src="https://unpkg.com/leaflet.gridlayer.googlemutant/Leaflet.GoogleMutant.js"></script>
+
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://rawcdn.githack.com/bbecquet/Leaflet.RotatedMarker/master/leaflet.rotatedMarker.js"></script>
 <script>
@@ -431,9 +434,40 @@ const URL_API = "https://dev.speedtrack.id/api/objects";
 const REFRESH_INTERVAL = 5000;
 
 let map = L.map('map').setView([-6.4, 106.63], 12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+// OSM default
+let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
+
+// Google layers (resmi)
+let g_roadmap = L.gridLayer.googleMutant({
+    type: 'roadmap'   // jalan
+});
+
+let g_satellite = L.gridLayer.googleMutant({
+    type: 'satellite' // satelit
+});
+
+let g_hybrid = L.gridLayer.googleMutant({
+    type: 'hybrid'    // satelit + label
+});
+
+let g_terrain = L.gridLayer.googleMutant({
+    type: 'terrain'   // topografi
+});
+
+// Tambahkan kontrol pilihan layer
+L.control.layers(
+    {
+        "OSM Standard": osm,
+        "Google Roadmap": g_roadmap,
+        "Google Satellite": g_satellite,
+        "Google Hybrid": g_hybrid,
+        "Google Terrain": g_terrain
+    }
+).addTo(map);
+
 
 let markers = {};
 let deviceList = [];
