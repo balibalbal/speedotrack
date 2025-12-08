@@ -1,151 +1,289 @@
 @push('style')
-
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-
     <style>
         /* RESET YANG BENAR */
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-            /* HAPUS overflow: hidden dari sini */
         }
 
         /* ===== LAYOUT UTAMA ===== */
         .container-fluid.p-0 {
-            height: calc(100vh - 56px); /* tinggi viewport dikurangi tinggi header */
+            height: calc(100vh - 56px);
             display: flex;
             flex-direction: column;
         }
 
-        /* ===== WRAPPER ===== */
+        /* ===== WRAPPER UTAMA ===== */
         .wrapper {
-            flex: 1; /* Mengisi sisa ruang */
+            flex: 1;
             display: flex;
-            overflow: hidden; /* Tetap hidden di wrapper, bukan di body */
-            background: #f0f0f0;
-            position: relative; /* Ubah dari absolute ke relative */
-        }
-
-        /* ===== FOOTER ===== */
-        /* Pastikan footer ada di luar wrapper */
-        footer {
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            overflow: hidden;
             position: relative;
-            z-index: 10;
-            background: #fff;
-            border-top: 1px solid #ddd;
         }
 
-        /* ===== SIDEBAR KIRI ===== */
+        /* ===== CARD STYLE ===== */
+        .panel-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+        }
+
+        .panel-card .card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .panel-card .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 20px;
+            font-weight: 600;
+        }
+
+        .panel-card .card-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        /* ===== SIDEBAR KIRI (DAFTAR KENDARAAN) ===== */
         #sidebar {
             width: 320px;
             min-width: 320px;
-            background: #fff;
-            border-right: 1px solid #ddd;
-            overflow-y: auto;
             transition: all 0.3s ease;
-            position: relative;
-            z-index: 20;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
+
         #sidebar.hidden {
             min-width: 0;
             width: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
-            border-right: none;
+            margin-right: 0;
+            overflow: hidden;
         }
 
         /* ===== MAP AREA ===== */
-        #map {
+        #map-container {
             flex: 1;
             min-width: 0;
-            height: 100%;
-            z-index: 1;
             position: relative;
+        }
+
+        #map-container .card {
+            border: none;
+        }
+
+        #map-container .card-body {
+            padding: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            border-radius: 0 0 10px 10px;
         }
 
         /* ===== PANEL DETAIL KANAN ===== */
         #detailPanel {
             width: 320px;
             min-width: 320px;
-            background: #fff;
-            border-left: 1px solid #ddd;
-            padding: 20px;
-            overflow-y: auto;
             transition: all 0.3s ease;
-            position: relative;
-            z-index: 20;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
         }
+
         #detailPanel.hidden {
             min-width: 0;
             width: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
-            border-left: none;
+            margin-left: 0;
+            overflow: hidden;
+        }
+
+        /* ===== SEARCH BOX ===== */
+        #searchInput {
+            margin: 15px;
+            padding: 10px 15px;
+            width: calc(100% - 30px);
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        #searchInput:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        /* ===== LIST KENDARAAN ===== */
+        #list {
+            padding: 0 10px 10px 10px;
+        }
+
+        .vehicle-item {
+            padding: 12px 15px;
+            margin: 0 5px 8px 5px;
+            cursor: pointer;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .vehicle-item:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .vehicle-item.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-color: #f5576c;
+        }
+
+        .vehicle-item .vehicle-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+
+        .vehicle-item .vehicle-status {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .vehicle-item .vehicle-location {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .vehicle-item.active .vehicle-location {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ===== DETAIL KENDARAAN ===== */
+        .detail-section {
+            padding: 15px;
+        }
+
+        .detail-section h6 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .detail-item {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-size: 14px;
         }
 
         /* ===== TOGGLE BUTTONS ===== */
-        #toggleSidebarLeft {
+        .toggle-btn {
             position: absolute;
             top: 50%;
-            left: 310px;
             transform: translateY(-50%);
-            background: #2c3e50;
-            color: #fff;
-            border: none;
-            width: 20px;
-            height: 60px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            width: 25px;
+            height: 70px;
             cursor: pointer;
-            border-radius: 15px;
+            border-radius: 0 8px 8px 0;
             z-index: 30;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: left 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
         }
 
-        #toggleSidebarLeft:hover {
-            background: #34495e;
+        .toggle-btn:hover {
+            background: #667eea;
+            color: white;
+            width: 28px;
         }
 
-        #toggleSidebarRight {
-            position: absolute;
-            top: 50%;
-            right: 310px;
-            transform: translateY(-50%);
-            background: #2c3e50;
-            color: #fff;
-            border: none;
-            width: 20px;
-            height: 60px;
-            cursor: pointer;
-            border-radius: 15px;
-            z-index: 30;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: right 0.3s ease;
+        .toggle-btn.left {
+            left: 320px;
+            border-radius: 0 8px 8px 0;
         }
 
-        #toggleSidebarRight:hover {
-            background: #34495e;
+        .toggle-btn.right {
+            right: 320px;
+            border-radius: 8px 0 0 8px;
         }
 
         /* Ketika sidebar tersembunyi */
-        #sidebar.hidden + #toggleSidebarLeft {
+        #sidebar.hidden ~ .toggle-btn.left {
             left: 0;
+            border-radius: 0 8px 8px 0;
         }
 
-        #detailPanel.hidden ~ #toggleSidebarRight {
+        #detailPanel.hidden ~ .toggle-btn.right {
             right: 0;
+            border-radius: 8px 0 0 8px;
+        }
+
+        /* ===== SCROLLBAR CUSTOM ===== */
+        .card-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .card-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .card-body::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .card-body::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
         }
 
         /* Responsif untuk mobile */
         @media (max-width: 768px) {
-            .container-fluid.p-0 {
-                height: calc(100vh - 56px); /* sesuaikan jika header mobile berbeda */
+            .wrapper {
+                gap: 10px;
+                padding: 10px;
             }
             
             #sidebar, #detailPanel {
@@ -153,64 +291,128 @@
                 min-width: 280px;
             }
             
-            #toggleSidebarLeft {
+            .toggle-btn.left {
                 left: 280px;
             }
             
-            #toggleSidebarRight {
+            .toggle-btn.right {
                 right: 280px;
             }
         }
-    </style>
 
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 @endpush
 
 @extends('layouts.admin')
 @section('title', 'Monitoring Kendaraan')
 @section('content')
 
-<div class="container-fluid p-0"> <!-- Tambahkan p-0 untuk menghilangkan padding container -->
-
+<div class="container-fluid p-0">
     <div class="wrapper">
-        <!-- Sidebar Kiri -->
-        <div id="sidebar">
-            <input type="text" 
-                   id="searchInput" 
-                   placeholder="Cari kendaraan..." 
-                   onkeyup="filterList()">
-            <div id="list">
-                <!-- Daftar kendaraan akan muncul di sini -->
+        <!-- Sidebar Kiri - Daftar Kendaraan -->
+        <div id="sidebar" class="panel-card">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Daftar Kendaraan</span>
+                    <span class="badge bg-light text-dark" id="vehicleCount">0</span>
+                </div>
+                <div class="card-body">
+                    <input type="text" 
+                           id="searchInput" 
+                           class="form-control" 
+                           placeholder="🔍 Cari kendaraan..." 
+                           onkeyup="filterList()">
+                    <div id="list" class="mt-3">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Memuat data kendaraan...</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Tombol toggle sidebar kiri -->
-        <button id="toggleSidebarLeft" onclick="toggleSidebarLeft()">⮜</button>
+        <button class="toggle-btn left" id="toggleSidebarLeft" onclick="toggleSidebarLeft()">
+            <span id="leftArrow">◀</span>
+        </button>
 
         <!-- Peta -->
-        <div id="map"></div>
+        <div id="map-container" class="panel-card">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Peta Monitoring</span>
+                    <div>
+                        <small class="me-3">
+                            Total: <span id="mapCount" class="badge bg-info">0</span>
+                        </small>
+                        <small>
+                            Aktif: <span id="activeCount" class="badge bg-success">0</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
 
         <!-- Panel Detail Kanan -->
-        <div id="detailPanel">
-            <h5>Detail Kendaraan</h5>
-            <div id="detailContent">
-                <!-- Detail kendaraan akan muncul di sini -->
-                <p class="text-muted">Pilih kendaraan untuk melihat detail</p>
+        <div id="detailPanel" class="panel-card">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Detail Kendaraan</span>
+                    <button class="btn btn-sm btn-light" onclick="clearDetail()">
+                        <small>Clear</small>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="detailContent">
+                        <div class="text-center py-5">
+                            <div class="mb-3">
+                                <i class="fas fa-car fa-3x text-muted"></i>
+                            </div>
+                            <h6 class="text-muted">Pilih kendaraan</h6>
+                            <p class="text-muted small">Klik pada daftar kendaraan atau marker di peta</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Tombol toggle sidebar kanan -->
-        <button id="toggleSidebarRight" onclick="toggleSidebarRight()">⮞</button>
+        <button class="toggle-btn right" id="toggleSidebarRight" onclick="toggleSidebarRight()">
+            <span id="rightArrow">▶</span>
+        </button>
     </div>
-
 </div>
 
 @endsection
 
 @push('scripts')
-
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://rawcdn.githack.com/bbecquet/Leaflet.RotatedMarker/master/leaflet.rotatedMarker.js"></script>
-
 <script>
 const URL_API = "https://dev.speedtrack.id/api/objects";
 const REFRESH_INTERVAL = 5000;
@@ -222,6 +424,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let markers = {};
 let deviceList = [];
+let selectedImei = null;
 
 /* ============================
    LOAD DATA
@@ -232,11 +435,20 @@ function loadData() {
         .then(data => {
             if (data.result) {
                 deviceList = data.result;
+                updateCounters(deviceList);
                 renderList(deviceList);
                 updateMarkers(deviceList);
             }
         })
         .catch(err => console.error("API Error:", err));
+}
+
+function updateCounters(devices) {
+    document.getElementById('vehicleCount').textContent = devices.length;
+    document.getElementById('mapCount').textContent = devices.length;
+    
+    const activeCount = devices.filter(d => d.st === 'moving' || d.st === 'running').length;
+    document.getElementById('activeCount').textContent = activeCount;
 }
 
 /* ============================
@@ -253,14 +465,32 @@ function renderList(devices) {
     
     let html = "";
     devices.forEach(d => {
+        const isActive = selectedImei === d.imei;
         html += `
-            <div class="item" onclick="selectDevice('${d.imei}')">
-                <b>${d.name || d.plate_number || d.imei}</b><br>
-                <small>Status: ${d.st} - ${d.ststr}</small><br>
-                <small class="text-muted">${d.address || 'Lokasi tidak diketahui'}</small>
+            <div class="vehicle-item ${isActive ? 'active' : ''}" onclick="selectDevice('${d.imei}')">
+                <div class="vehicle-name">${d.name || d.plate_number || d.imei}</div>
+                <div class="vehicle-status">
+                    <span class="badge ${getStatusBadge(d.st)}">${d.ststr}</span>
+                    ${d.speed ? `<span class="ms-2">${d.speed} km/h</span>` : ''}
+                </div>
+                <div class="vehicle-location">${d.address || 'Lokasi tidak diketahui'}</div>
             </div>`;
     });
     listContainer.innerHTML = html;
+}
+
+function getStatusBadge(status) {
+    switch(status) {
+        case 'moving':
+        case 'running':
+            return 'bg-success';
+        case 'stopped':
+            return 'bg-warning';
+        case 'offline':
+            return 'bg-danger';
+        default:
+            return 'bg-secondary';
+    }
 }
 
 function filterList() {
@@ -286,11 +516,8 @@ function updateMarkers(devices) {
         let latlng = [lat, lng];
         let angle = parseFloat(d.angle || d.course || d.direction || 0);
 
-        // Gunakan marker default jika tidak ada URL marker
-        let markerUrl = d.marker || 'https://unpkg.com/leaflet/dist/images/marker-icon.png';
-        
         let icon = L.icon({
-            iconUrl: markerUrl,
+            iconUrl: getMarkerIcon(d.st),
             iconSize: [30, 40],
             iconAnchor: [15, 40]
         });
@@ -303,28 +530,60 @@ function updateMarkers(devices) {
                 title: d.name || d.imei
             })
             .addTo(map)
-            .on("click", () => showDetail(d));
-
+            .on("click", () => selectDevice(d.imei));
         } else {
             markers[d.imei].setLatLng(latlng);
             markers[d.imei].setRotationAngle(angle);
+            markers[d.imei].setIcon(L.icon({
+                iconUrl: getMarkerIcon(d.st),
+                iconSize: [30, 40],
+                iconAnchor: [15, 40]
+            }));
+        }
+        
+        // Update marker jika ini adalah yang dipilih
+        if (selectedImei === d.imei) {
+            markers[d.imei].setIcon(L.icon({
+                iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon-red.png',
+                iconSize: [35, 45],
+                iconAnchor: [17, 45]
+            }));
         }
     });
+}
+
+function getMarkerIcon(status) {
+    switch(status) {
+        case 'moving':
+        case 'running':
+            return 'https://unpkg.com/leaflet/dist/images/marker-icon-green.png';
+        case 'stopped':
+            return 'https://unpkg.com/leaflet/dist/images/marker-icon-yellow.png';
+        case 'offline':
+            return 'https://unpkg.com/leaflet/dist/images/marker-icon-grey.png';
+        default:
+            return 'https://unpkg.com/leaflet/dist/images/marker-icon.png';
+    }
 }
 
 /* ============================
    KLIK LIST → MAP + DETAIL
 =============================== */
 function selectDevice(imei) {
+    selectedImei = imei;
     let d = deviceList.find(v => v.imei == imei);
     if (!d) return;
 
+    // Update UI
+    renderList(deviceList);
+    
     // Buka panel detail jika tertutup
     const detailPanel = document.getElementById("detailPanel");
     if (detailPanel.classList.contains("hidden")) {
         toggleSidebarRight();
     }
 
+    // Zoom ke marker
     let marker = markers[imei];
     if (marker) {
         map.setView(marker.getLatLng(), 16);
@@ -341,19 +600,69 @@ function showDetail(d) {
     if (!detailContent) return;
     
     detailContent.innerHTML = `
-        <div class="mb-3">
+        <div class="detail-section">
             <h6>${d.name || 'Tidak ada nama'}</h6>
-            <hr>
+            
+            <div class="detail-item">
+                <div class="detail-label">IMEI</div>
+                <div class="detail-value">${d.imei}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Nomor Polisi</div>
+                <div class="detail-value">${d.plate_number || '-'}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Status</div>
+                <div class="detail-value">
+                    <span class="badge ${getStatusBadge(d.st)}">${d.ststr}</span>
+                </div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Kecepatan</div>
+                <div class="detail-value">${d.speed || 0} km/h</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Arah</div>
+                <div class="detail-value">${d.angle || 0}°</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Update Terakhir</div>
+                <div class="detail-value">${formatDateTime(d.dt_tracker)}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Alamat</div>
+                <div class="detail-value">${d.address || '-'}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Koordinat</div>
+                <div class="detail-value">${d.lat}, ${d.lng}</div>
+            </div>
         </div>
-        <div class="mb-2"><b>IMEI:</b> ${d.imei}</div>
-        <div class="mb-2"><b>Nomor Polisi:</b> ${d.plate_number || '-'}</div>
-        <div class="mb-2"><b>Status:</b> ${d.st} (${d.ststr})</div>
-        <div class="mb-2"><b>Kecepatan:</b> ${d.speed || 0} km/h</div>
-        <div class="mb-2"><b>Arah:</b> ${d.angle || 0}°</div>
-        <div class="mb-2"><b>Update Terakhir:</b> ${d.dt_tracker || '-'}</div>
-        <div class="mb-3"><b>Alamat:</b><br>${d.address || '-'}</div>
-        <div class="small text-muted">
-            <b>Koordinat:</b> ${d.lat}, ${d.lng}
+    `;
+}
+
+function formatDateTime(dt) {
+    if (!dt) return '-';
+    return new Date(dt).toLocaleString('id-ID');
+}
+
+function clearDetail() {
+    selectedImei = null;
+    renderList(deviceList);
+    document.getElementById('detailContent').innerHTML = `
+        <div class="text-center py-5">
+            <div class="mb-3">
+                <i class="fas fa-car fa-3x text-muted"></i>
+            </div>
+            <h6 class="text-muted">Pilih kendaraan</h6>
+            <p class="text-muted small">Klik pada daftar kendaraan atau marker di peta</p>
         </div>
     `;
 }
@@ -364,29 +673,33 @@ function showDetail(d) {
 function toggleSidebarLeft() {
     const sidebar = document.getElementById("sidebar");
     const toggleBtn = document.getElementById("toggleSidebarLeft");
+    const arrow = document.getElementById("leftArrow");
     
     sidebar.classList.toggle("hidden");
     
-    // Ganti arah panah
     if (sidebar.classList.contains("hidden")) {
-        toggleBtn.innerHTML = "⮞";
+        arrow.innerHTML = "▶";
     } else {
-        toggleBtn.innerHTML = "⮜";
+        arrow.innerHTML = "◀";
     }
+    
+    setTimeout(() => map.invalidateSize(), 300);
 }
 
 function toggleSidebarRight() {
     const detailPanel = document.getElementById("detailPanel");
     const toggleBtn = document.getElementById("toggleSidebarRight");
+    const arrow = document.getElementById("rightArrow");
     
     detailPanel.classList.toggle("hidden");
     
-    // Ganti arah panah
     if (detailPanel.classList.contains("hidden")) {
-        toggleBtn.innerHTML = "⮜";
+        arrow.innerHTML = "◀";
     } else {
-        toggleBtn.innerHTML = "⮞";
+        arrow.innerHTML = "▶";
     }
+    
+    setTimeout(() => map.invalidateSize(), 300);
 }
 
 /* ============================
@@ -405,5 +718,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
 @endpush
