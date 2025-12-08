@@ -374,7 +374,7 @@
         <!-- Peta -->
         <div id="map-container" class="panel-card">
             <div class="card">
-                {{-- <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Peta Monitoring</span>
                     <div>
                         <small class="me-3">
@@ -384,7 +384,7 @@
                             Aktif: <span id="activeCount" class="badge bg-success">0</span>
                         </small>
                     </div>
-                </div> --}}
+                </div>
                 <div class="card-body">
                     <div id="map"></div>
                 </div>
