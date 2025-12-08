@@ -67,7 +67,7 @@
   </body>
   @vite('resources/js/app.js')
 
-  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  {{-- <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     
   <script>
     // Mendapatkan customer_id dari pengguna saat ini
@@ -270,5 +270,5 @@
         console.error('WebSocket connection failed: ', error);
       });
     });
-  </script>
+  </script> --}}
 </html>
