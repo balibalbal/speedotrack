@@ -2,11 +2,11 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     <style>
         /* RESET YANG BENAR */
-        html, body {
+        /* html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-        }
+        } */
 
         /* ===== LAYOUT UTAMA ===== */
         .container-fluid.p-0 {
@@ -736,13 +736,6 @@ function showDetail(d) {
             <div class="detail-item">
                 <div class="detail-label">Koordinat</div>
                 <div class="detail-value">${d.lat}, ${d.lng}</div>
-            </div>
-            
-            <div class="detail-item">
-                <div class="detail-label">Marker</div>
-                <div class="detail-value">
-                    <small><a href="${markerUrl}" target="_blank">Lihat marker</a></small>
-                </div>
             </div>
         </div>
     `;
