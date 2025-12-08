@@ -45,7 +45,7 @@
         }
 
         .panel-card .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00FF9C 0%, #B6FFA1 100%);
             color: white;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             padding: 12px 20px;
