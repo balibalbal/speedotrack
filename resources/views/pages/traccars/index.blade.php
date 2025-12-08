@@ -433,15 +433,24 @@
 const URL_API = "https://dev.speedtrack.id/api/objects";
 const REFRESH_INTERVAL = 5000;
 
+
+let markers = {};
+let deviceList = [];
+let selectedImei = null;
+
+let map;
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    let map = L.map('map').setView([-6.4, 106.63], 12);
+    /* INIT MAP GLOBAL */
+    map = L.map('map').setView([-6.4, 106.63], 12);
 
-    let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+        .addTo(map);
 
-    // Tambahkan delay kecil agar Google Maps API benar-benar siap
+    /* GOOGLE LAYER */
     setTimeout(() => {
-        let g_roadmap = L.gridLayer.googleMutant({ type: 'roadmap' });
+        let g_roadmap  = L.gridLayer.googleMutant({ type: 'roadmap' });
         let g_satellite = L.gridLayer.googleMutant({ type: 'satellite' });
         let g_hybrid = L.gridLayer.googleMutant({ type: 'hybrid' });
         let g_terrain = L.gridLayer.googleMutant({ type: 'terrain' });
@@ -455,13 +464,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }).addTo(map);
     }, 150);
 
+    /* LOAD DATA */
+    loadData();
+    setInterval(loadData, REFRESH_INTERVAL);
+
+    /* RESIZE MAP */
+    window.addEventListener('resize', () => map.invalidateSize());
+
+    /* ZOOM & SCALE */
+    L.control.zoom({ position: 'topright' }).addTo(map);
+    L.control.scale({ metric: true, imperial: false }).addTo(map);
 });
 
-
-
-let markers = {};
-let deviceList = [];
-let selectedImei = null;
 
 // Cache untuk marker icons untuk performa
 let iconCache = {};
