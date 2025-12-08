@@ -424,10 +424,10 @@
 @endsection
 
 @push('scripts')
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnjStSt0_qeuKkG-2AQiZEV7NdXckDW5Y"></script>
 <script src="https://unpkg.com/leaflet.gridlayer.googlemutant/Leaflet.GoogleMutant.js"></script>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://rawcdn.githack.com/bbecquet/Leaflet.RotatedMarker/master/leaflet.rotatedMarker.js"></script>
 <script>
 const URL_API = "https://dev.speedtrack.id/api/objects";
