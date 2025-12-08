@@ -531,12 +531,13 @@ function renderList(devices) {
 
 function getStatusBadge(status) {
     switch(status) {
-        case 'moving':
-        case 'running':
+        case 'Moving':
             return 'bg-success';
-        case 'stopped':
+        case 'running':
+            return 'bg-primary';
+        case 'Stopped':
             return 'bg-warning';
-        case 'offline':
+        case 'Offline':
             return 'bg-danger';
         default:
             return 'bg-secondary';
