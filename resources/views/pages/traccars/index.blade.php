@@ -841,32 +841,5 @@ function toggleSidebarRight() {
     
     setTimeout(() => map.invalidateSize(), 300);
 }
-
-/* ============================
-   INITIALIZE
-=============================== */
-document.addEventListener('DOMContentLoaded', function() {
-    // Load data pertama kali
-    loadData();
-    
-    // Set interval untuk refresh data
-    setInterval(loadData, REFRESH_INTERVAL);
-    
-    // Resize map saat window di-resize
-    window.addEventListener('resize', function() {
-        map.invalidateSize();
-    });
-    
-    // Tambahkan kontrol zoom
-    L.control.zoom({
-        position: 'topright'
-    }).addTo(map);
-    
-    // Tambahkan skala
-    L.control.scale({
-        imperial: false,
-        metric: true
-    }).addTo(map);
-});
 </script>
 @endpush
