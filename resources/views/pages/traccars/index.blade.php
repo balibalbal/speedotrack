@@ -20,7 +20,6 @@
             flex: 1;
             display: flex;
             gap: 15px;
-            padding: 15px;
             background: #f8f9fa;
             overflow: hidden;
             position: relative;
@@ -240,13 +239,13 @@
         }
 
         .toggle-btn.left {
-            left: 320px;
-            border-radius: 0 8px 8px 0;
+            left: 310px;
+            border-radius: 15px;
         }
 
         .toggle-btn.right {
-            right: 320px;
-            border-radius: 8px 0 0 8px;
+            right: 310px;
+            border-radius: 15px;
         }
 
         /* Ketika sidebar tersembunyi */
