@@ -169,26 +169,39 @@
 @section('title', 'Monitoring Kendaraan')
 @section('content')
 
-<div class="container-fluid p-0">
-    <!-- Konten Utama -->
+<div class="container-fluid p-0"> <!-- Tambahkan p-0 untuk menghilangkan padding container -->
+
     <div class="wrapper">
         <!-- Sidebar Kiri -->
-        <div id="sidebar">...</div>
-        
+        <div id="sidebar">
+            <input type="text" 
+                   id="searchInput" 
+                   placeholder="Cari kendaraan..." 
+                   onkeyup="filterList()">
+            <div id="list">
+                <!-- Daftar kendaraan akan muncul di sini -->
+            </div>
+        </div>
+
         <!-- Tombol toggle sidebar kiri -->
         <button id="toggleSidebarLeft" onclick="toggleSidebarLeft()">⮜</button>
-        
+
         <!-- Peta -->
         <div id="map"></div>
-        
+
         <!-- Panel Detail Kanan -->
-        <div id="detailPanel">...</div>
-        
+        <div id="detailPanel">
+            <h5>Detail Kendaraan</h5>
+            <div id="detailContent">
+                <!-- Detail kendaraan akan muncul di sini -->
+                <p class="text-muted">Pilih kendaraan untuk melihat detail</p>
+            </div>
+        </div>
+
         <!-- Tombol toggle sidebar kanan -->
         <button id="toggleSidebarRight" onclick="toggleSidebarRight()">⮞</button>
     </div>
-    
-    <!-- Footer akan muncul di sini secara otomatis dari layout admin -->
+
 </div>
 
 @endsection
