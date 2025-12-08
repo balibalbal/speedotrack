@@ -632,8 +632,8 @@ function getDefaultMarkerByStatus(status) {
 function createMarkerPopup(d) {
     return `
         <div style="min-width: 200px;">
-            <strong>${d.name || 'Tanpa Nama'}</strong><br>
-            <small>${d.plate_number || 'No. Polisi: -'}</small><br>
+            <strong>${d.plate_number || 'Tanpa Nama'}</strong><br>
+            <small>${d.imei || 'No. Imei: -'}</small><br>
             <hr style="margin: 5px 0;">
             <table style="font-size: 12px;">
                 <tr>
