@@ -3,176 +3,165 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
     <style>
-    
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
-    /* ===== WRAPPER ===== */
-    .wrapper {
-        position: absolute;
-        top: 56px; /* sesuaikan tinggi header admin */
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        overflow: hidden;
-        background: #f0f0f0;
-    }
-
-    /* ===== SIDEBAR KIRI ===== */
-    #sidebar {
-        width: 320px;
-        min-width: 320px;
-        background: #fff;
-        border-right: 1px solid #ddd;
-        overflow-y: auto;
-        transition: all 0.3s ease;
-        position: relative;
-        z-index: 20;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    }
-    #sidebar.hidden {
-        min-width: 0;
-        width: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-        border-right: none;
-    }
-
-    /* ===== SEARCH ===== */
-    #searchInput {
-        margin: 15px;
-        padding: 10px 12px;
-        width: calc(100% - 30px);
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-        box-sizing: border-box;
-    }
-
-    #list {
-        padding: 0 10px 10px 10px;
-    }
-
-    .item {
-        padding: 12px 15px;
-        cursor: pointer;
-        border-bottom: 1px solid #eee;
-        transition: background 0.2s;
-        border-radius: 5px;
-        margin-bottom: 5px;
-    }
-    .item:hover {
-        background: #f0f7ff;
-        border-left: 3px solid #4a90e2;
-    }
-
-    /* ===== MAP AREA ===== */
-    #map {
-        flex: 1;
-        min-width: 0;
-        height: 100%;
-        z-index: 1;
-        position: relative;
-    }
-
-    /* ===== PANEL DETAIL KANAN ===== */
-    #detailPanel {
-        width: 320px;
-        min-width: 320px;
-        background: #fff;
-        border-left: 1px solid #ddd;
-        padding: 20px;
-        overflow-y: auto;
-        transition: all 0.3s ease;
-        position: relative;
-        z-index: 20;
-        box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-    }
-    #detailPanel.hidden {
-        min-width: 0;
-        width: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-        border-left: none;
-    }
-
-    /* ===== TOGGLE BUTTONS ===== */
-    #toggleSidebarLeft {
-        position: absolute;
-        top: 50%;
-        left: 320px;
-        transform: translateY(-50%);
-        background: #2c3e50;
-        color: #fff;
-        border: none;
-        width: 20px;
-        height: 60px;
-        cursor: pointer;
-        border-radius: 0 5px 5px 0;
-        z-index: 30;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: left 0.3s ease;
-    }
-
-    #toggleSidebarLeft:hover {
-        background: #34495e;
-    }
-
-    #toggleSidebarRight {
-        position: absolute;
-        top: 50%;
-        right: 320px;
-        transform: translateY(-50%);
-        background: #2c3e50;
-        color: #fff;
-        border: none;
-        width: 20px;
-        height: 60px;
-        cursor: pointer;
-        border-radius: 5px 0 0 5px;
-        z-index: 30;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: right 0.3s ease;
-    }
-
-    #toggleSidebarRight:hover {
-        background: #34495e;
-    }
-
-    /* Ketika sidebar tersembunyi */
-    #sidebar.hidden + #toggleSidebarLeft {
-        left: 0;
-    }
-
-    #detailPanel.hidden ~ #toggleSidebarRight {
-        right: 0;
-    }
-
-    /* Responsif untuk mobile */
-    @media (max-width: 768px) {
-        #sidebar, #detailPanel {
-            width: 280px;
-            min-width: 280px;
+        /* RESET YANG BENAR */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            /* HAPUS overflow: hidden dari sini */
         }
-        
+
+        /* ===== LAYOUT UTAMA ===== */
+        .container-fluid.p-0 {
+            height: calc(100vh - 56px); /* tinggi viewport dikurangi tinggi header */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== WRAPPER ===== */
+        .wrapper {
+            flex: 1; /* Mengisi sisa ruang */
+            display: flex;
+            overflow: hidden; /* Tetap hidden di wrapper, bukan di body */
+            background: #f0f0f0;
+            position: relative; /* Ubah dari absolute ke relative */
+        }
+
+        /* ===== FOOTER ===== */
+        /* Pastikan footer ada di luar wrapper */
+        footer {
+            position: relative;
+            z-index: 10;
+            background: #fff;
+            border-top: 1px solid #ddd;
+        }
+
+        /* ===== SIDEBAR KIRI ===== */
+        #sidebar {
+            width: 320px;
+            min-width: 320px;
+            background: #fff;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 20;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        #sidebar.hidden {
+            min-width: 0;
+            width: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            border-right: none;
+        }
+
+        /* ===== MAP AREA ===== */
+        #map {
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* ===== PANEL DETAIL KANAN ===== */
+        #detailPanel {
+            width: 320px;
+            min-width: 320px;
+            background: #fff;
+            border-left: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 20;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+        }
+        #detailPanel.hidden {
+            min-width: 0;
+            width: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            border-left: none;
+        }
+
+        /* ===== TOGGLE BUTTONS ===== */
         #toggleSidebarLeft {
-            left: 280px;
+            position: absolute;
+            top: 50%;
+            left: 310px;
+            transform: translateY(-50%);
+            background: #2c3e50;
+            color: #fff;
+            border: none;
+            width: 20px;
+            height: 60px;
+            cursor: pointer;
+            border-radius: 15px;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: left 0.3s ease;
         }
-        
+
+        #toggleSidebarLeft:hover {
+            background: #34495e;
+        }
+
         #toggleSidebarRight {
-            right: 280px;
+            position: absolute;
+            top: 50%;
+            right: 310px;
+            transform: translateY(-50%);
+            background: #2c3e50;
+            color: #fff;
+            border: none;
+            width: 20px;
+            height: 60px;
+            cursor: pointer;
+            border-radius: 15px;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: right 0.3s ease;
         }
-    }
-</style>
+
+        #toggleSidebarRight:hover {
+            background: #34495e;
+        }
+
+        /* Ketika sidebar tersembunyi */
+        #sidebar.hidden + #toggleSidebarLeft {
+            left: 0;
+        }
+
+        #detailPanel.hidden ~ #toggleSidebarRight {
+            right: 0;
+        }
+
+        /* Responsif untuk mobile */
+        @media (max-width: 768px) {
+            .container-fluid.p-0 {
+                height: calc(100vh - 56px); /* sesuaikan jika header mobile berbeda */
+            }
+            
+            #sidebar, #detailPanel {
+                width: 280px;
+                min-width: 280px;
+            }
+            
+            #toggleSidebarLeft {
+                left: 280px;
+            }
+            
+            #toggleSidebarRight {
+                right: 280px;
+            }
+        }
+    </style>
 
 @endpush
 
@@ -180,39 +169,26 @@
 @section('title', 'Monitoring Kendaraan')
 @section('content')
 
-<div class="container-fluid p-0"> <!-- Tambahkan p-0 untuk menghilangkan padding container -->
-
+<div class="container-fluid p-0">
+    <!-- Konten Utama -->
     <div class="wrapper">
         <!-- Sidebar Kiri -->
-        <div id="sidebar">
-            <input type="text" 
-                   id="searchInput" 
-                   placeholder="Cari kendaraan..." 
-                   onkeyup="filterList()">
-            <div id="list">
-                <!-- Daftar kendaraan akan muncul di sini -->
-            </div>
-        </div>
-
+        <div id="sidebar">...</div>
+        
         <!-- Tombol toggle sidebar kiri -->
         <button id="toggleSidebarLeft" onclick="toggleSidebarLeft()">⮜</button>
-
+        
         <!-- Peta -->
         <div id="map"></div>
-
+        
         <!-- Panel Detail Kanan -->
-        <div id="detailPanel">
-            <h5>Detail Kendaraan</h5>
-            <div id="detailContent">
-                <!-- Detail kendaraan akan muncul di sini -->
-                <p class="text-muted">Pilih kendaraan untuk melihat detail</p>
-            </div>
-        </div>
-
+        <div id="detailPanel">...</div>
+        
         <!-- Tombol toggle sidebar kanan -->
         <button id="toggleSidebarRight" onclick="toggleSidebarRight()">⮞</button>
     </div>
-
+    
+    <!-- Footer akan muncul di sini secara otomatis dari layout admin -->
 </div>
 
 @endsection
