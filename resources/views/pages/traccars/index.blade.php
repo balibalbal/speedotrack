@@ -470,10 +470,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* RESIZE MAP */
     window.addEventListener('resize', () => map.invalidateSize());
-
-    /* ZOOM & SCALE */
-    L.control.zoom({ position: 'topright' }).addTo(map);
-    L.control.scale({ metric: true, imperial: false }).addTo(map);
 });
 
 
