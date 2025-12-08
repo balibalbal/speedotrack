@@ -19,8 +19,7 @@
         .wrapper {
             flex: 1;
             display: flex;
-            gap: 15px;
-            padding: 15px;
+            gap: 10px;
             background: #f8f9fa;
             overflow: hidden;
             position: relative;
@@ -375,7 +374,7 @@
         <!-- Peta -->
         <div id="map-container" class="panel-card">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                {{-- <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Peta Monitoring</span>
                     <div>
                         <small class="me-3">
@@ -385,7 +384,7 @@
                             Aktif: <span id="activeCount" class="badge bg-success">0</span>
                         </small>
                     </div>
-                </div>
+                </div> --}}
                 <div class="card-body">
                     <div id="map"></div>
                 </div>
