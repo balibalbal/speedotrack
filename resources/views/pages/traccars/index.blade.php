@@ -440,7 +440,7 @@ let selectedImei = null;
 
 let map;
 
-document.addEventListener("DOMContentLoaded", function () {
+$(document).ready(function(){
 
     /* INIT MAP GLOBAL */
     map = L.map('map').setView([-6.4, 106.63], 12);
