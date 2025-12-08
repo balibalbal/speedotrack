@@ -20,6 +20,7 @@
             flex: 1;
             display: flex;
             gap: 15px;
+            padding: 15px;
             background: #f8f9fa;
             overflow: hidden;
             position: relative;
@@ -239,13 +240,13 @@
         }
 
         .toggle-btn.left {
-            left: 310px;
-            border-radius: 15px;
+            left: 320px;
+            border-radius: 0 8px 8px 0;
         }
 
         .toggle-btn.right {
-            right: 310px;
-            border-radius: 15px;
+            right: 320px;
+            border-radius: 8px 0 0 8px;
         }
 
         /* Ketika sidebar tersembunyi */
@@ -320,6 +321,20 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Marker Status Indicator */
+        .marker-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-moving { background-color: #28a745; }
+        .status-stopped { background-color: #ffc107; }
+        .status-offline { background-color: #dc3545; }
+        .status-unknown { background-color: #6c757d; }
     </style>
 @endpush
 
@@ -425,6 +440,9 @@ let markers = {};
 let deviceList = [];
 let selectedImei = null;
 
+// Cache untuk marker icons untuk performa
+let iconCache = {};
+
 /* ============================
    LOAD DATA
 =============================== */
@@ -503,7 +521,7 @@ function filterList() {
 }
 
 /* ============================
-   UPDATE MARKER
+   UPDATE MARKER DENGAN URL DARI API
 =============================== */
 function updateMarkers(devices) {
     devices.forEach(d => {
@@ -515,11 +533,14 @@ function updateMarkers(devices) {
         let latlng = [lat, lng];
         let angle = parseFloat(d.angle || d.course || d.direction || 0);
 
-        let icon = L.icon({
-            iconUrl: getMarkerIcon(d.st),
-            iconSize: [30, 40],
-            iconAnchor: [15, 40]
-        });
+        // Gunakan marker dari API jika ada, jika tidak gunakan default berdasarkan status
+        let markerUrl = d.marker || getDefaultMarkerByStatus(d.st);
+        
+        // Cache key untuk icon
+        let cacheKey = `${markerUrl}_${angle}_${selectedImei === d.imei ? 'selected' : 'normal'}`;
+        
+        // Buat icon dengan URL dari API
+        let icon = createIcon(markerUrl, angle, d.imei);
 
         if (!markers[d.imei]) {
             markers[d.imei] = L.marker(latlng, {
@@ -530,39 +551,94 @@ function updateMarkers(devices) {
             })
             .addTo(map)
             .on("click", () => selectDevice(d.imei));
+            
+            // Tambahkan popup untuk marker
+            markers[d.imei].bindPopup(createMarkerPopup(d));
+            
         } else {
             markers[d.imei].setLatLng(latlng);
             markers[d.imei].setRotationAngle(angle);
-            markers[d.imei].setIcon(L.icon({
-                iconUrl: getMarkerIcon(d.st),
-                iconSize: [30, 40],
-                iconAnchor: [15, 40]
-            }));
-        }
-        
-        // Update marker jika ini adalah yang dipilih
-        if (selectedImei === d.imei) {
-            markers[d.imei].setIcon(L.icon({
-                iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon-red.png',
-                iconSize: [35, 45],
-                iconAnchor: [17, 45]
-            }));
+            markers[d.imei].setIcon(icon);
+            
+            // Update popup
+            markers[d.imei].setPopupContent(createMarkerPopup(d));
         }
     });
 }
 
-function getMarkerIcon(status) {
+function createIcon(markerUrl, angle, imei) {
+    // Jika kendaraan dipilih, buat icon lebih besar
+    const isSelected = selectedImei === imei;
+    const sizeMultiplier = isSelected ? 1.2 : 1.0;
+    
+    return L.icon({
+        iconUrl: markerUrl,
+        iconSize: [30 * sizeMultiplier, 40 * sizeMultiplier],
+        iconAnchor: [15 * sizeMultiplier, 40 * sizeMultiplier],
+        popupAnchor: [0, -40 * sizeMultiplier]
+    });
+}
+
+function getDefaultMarkerByStatus(status) {
+    // Fallback marker berdasarkan status jika tidak ada di API
+    const baseUrl = 'https://speedotrack.pro//img/markers/';
+    
     switch(status) {
         case 'moving':
         case 'running':
-            return 'https://unpkg.com/leaflet/dist/images/marker-icon-green.png';
+            return baseUrl + 'arrow-green.svg';
         case 'stopped':
-            return 'https://unpkg.com/leaflet/dist/images/marker-icon-yellow.png';
+            return baseUrl + 'arrow-yellow.svg';
         case 'offline':
-            return 'https://unpkg.com/leaflet/dist/images/marker-icon-grey.png';
+            return baseUrl + 'arrow-grey.svg';
         default:
-            return 'https://unpkg.com/leaflet/dist/images/marker-icon.png';
+            return baseUrl + 'arrow-red.svg'; // Default dari contoh Anda
     }
+}
+
+function createMarkerPopup(d) {
+    return `
+        <div style="min-width: 200px;">
+            <strong>${d.name || 'Tanpa Nama'}</strong><br>
+            <small>${d.plate_number || 'No. Polisi: -'}</small><br>
+            <hr style="margin: 5px 0;">
+            <table style="font-size: 12px;">
+                <tr>
+                    <td>Status:</td>
+                    <td><b>${d.ststr}</b></td>
+                </tr>
+                <tr>
+                    <td>Kecepatan:</td>
+                    <td><b>${d.speed || 0} km/h</b></td>
+                </tr>
+                <tr>
+                    <td>Terakhir:</td>
+                    <td>${formatTime(d.dt_tracker)}</td>
+                </tr>
+            </table>
+            <button onclick="selectDeviceFromMap('${d.imei}')" 
+                    style="margin-top: 8px; padding: 4px 12px; font-size: 12px;"
+                    class="btn btn-sm btn-primary w-100">
+                Lihat Detail
+            </button>
+        </div>
+    `;
+}
+
+function selectDeviceFromMap(imei) {
+    // Tutup popup
+    markers[imei].closePopup();
+    // Pilih device
+    selectDevice(imei);
+}
+
+function formatTime(dt) {
+    if (!dt) return '-';
+    const date = new Date(dt);
+    return date.toLocaleTimeString('id-ID', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
 }
 
 /* ============================
@@ -576,6 +652,9 @@ function selectDevice(imei) {
     // Update UI
     renderList(deviceList);
     
+    // Update semua marker untuk reflect selection
+    updateMarkers(deviceList);
+    
     // Buka panel detail jika tertutup
     const detailPanel = document.getElementById("detailPanel");
     if (detailPanel.classList.contains("hidden")) {
@@ -586,6 +665,7 @@ function selectDevice(imei) {
     let marker = markers[imei];
     if (marker) {
         map.setView(marker.getLatLng(), 16);
+        marker.openPopup();
     }
 
     showDetail(d);
@@ -598,9 +678,17 @@ function showDetail(d) {
     const detailContent = document.getElementById("detailContent");
     if (!detailContent) return;
     
+    // Dapatkan URL marker untuk ditampilkan di detail
+    const markerUrl = d.marker || getDefaultMarkerByStatus(d.st);
+    
     detailContent.innerHTML = `
         <div class="detail-section">
-            <h6>${d.name || 'Tidak ada nama'}</h6>
+            <div class="text-center mb-3">
+                <div style="display: inline-block; transform: rotate(${d.angle || 0}deg);">
+                    <img src="${markerUrl}" alt="Marker" style="width: 40px; height: 40px;">
+                </div>
+                <h6 class="mt-2">${d.name || 'Tidak ada nama'}</h6>
+            </div>
             
             <div class="detail-item">
                 <div class="detail-label">IMEI</div>
@@ -626,7 +714,14 @@ function showDetail(d) {
             
             <div class="detail-item">
                 <div class="detail-label">Arah</div>
-                <div class="detail-value">${d.angle || 0}°</div>
+                <div class="detail-value">
+                    <div style="display: flex; align-items: center;">
+                        <div style="transform: rotate(${d.angle || 0}deg); margin-right: 8px;">
+                            ➤
+                        </div>
+                        <span>${d.angle || 0}°</span>
+                    </div>
+                </div>
             </div>
             
             <div class="detail-item">
@@ -643,18 +738,40 @@ function showDetail(d) {
                 <div class="detail-label">Koordinat</div>
                 <div class="detail-value">${d.lat}, ${d.lng}</div>
             </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">Marker</div>
+                <div class="detail-value">
+                    <small><a href="${markerUrl}" target="_blank">Lihat marker</a></small>
+                </div>
+            </div>
         </div>
     `;
 }
 
 function formatDateTime(dt) {
     if (!dt) return '-';
-    return new Date(dt).toLocaleString('id-ID');
+    return new Date(dt).toLocaleString('id-ID', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
 }
 
 function clearDetail() {
     selectedImei = null;
     renderList(deviceList);
+    updateMarkers(deviceList); // Reset marker ke normal
+    
+    // Tutup semua popup
+    Object.values(markers).forEach(marker => {
+        if (marker.closePopup) marker.closePopup();
+    });
+    
     document.getElementById('detailContent').innerHTML = `
         <div class="text-center py-5">
             <div class="mb-3">
@@ -671,7 +788,6 @@ function clearDetail() {
 =============================== */
 function toggleSidebarLeft() {
     const sidebar = document.getElementById("sidebar");
-    const toggleBtn = document.getElementById("toggleSidebarLeft");
     const arrow = document.getElementById("leftArrow");
     
     sidebar.classList.toggle("hidden");
@@ -687,7 +803,6 @@ function toggleSidebarLeft() {
 
 function toggleSidebarRight() {
     const detailPanel = document.getElementById("detailPanel");
-    const toggleBtn = document.getElementById("toggleSidebarRight");
     const arrow = document.getElementById("rightArrow");
     
     detailPanel.classList.toggle("hidden");
@@ -715,6 +830,17 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', function() {
         map.invalidateSize();
     });
+    
+    // Tambahkan kontrol zoom
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(map);
+    
+    // Tambahkan skala
+    L.control.scale({
+        imperial: false,
+        metric: true
+    }).addTo(map);
 });
 </script>
 @endpush
