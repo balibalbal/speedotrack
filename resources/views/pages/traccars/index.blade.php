@@ -433,40 +433,30 @@
 const URL_API = "https://dev.speedtrack.id/api/objects";
 const REFRESH_INTERVAL = 5000;
 
-let map = L.map('map').setView([-6.4, 106.63], 12);
+document.addEventListener("DOMContentLoaded", function () {
 
-// OSM default
-let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+    let map = L.map('map').setView([-6.4, 106.63], 12);
 
-// Google layers (resmi)
-let g_roadmap = L.gridLayer.googleMutant({
-    type: 'roadmap'   // jalan
+    let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // Tambahkan delay kecil agar Google Maps API benar-benar siap
+    setTimeout(() => {
+        let g_roadmap = L.gridLayer.googleMutant({ type: 'roadmap' });
+        let g_satellite = L.gridLayer.googleMutant({ type: 'satellite' });
+        let g_hybrid = L.gridLayer.googleMutant({ type: 'hybrid' });
+        let g_terrain = L.gridLayer.googleMutant({ type: 'terrain' });
+
+        L.control.layers({
+            "OSM": osm,
+            "Google Roadmap": g_roadmap,
+            "Google Satellite": g_satellite,
+            "Google Hybrid": g_hybrid,
+            "Google Terrain": g_terrain
+        }).addTo(map);
+    }, 150);
+
 });
 
-let g_satellite = L.gridLayer.googleMutant({
-    type: 'satellite' // satelit
-});
-
-let g_hybrid = L.gridLayer.googleMutant({
-    type: 'hybrid'    // satelit + label
-});
-
-let g_terrain = L.gridLayer.googleMutant({
-    type: 'terrain'   // topografi
-});
-
-// Tambahkan kontrol pilihan layer
-L.control.layers(
-    {
-        "OSM Standard": osm,
-        "Google Roadmap": g_roadmap,
-        "Google Satellite": g_satellite,
-        "Google Hybrid": g_hybrid,
-        "Google Terrain": g_terrain
-    }
-).addTo(map);
 
 
 let markers = {};
