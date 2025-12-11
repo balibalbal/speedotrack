@@ -3,8 +3,8 @@
         <div class="container-fluid">
             <!-- Logo dan Brand -->
             <a class="navbar-brand d-flex align-items-center gap-1 pt-0 pb-0" href="/">
-                <img src="{{ url('backend/img/speedotrack-logo.png') }}" alt="borneotelemetry Logo">
-                <span class="navbar-brand-text">Speedotrack</span>
+                <img src="{{ url('backend/img/speedo-track-logo.png') }}" alt="Speedotrack Logo">
+                {{-- <span class="navbar-brand-text">Speedotrack</span> --}}
             </a>
 
             
