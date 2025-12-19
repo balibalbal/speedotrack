@@ -8,6 +8,8 @@ let deviceList = [];
 let selectedImei = null;
 
 let map;
+let currentStatusFilter = 'moving';
+
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -54,11 +56,15 @@ function loadData() {
         .then(data => {
             if (data.result) {
                 deviceList = data.result;
+
                 updateCounters(deviceList);
-                renderList(deviceList);
-                updateMarkers(deviceList);
+
+                const filtered = getFilteredDevices();
+                renderList(filtered);
+                updateMarkers(filtered);
             }
         })
+
         .catch(err => console.error("API Error:", err));
 }
 
@@ -81,6 +87,10 @@ function renderList(devices) {
         listContainer.innerHTML = '<p class="text-muted p-3">Tidak ada data kendaraan</p>';
         return;
     }
+
+    const status = normalizeStatus(d);
+    <span class="badge ${getStatusBadge(status)}">${status.toUpperCase()}</span>
+
     
     let html = "";
     devices.forEach(d => {
@@ -411,3 +421,46 @@ function toggleSidebarRight() {
     
     setTimeout(() => map.invalidateSize(), 300);
 }
+
+function normalizeStatus(d) {
+    if (d.st === 'moving' || d.speed > 3) return 'moving';
+    if (d.st === 'idle' || (d.speed > 0 && d.speed <= 3)) return 'idle';
+    return 'stop';
+}
+function updateCounters(devices) {
+    const moving = devices.filter(d => normalizeStatus(d) === 'moving').length;
+    const idle   = devices.filter(d => normalizeStatus(d) === 'idle').length;
+    const stop   = devices.filter(d => normalizeStatus(d) === 'stop').length;
+
+    document.getElementById('count-moving').textContent = moving;
+    document.getElementById('count-idle').textContent = idle;
+    document.getElementById('count-stop').textContent = stop;
+
+    document.getElementById('vehicleCount').textContent = devices.length;
+}
+function getFilteredDevices() {
+    return deviceList.filter(d => normalizeStatus(d) === currentStatusFilter);
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        currentStatusFilter = btn.dataset.status;
+
+        const filtered = getFilteredDevices();
+        renderList(filtered);
+        updateMarkers(filtered);
+    });
+});
+
+function getStatusBadge(status) {
+    switch(status) {
+        case 'moving': return 'bg-success';
+        case 'idle': return 'bg-primary';
+        case 'stop': return 'bg-warning';
+        default: return 'bg-secondary';
+    }
+}
+
