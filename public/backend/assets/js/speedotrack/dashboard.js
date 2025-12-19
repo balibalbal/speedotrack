@@ -9,6 +9,7 @@ let selectedImei = null;
 
 let map;
 let currentStatusFilter = 'moving';
+let activeFilter = 'all';
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -444,8 +445,13 @@ function updateCounters(devices) {
 }
 
 function getFilteredDevices() {
-    return deviceList.filter(d => normalizeStatus(d) === currentStatusFilter);
+    if (activeFilter === 'all') {
+        return deviceList;
+    }
+
+    return deviceList.filter(d => normalizeStatus(d) === activeFilter);
 }
+
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -469,3 +475,18 @@ function getStatusBadge(status) {
     }
 }
 
+function setFilter(filter) {
+    activeFilter = filter;
+
+    document.querySelectorAll('.status-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    document
+        .querySelector(`.status-tab[data-filter="${filter}"]`)
+        .classList.add('active');
+
+    const filtered = getFilteredDevices();
+    renderList(filtered);
+    updateMarkers(filtered);
+}
