@@ -235,7 +235,7 @@ function createMarkerPopup(d) {
             <button onclick="selectDeviceFromMap('${d.imei}')" 
                     style="margin-top: 8px; padding: 4px 12px; font-size: 12px;"
                     class="btn btn-sm btn-primary w-100">
-                Lihat Detail
+                Historical
             </button>
         </div>
     `;
