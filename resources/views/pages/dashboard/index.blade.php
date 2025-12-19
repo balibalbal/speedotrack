@@ -339,11 +339,12 @@
         <!-- Sidebar Kiri - Daftar Kendaraan -->
         <div id="sidebar" class="panel-card">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                {{-- <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Daftar Kendaraan</span>
                     <span class="badge bg-light text-dark" id="vehicleCount">0</span>
-                </div>
+                </div> --}}
                 <div class="card-body">
+                    <span class="badge bg-light text-dark" id="vehicleCount">0</span>
                     <input type="text" 
                            id="searchInput" 
                            class="form-control" 
