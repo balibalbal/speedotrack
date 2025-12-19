@@ -87,24 +87,28 @@ function renderList(devices) {
         listContainer.innerHTML = '<p class="text-muted p-3">Tidak ada data kendaraan</p>';
         return;
     }
-
-    const status = normalizeStatus(d);
-    <span class="badge ${getStatusBadge(status)}">${status.toUpperCase()}</span>
-
     
     let html = "";
     devices.forEach(d => {
         const isActive = selectedImei === d.imei;
+        const status = normalizeStatus(d); // moving | idle | stop
+        
         html += `
             <div class="vehicle-item ${isActive ? 'active' : ''}" onclick="selectDevice('${d.imei}')">
                 <div class="vehicle-name">${d.name || d.plate_number || d.imei}</div>
                 <div class="vehicle-status">
-                    <span class="badge ${getStatusBadge(d.st)}">${d.ststr}</span>
+                    <span class="badge ${getStatusBadge(status)}">
+                        ${status.toUpperCase()}
+                    </span>
                     ${d.speed ? `<span class="ms-2">${d.speed} km/h</span>` : ''}
                 </div>
-                <div class="vehicle-location">${d.address || 'Lokasi tidak diketahui'}</div>
-            </div>`;
+                <div class="vehicle-location">
+                    ${d.address || 'Lokasi tidak diketahui'}
+                </div>
+            </div>
+        `;
     });
+
     listContainer.innerHTML = html;
 }
 
