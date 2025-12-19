@@ -70,11 +70,9 @@ function loadData() {
 }
 
 function updateCounters(devices) {
-    document.getElementById('vehicleCount').textContent = devices.length;
-    // document.getElementById('mapCount').textContent = devices.length;
+    // document.getElementById('vehicleCount').textContent = devices.length;
     
     const activeCount = devices.filter(d => d.st === 'moving' || d.st === 'running').length;
-    // document.getElementById('activeCount').textContent = activeCount;
 }
 
 /* ============================
@@ -373,26 +371,6 @@ function formatDateTime(dt) {
     });
 }
 
-function clearDetail() {
-    selectedImei = null;
-    renderList(deviceList);
-    updateMarkers(deviceList); // Reset marker ke normal
-    
-    // Tutup semua popup
-    Object.values(markers).forEach(marker => {
-        if (marker.closePopup) marker.closePopup();
-    });
-    
-    document.getElementById('detailContent').innerHTML = `
-        <div class="text-center py-5">
-            <div class="mb-3">
-                <i class="fas fa-car fa-3x text-muted"></i>
-            </div>
-            <h6 class="text-muted">Pilih kendaraan</h6>
-            <p class="text-muted small">Klik pada daftar kendaraan atau marker di peta</p>
-        </div>
-    `;
-}
 
 /* ============================
    COLLAPSIBLE SIDEBAR
