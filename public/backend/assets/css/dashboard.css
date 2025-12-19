@@ -41,8 +41,8 @@
 
         /* ===== SIDEBAR KIRI (DAFTAR KENDARAAN) ===== */
         #sidebar {
-            width: 320px;
-            min-width: 320px;
+            width: 330px;
+            min-width: 330px;
             transition: all 0.3s ease;
         }
 
