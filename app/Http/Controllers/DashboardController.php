@@ -31,7 +31,7 @@ class DashboardController extends Controller
         //    'geofences' => $geofences
         // ]);
 
-        return view('pages.traccars.index');
+        return view('pages.dashboard.index');
     }
 
     public function getObjects()
