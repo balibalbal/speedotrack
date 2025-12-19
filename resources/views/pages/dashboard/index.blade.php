@@ -387,17 +387,20 @@
         <!-- Panel Detail Kanan -->
         <div id="detailPanel" class="panel-card">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                {{-- <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Detail Kendaraan</span>
                     <button class="btn btn-sm btn-light" onclick="clearDetail()">
                         <small>Clear</small>
                     </button>
-                </div>
+                </div> --}}
                 <div class="card-body">
                     <div id="detailContent">
                         <div class="text-center py-5">
                             <div class="mb-3">
                                 <i class="fas fa-car fa-3x text-muted"></i>
+                                <button class="btn btn-sm btn-light" onclick="clearDetail()">
+                                  <small>Clear</small>
+                              </button>
                             </div>
                             <h6 class="text-muted">Pilih kendaraan</h6>
                             <p class="text-muted small">Klik pada daftar kendaraan atau marker di peta</p>
@@ -423,7 +426,8 @@
 
 <script src="https://rawcdn.githack.com/bbecquet/Leaflet.RotatedMarker/master/leaflet.rotatedMarker.js"></script>
 <script>
-const URL_API = "https://dev.speedtrack.id/api/objects";
+
+const URL_API = "/api/objects"; // dari route web karena api dari luar
 const REFRESH_INTERVAL = 5000;
 
 // const GOOGLE_KEY = "{{ config('services.google_map.api_key') }}";

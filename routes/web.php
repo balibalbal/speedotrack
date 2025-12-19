@@ -36,6 +36,7 @@ use App\Http\Controllers\Modem\TraccarMobileController;
 use App\Http\Controllers\Modem\TransmissionModemController;
 use App\Http\Controllers\Modem\AlarmController as ModemAlarmController;
 use App\Http\Controllers\Modem\DeviceController as ModemDeviceController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,7 +90,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/vehiclebygroup/{groupId}', [ReportController::class, 'getVehicleByGroup']); 
     Route::get('/get-nearby-vehicles', [TraccarController::class, 'getNearestVehicles']);
     Route::get('/get-traccar-data', [TraccarController::class, 'getData']);
-    Route::get('/api/objects', [TraccarController::class, 'getObjects']);
+    Route::get('/api/objects', [DashboardController::class, 'getObjects']);
     Route::get('/realtime', [TraccarController::class, 'webSocket']);
     Route::get('/get-traccar-hso', [HsoMonitoringController::class, 'getDataHso']);    
     Route::get('/report-last-position', [ReportController::class, 'tampilkanListPosisiAkhir']);
