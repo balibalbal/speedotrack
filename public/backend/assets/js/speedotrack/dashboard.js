@@ -432,16 +432,17 @@ function normalizeStatus(d) {
     return 'stop';
 }
 function updateCounters(devices) {
-    const moving = devices.filter(d => normalizeStatus(d) === 'moving').length;
-    const idle   = devices.filter(d => normalizeStatus(d) === 'idle').length;
-    const stop   = devices.filter(d => normalizeStatus(d) === 'stop').length;
+    document.getElementById('count-all').textContent = devices.length;
+    document.getElementById('count-moving').textContent =
+        devices.filter(d => normalizeStatus(d) === 'moving').length;
 
-    document.getElementById('count-moving').textContent = moving;
-    document.getElementById('count-idle').textContent = idle;
-    document.getElementById('count-stop').textContent = stop;
+    document.getElementById('count-idle').textContent =
+        devices.filter(d => normalizeStatus(d) === 'idle').length;
 
-    document.getElementById('vehicleCount').textContent = devices.length;
+    document.getElementById('count-stop').textContent =
+        devices.filter(d => normalizeStatus(d) === 'stop').length;
 }
+
 function getFilteredDevices() {
     return deviceList.filter(d => normalizeStatus(d) === currentStatusFilter);
 }

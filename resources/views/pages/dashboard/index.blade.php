@@ -23,17 +23,21 @@
                            class="form-control" 
                            placeholder="🔍 Cari kendaraan..." 
                            onkeyup="filterList()">
-                    <div class="vehicle-tabs">
-                      <button class="tab-btn active" data-status="moving">
-                          Moving <span id="count-moving">0</span>
-                      </button>
-                      <button class="tab-btn" data-status="idle">
-                          Idle <span id="count-idle">0</span>
-                      </button>
-                      <button class="tab-btn" data-status="stop">
-                          Stop <span id="count-stop">0</span>
-                      </button>
-                  </div>
+                    <div class="status-tabs">
+                        <div class="status-tab active" data-filter="all" onclick="setFilter('all')">
+                            All <span id="count-all">0</span>
+                        </div>
+                        <div class="status-tab" data-filter="moving" onclick="setFilter('moving')">
+                            Moving <span id="count-moving">0</span>
+                        </div>
+                        <div class="status-tab" data-filter="idle" onclick="setFilter('idle')">
+                            Idle <span id="count-idle">0</span>
+                        </div>
+                        <div class="status-tab" data-filter="stop" onclick="setFilter('stop')">
+                            Stop <span id="count-stop">0</span>
+                        </div>
+                    </div>
+
 
                     <div id="list" class="mt-3">
                         <div class="loading">
