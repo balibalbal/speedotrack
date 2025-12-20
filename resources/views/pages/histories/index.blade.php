@@ -7,17 +7,17 @@
 @extends('layouts.admin')
 @section('title', 'History Perjalanan')
 @section('content')
-<div class="container-fluid">    
-    <div class="card shadow mb-3">
-        <div id="map" style="height: 500px;"></div>
+    <div class="container-fluid">    
+        <div class="card shadow mb-3">
+            <div id="map" style="height: 500px;"></div>
+        </div>
     </div>
-</div>
 
-@if($imei)
-<script>
-    const IMEI = "{{ $imei }}";
-</script>
-@endif
+    @if($imei)
+    <script>
+        const IMEI = "{{ $imei }}";
+    </script>
+    @endif
 @endsection
 
 @push('scripts')
