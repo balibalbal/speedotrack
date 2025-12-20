@@ -12,7 +12,23 @@ async function loadRouteHistory() {
     console.log('Loading route for:', IMEI);
 
     const res = await fetch(`/histories/route?imei=${IMEI}`);
-    const json = await res.json();
+
+    const text = await res.text(); // 👈 ambil mentah dulu
+    console.log('Raw response:', text);
+
+    if (!text) {
+        alert('Response kosong dari server');
+        return;
+    }
+
+    let json;
+    try {
+        json = JSON.parse(text);
+    } catch (e) {
+        console.error('JSON parse error:', e);
+        alert('Response bukan JSON');
+        return;
+    }
 
     if (!json.route || json.route.length === 0) {
         alert('Data route tidak tersedia');
@@ -21,6 +37,7 @@ async function loadRouteHistory() {
 
     drawRoute(json.route);
 }
+
 
 function drawRoute(routeData) {
     const latlngs = [];
