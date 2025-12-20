@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* LOAD DATA */
     loadData();
-    setInterval(loadData, REFRESH_INTERVAL);
+    // setInterval(loadData, REFRESH_INTERVAL);
 
     /* RESIZE MAP */
     window.addEventListener('resize', () => map.invalidateSize());
