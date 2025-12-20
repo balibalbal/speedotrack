@@ -1,8 +1,20 @@
+let map;
+
+function initMap() {
+    map = L.map('map').setView([-6.2, 106.8], 10);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+}
+
 async function loadRouteHistory() {
+    console.log('Loading route for:', IMEI);
+
     const res = await fetch(`/histories/route?imei=${IMEI}`);
     const json = await res.json();
 
-    if (!json.route) {
+    if (!json.route || json.route.length === 0) {
         alert('Data route tidak tersedia');
         return;
     }
@@ -22,7 +34,7 @@ function drawRoute(routeData) {
         }
     });
 
-    if (latlngs.length === 0) return;
+    if (!latlngs.length) return;
 
     const polyline = L.polyline(latlngs, {
         weight: 4,
@@ -33,7 +45,9 @@ function drawRoute(routeData) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof IMEI !== 'undefined') {
+    initMap();
+
+    if (typeof IMEI !== 'undefined' && IMEI) {
         loadRouteHistory();
     }
 });
