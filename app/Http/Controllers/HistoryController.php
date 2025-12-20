@@ -6,8 +6,8 @@ use App\Models\History;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\HistoryRequest;
-use App\Models\Geofence;
-use App\Models\Vehicle;
+use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 class HistoryController extends Controller
 {
@@ -16,22 +16,12 @@ class HistoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $customer_id = auth()->user()->customer_id;
-                
-        //if ($customer_id == 1) {
-            $vehicles = Vehicle::where('status', 1)
-                    ->get();
-       // } else {
-         //   $vehicles = Vehicle::where('customer_id', $customer_id)
-         //           ->where('status', 1)
-         //           ->get();
-        //}
-        
-        return view('pages.histories.index')->with([
-            'vehicles' => $vehicles
-        ]);
+        $imei = $request->query('imei');
+
+        return view('pages.histories.index', compact('imei'));
+
 
     }
 
@@ -115,56 +105,7 @@ class HistoryController extends Controller
 
     
 
-    // public function getMapData(HistoryRequest $request) {
-        
-    //     $data = $request->all();
-
-    //     $start_date = $data['start_date'];
-    //     $end_date = $data['end_date'];
-    //     $no_pol = $data['no_pol'];
-
-        
-    //     // Membuat query dengan filter
-    //     $query = History::whereBetween('time', [$start_date, $end_date]);
-
-    //     if ($no_pol) {
-    //         $query->where('no_pol', $no_pol);
-    //     }
-
-    //     $data = $query->get();
-
-    //     $depotItems = Depo::all();
-        
-    //     $depotMapData = [];
-
-    //     // Format the retrieved depot data
-    //     foreach ($depotItems as $depot) {
-    //         $depotMapData[] = [
-    //             'id' => $depot->id,
-    //             'polygon' => $depot->polygon,
-    //             'name' => $depot->name,
-    //             'address' => $depot->address,
-    //             'phone' => $depot->phone
-    //         ];
-    //     }
-
-    //     $customerItems = Customer::all();
-        
-    //     $customerMapData = [];
-
-    //     // Format the retrieved depot data
-    //     foreach ($customerItems as $customer) {
-    //         $customerMapData[] = [
-    //             'id' => $customer->id,
-    //             'polygon' => $customer->polygon,
-    //             'name' => $customer->name,
-    //             'address' => $customer->address,
-    //             'phone' => $customer->phone
-    //         ];
-    //     }
-                
-    //     return response()->json($data);
-    // }
+    
 
     public function getMapData(HistoryRequest $request) {
         //$customer_id = auth()->user()->customer_id;
@@ -204,30 +145,7 @@ class HistoryController extends Controller
         // $geoItems = Geofence::where('customer_id', $customer_id)->get();
         $geofenceMapData = [];
     
-        // Format the retrieved geofence data
-        // foreach ($geoItems as $geo) {
-        //     $geofenceMapData[] = [
-        //         'id' => $geo->id,
-        //         'latlong' => $geo->latlong,
-        //         'name' => $geo->name,
-        //         'type' => $geo->type,
-        //         'radius' => $geo->radius
-        //     ];
-        // }
-    
-        // $customerItems = Customer::all();
-        // $customerMapData = [];
-    
-        // // Format the retrieved customer data
-        // foreach ($customerItems as $customer) {
-        //     $customerMapData[] = [
-        //         'id' => $customer->id,
-        //         'polygon' => $customer->polygon,
-        //         'name' => $customer->name,
-        //         'address' => $customer->address,
-        //         'phone' => $customer->phone
-        //     ];
-        // }
+        
     
         // Mengemas semua data ke dalam satu array asosiatif
         $data = [
@@ -239,6 +157,31 @@ class HistoryController extends Controller
         return response()->json($data);
     }
     
-    
-    
+    public function getRoute(Request $request)
+    {
+        $imei = $request->query('imei');
+
+        if (!$imei) {
+            return response()->json([
+                'status' => false,
+                'message' => 'IMEI tidak ditemukan'
+            ], 400);
+        }
+
+        // ✅ BULAN BERJALAN
+        $startDate = Carbon::now()->startOfMonth()->format('Y-m-d 00:00:01');
+        $endDate   = Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+
+        $url = "https://www.speedotrack.in/api/api.php";
+
+        $response = Http::get($url, [
+            'api' => 'user',
+            'ver' => '1.0',
+            'key' => env('SPEEDOTRACK_API_KEY'),
+            'cmd' => "OBJECT_GET_ROUTE,$imei,$startDate,$endDate,1"
+        ]);
+
+        return response()->json($response->json());
+    }
 }
+

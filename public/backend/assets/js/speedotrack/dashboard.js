@@ -232,7 +232,7 @@ function createMarkerPopup(d) {
                     <td>${formatTime(d.dt_tracker)}</td>
                 </tr>
             </table>
-            <button onclick="selectDeviceFromMap('${d.imei}')" 
+            <button onclick="selectRouteDeviceFromMap('${d.imei}')" 
                     style="margin-top: 8px; padding: 4px 12px; font-size: 12px;"
                     class="btn btn-sm btn-primary w-100">
                 Historical
@@ -241,11 +241,10 @@ function createMarkerPopup(d) {
     `;
 }
 
-function selectDeviceFromMap(imei) {
+function selectRouteDeviceFromMap(imei) {
     // Tutup popup
     markers[imei].closePopup();
-    // Pilih device
-    selectDevice(imei);
+    
 }
 
 function formatTime(dt) {

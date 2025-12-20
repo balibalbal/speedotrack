@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('events', EventController::class);
     Route::resource('transmissions', TransmissionController::class);
     Route::resource('alarms', AlarmController::class);
+    Route::get('/histories/route', [HistoryController::class, 'getRoute'])->name('histories.route');
     Route::post('/settings/save', [SettingController::class, 'save']);
     Route::get('/vehicle/export', [VehicleController::class, 'exportVehicle'])->name('vehicles.export');
     Route::get('/group-vehicle/{customerId}', [VehicleController::class, 'getGroupsByCustomer']); 
