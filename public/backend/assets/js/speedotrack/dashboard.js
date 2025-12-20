@@ -243,9 +243,14 @@ function createMarkerPopup(d) {
 
 function selectRouteDeviceFromMap(imei) {
     // Tutup popup
-    markers[imei].closePopup();
-    
+    if (markers[imei]) {
+        markers[imei].closePopup();
+    }
+
+    // Redirect ke histories index + kirim imei
+    window.location.href = `/histories?imei=${encodeURIComponent(imei)}`;
 }
+
 
 function formatTime(dt) {
     if (!dt) return '-';
