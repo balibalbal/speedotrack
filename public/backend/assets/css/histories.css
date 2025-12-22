@@ -15,7 +15,7 @@
 
 /* RIGHT PANEL */
 .history-side {
-    width: 360px;
+    width: 300px;
     display: flex;
     flex-direction: column;
     gap: 10px;
