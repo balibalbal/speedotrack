@@ -344,28 +344,78 @@ function initMovingMarker() {
 /* =========================
    PLAYBACK
 ========================= */
+// function playRoute() {
+//     if (isPlaying || !routeLatLngs.length) return;
+
+//     isPlaying = true;
+//     allowHoverJump = false; // 🔥 MATIKAN HOVER
+
+//     playInterval = setInterval(() => {
+//         if (playIndex >= routeLatLngs.length - 1) {
+//             pauseRoute();
+//             return;
+//         }
+
+//         animateMove(playIndex, playIndex + 1);
+//         playIndex++;
+//     }, playSpeed);
+// }
+
+/* =========================
+   PLAYBACK OPTIMIZED
+========================= */
+let playIndex = 0;
+let isPlaying = false;
+let followMode = true;
+let animationRAF = null;
+
 function playRoute() {
     if (isPlaying || !routeLatLngs.length) return;
 
     isPlaying = true;
-    allowHoverJump = false; // 🔥 MATIKAN HOVER
+    allowHoverJump = false;
 
-    playInterval = setInterval(() => {
+    // Jika data ribuan, gunakan sampling step
+    const stepSize = routeLatLngs.length > 1000 ? 5 : 1;
+
+    function step() {
         if (playIndex >= routeLatLngs.length - 1) {
-            pauseRoute();
+            isPlaying = false;
             return;
         }
 
-        animateMove(playIndex, playIndex + 1);
-        playIndex++;
-    }, playSpeed);
+        const nextIndex = Math.min(playIndex + stepSize, routeLatLngs.length - 1);
+
+        // Animasi marker langsung ke titik berikutnya
+        const latLng = L.latLng(routeLatLngs[nextIndex]);
+        movingMarker.setLatLng(latLng);
+        movingMarker.setRotationAngle(routeMeta[nextIndex].angle);
+
+        if (followMode && (nextIndex % 10 === 0 || nextIndex === routeLatLngs.length - 1)) {
+            // Pan hanya setiap 10 titik → lebih ringan
+            map.panTo(latLng, { animate: false });
+        }
+
+        // Update info / progress bar setiap stepSize titik
+        updateInfo(routeMeta[nextIndex], nextIndex);
+        progressBar.value = nextIndex;
+
+        playIndex = nextIndex;
+
+        // requestAnimationFrame untuk smooth animasi
+        animationRAF = requestAnimationFrame(step);
+    }
+
+    animationRAF = requestAnimationFrame(step);
 }
 
 function pauseRoute() {
     isPlaying = false;
-    allowHoverJump = true; // hidupkan lagi
-    clearInterval(playInterval);
+    allowHoverJump = true;
+    if (animationRAF) cancelAnimationFrame(animationRAF);
 }
+
+
 
 function getIndexFromEvent(e, canvas) {
     const rect = canvas.getBoundingClientRect();
@@ -378,31 +428,62 @@ function getIndexFromEvent(e, canvas) {
 }
 
 
+// function animateMove(fromIndex, toIndex) {
+//     const from = L.latLng(routeLatLngs[fromIndex]);
+//     const to = L.latLng(routeLatLngs[toIndex]);
+//     const meta = routeMeta[toIndex];
+//     let step = 0;
+
+//     const interval = setInterval(() => {
+//         step++;
+//         const lat = from.lat + (to.lat - from.lat) * step / smoothStep;
+//         const lng = from.lng + (to.lng - from.lng) * step / smoothStep;
+
+//         currentAngle = smoothAngle(currentAngle, meta.angle);
+//         movingMarker.setLatLng([lat, lng]);
+//         movingMarker.setRotationAngle(currentAngle);
+
+//         updateInfo(meta, toIndex);
+//         // highlightChart(toIndex);
+//         playIndex = toIndex;
+
+//         if (followMode) map.panTo([lat, lng], { animate: false });
+//         if (step >= smoothStep) clearInterval(interval);
+
+//         progressBar.value = toIndex;
+//     }, playSpeed / smoothStep);
+// }
+
 function animateMove(fromIndex, toIndex) {
     const from = L.latLng(routeLatLngs[fromIndex]);
     const to = L.latLng(routeLatLngs[toIndex]);
     const meta = routeMeta[toIndex];
+    const steps = 5; // interpolate 5 frame antar step
     let step = 0;
 
-    const interval = setInterval(() => {
+    function moveStep() {
         step++;
-        const lat = from.lat + (to.lat - from.lat) * step / smoothStep;
-        const lng = from.lng + (to.lng - from.lng) * step / smoothStep;
+        const lat = from.lat + (to.lat - from.lat) * (step / steps);
+        const lng = from.lng + (to.lng - from.lng) * (step / steps);
 
-        currentAngle = smoothAngle(currentAngle, meta.angle);
         movingMarker.setLatLng([lat, lng]);
-        movingMarker.setRotationAngle(currentAngle);
+        movingMarker.setRotationAngle(smoothAngle(currentAngle, meta.angle));
+        currentAngle = meta.angle;
 
+        if (followMode && step === steps) map.panTo([lat, lng], { animate: false });
         updateInfo(meta, toIndex);
-        // highlightChart(toIndex);
-        playIndex = toIndex;
 
-        if (followMode) map.panTo([lat, lng], { animate: false });
-        if (step >= smoothStep) clearInterval(interval);
+        if (step < steps) {
+            requestAnimationFrame(moveStep);
+        } else {
+            playIndex = toIndex;
+            if (isPlaying) playRoute(); // lanjut ke next
+        }
+    }
 
-        progressBar.value = toIndex;
-    }, playSpeed / smoothStep);
+    moveStep();
 }
+
 
 /* =========================
    SMOOTH ANGLE
