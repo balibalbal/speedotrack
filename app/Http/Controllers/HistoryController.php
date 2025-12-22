@@ -182,6 +182,9 @@ class HistoryController extends Controller
             ]
         );
 
+        dd($response->body());
+
+
         // 🔥 CEK APAKAH RESPONSE VALID
         if (!$response->ok()) {
             return response()->json([
