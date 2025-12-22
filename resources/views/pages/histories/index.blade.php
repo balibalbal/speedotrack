@@ -39,7 +39,7 @@
                                 value="0"
                                 step="1"
                                 class="form-range"
-                                style="width:200px"
+                                style="width:100%"
                             >
 
                         <button id="followBtn" class="btn btn-sm btn-secondary w-100 mb-2"
