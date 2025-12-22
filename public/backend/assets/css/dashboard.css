@@ -158,7 +158,7 @@
 
         .vehicle-item.active {
             background: linear-gradient(135deg, #F0E491 0%, #B7E5CD 100%);
-            color: white;
+            color: black;
             border-color: #41644A;
         }
 
