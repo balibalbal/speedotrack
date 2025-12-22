@@ -354,23 +354,30 @@ function toggleFollow() {
 
 function setSpeedLevel(level) {
     const map = {
-        1: { delay: 2000, label: '0.5x' },
-        2: { delay: 1200, label: '0.75x' },
-        3: { delay: 600,  label: '1x' },
-        4: { delay: 300,  label: '1.5x' },
-        5: { delay: 150,  label: '2x' }
+        1: { delay: 2000, label: '0.5x', color: '#198754' }, // hijau
+        2: { delay: 1200, label: '0.75x', color: '#0dcaf0' },
+        3: { delay: 600,  label: '1x',    color: '#0d6efd' }, // biru
+        4: { delay: 300,  label: '1.5x',  color: '#ffc107' },
+        5: { delay: 150,  label: '2x',    color: '#dc3545' } // merah
     };
 
     const cfg = map[level];
     playSpeed = cfg.delay;
 
+    // label
     document.getElementById('speedLabel').innerText = cfg.label;
 
+    // 🔥 GANTI WARNA SLIDER
+    const range = document.getElementById('speedRange');
+    range.style.accentColor = cfg.color;
+
+    // restart playback kalau sedang jalan
     if (isPlaying) {
         pauseRoute();
         playRoute();
     }
 }
+
 
 
 function reloadRoute() {
