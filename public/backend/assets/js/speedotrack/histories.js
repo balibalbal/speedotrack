@@ -555,7 +555,7 @@ function goEnd() {
 }
 
 function disableControls(disable = true) {
-    const controlIds = ["playBtn", "pauseBtn", "goStartBtn", "goEndBtn"];
+    const controlIds = ["playBtn", "pauseBtn", "goStartBtn", "goEndBtn", "downloadExcel"];
     controlIds.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.disabled = disable;

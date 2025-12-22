@@ -65,7 +65,7 @@
                     <div id="infoPanel" class="side-box small"></div>
 
                     <div>
-                        <button id="showBtn" class="btn btn-sm btn-danger w-100 mb-1" onclick="reloadRoute()"><span class="mdi mdi-file-excel-outline"></span>&nbsp;Download To Excel/CSV</button>
+                        <button id="downloadExcel" class="btn btn-sm btn-success w-100 mb-1" onclick="reloadRoute()"><span class="mdi mdi-file-excel-outline"></span>&nbsp;Download To Excel/CSV</button>
                     </div>
                 </div>
 
