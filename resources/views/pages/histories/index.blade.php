@@ -28,6 +28,11 @@
                 </div>
 
                 <div id="infoPanel" class="p-2 mb-2 bg-light rounded small shadow-sm"></div>
+                <div class="card shadow-sm mb-2">
+                    <div class="card-body p-2">
+                        <canvas id="speedChart" height="120"></canvas>
+                    </div>
+                </div>
 
                 <div id="map" style="height: 500px;"></div>
             </div>
@@ -48,5 +53,6 @@
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker/leaflet.rotatedMarker.js"></script>
 <script src="{{ asset('backend/assets/js/speedotrack/histories.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 @endpush

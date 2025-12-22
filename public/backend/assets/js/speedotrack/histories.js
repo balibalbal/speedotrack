@@ -14,6 +14,11 @@ let isPlaying = false;
 let followMode = true;
 let smoothStep = 10; // makin besar makin halus
 
+let speedChart;
+let speedData = [];
+let speedLabels = [];
+
+
 
 /* =========================
    INIT MAP
@@ -25,6 +30,50 @@ function initMap() {
         maxZoom: 19
     }).addTo(map);
 }
+
+function initSpeedChart() {
+    const ctx = document.getElementById('speedChart');
+    if (!ctx) return;
+
+    speedData = [];
+    speedLabels = [];
+
+    speedChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: speedLabels,
+            datasets: [{
+                label: 'Speed (km/h)',
+                data: speedData,
+                borderWidth: 2,
+                tension: 0.3,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: false,
+            scales: {
+                x: {
+                    display: false
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'km/h'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
 
 /* =========================
    AUTO LOAD HARI INI
@@ -63,6 +112,7 @@ async function loadRoute(url) {
     }
 
     parseRoute(json.route);
+    initSpeedChart();
     drawRoute();
     addStartEndMarker();
     initMovingMarker();
