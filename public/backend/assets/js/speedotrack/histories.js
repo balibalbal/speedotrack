@@ -1,7 +1,6 @@
 let map;
 let routeLatLngs = [];
 let routeMeta = [];
-let routeSegments = [];
 let routePolyline;
 let movingMarker;
 let startMarker;
@@ -23,6 +22,10 @@ let speedLabels = [];
 
 /* ===== LOADING ===== */
 let loadingEl;
+
+let isScrubbing = false;     // mouse sedang geser chart
+let allowHoverJump = true;  // disable saat play
+
 
 /* =========================
    INIT MAP
@@ -91,15 +94,40 @@ function initSpeedChart() {
         }
     });
 
+    // canvas.addEventListener('mousemove', e => {
+    //     const rect = canvas.getBoundingClientRect();
+    //     const percent = (e.clientX - rect.left) / rect.width;
+    //     const index = Math.round(percent * (routeLatLngs.length - 1));
+    //     if (index >= 0 && index < routeLatLngs.length) {
+    //         pauseRoute();
+    //         jumpToPoint(index);
+    //     }
+    // });
+
     canvas.addEventListener('mousemove', e => {
-        const rect = canvas.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
-        const index = Math.round(percent * (routeLatLngs.length - 1));
-        if (index >= 0 && index < routeLatLngs.length) {
-            pauseRoute();
-            jumpToPoint(index);
-        }
+        if (!isScrubbing) return;
+        if (!allowHoverJump) return;
+
+        const index = getIndexFromEvent(e, canvas);
+        if (index === null) return;
+
+        jumpToPoint(index);
     });
+
+    canvas.addEventListener('mousedown', e => {
+        isScrubbing = true;
+        allowHoverJump = true;
+        pauseRoute();
+
+        const index = getIndexFromEvent(e, canvas);
+        if (index !== null) jumpToPoint(index);
+    });
+
+    document.addEventListener('mouseup', () => {
+        isScrubbing = false;
+    });
+
+
 
     canvas.addEventListener('click', e => {
         const rect = canvas.getBoundingClientRect();
@@ -198,15 +226,32 @@ function initMovingMarker() {
 /* =========================
    PLAYBACK
 ========================= */
+// function playRoute() {
+//     if (isPlaying) return;
+//     isPlaying = true;
+
+//     playInterval = setInterval(() => {
+//         if (playIndex >= routeLatLngs.length - 1) {
+//             pauseRoute();
+//             return;
+//         }
+//         animateMove(playIndex, playIndex + 1);
+//         playIndex++;
+//     }, playSpeed);
+// }
+
 function playRoute() {
-    if (isPlaying) return;
+    if (isPlaying || !routeLatLngs.length) return;
+
     isPlaying = true;
+    allowHoverJump = false; // 🔥 MATIKAN HOVER
 
     playInterval = setInterval(() => {
         if (playIndex >= routeLatLngs.length - 1) {
             pauseRoute();
             return;
         }
+
         animateMove(playIndex, playIndex + 1);
         playIndex++;
     }, playSpeed);
@@ -214,8 +259,20 @@ function playRoute() {
 
 function pauseRoute() {
     isPlaying = false;
+    allowHoverJump = true; // hidupkan lagi
     clearInterval(playInterval);
 }
+
+function getIndexFromEvent(e, canvas) {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+
+    const percent = x / rect.width;
+    if (percent < 0 || percent > 1) return null;
+
+    return Math.round(percent * (routeLatLngs.length - 1));
+}
+
 
 function animateMove(fromIndex, toIndex) {
     const from = L.latLng(routeLatLngs[fromIndex]);
@@ -291,9 +348,8 @@ function reloadRoute() {
     loadRoute(`/histories/route?imei=${IMEI}&start=${startDate.value}&end=${endDate.value}`);
 }
 function clearMap() {
-    [...routeSegments, routePolyline, movingMarker, startMarker, endMarker]
+    [...routePolyline, movingMarker, startMarker, endMarker]
         .forEach(l => l && map.removeLayer(l));
-    routeSegments = [];
     if (speedChart) speedChart.destroy();
     playIndex = 0;
     pauseRoute();
