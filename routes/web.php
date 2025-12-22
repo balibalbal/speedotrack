@@ -65,6 +65,7 @@ Route::get('/dump/{status}', [DashboardController::class, 'listDump'])->name('tr
 Route::get('traccar', [DashboardController::class, 'listTraccar'])->name('traccar.listTraccar')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/histories/route', [HistoryController::class, 'getRoute'])->name('histories.route');
     Route::resource('drivers', DriverController::class);
     Route::resource('vehicles', VehicleController::class);   
     Route::resource('groups', GroupController::class); 
@@ -84,7 +85,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('events', EventController::class);
     Route::resource('transmissions', TransmissionController::class);
     Route::resource('alarms', AlarmController::class);
-    Route::get('/histories/route', [HistoryController::class, 'getRoute'])->name('histories.route');
+    
     Route::post('/settings/save', [SettingController::class, 'save']);
     Route::get('/vehicle/export', [VehicleController::class, 'exportVehicle'])->name('vehicles.export');
     Route::get('/group-vehicle/{customerId}', [VehicleController::class, 'getGroupsByCustomer']); 
