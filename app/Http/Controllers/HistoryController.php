@@ -182,7 +182,11 @@ class HistoryController extends Controller
             ]
         );
 
-        dd($response->body());
+        dd([
+            'status' => $response->status(),
+            'headers' => $response->headers(),
+            'body' => $response->body(),
+        ]);
 
 
         // 🔥 CEK APAKAH RESPONSE VALID
