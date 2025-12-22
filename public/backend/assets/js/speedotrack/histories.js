@@ -211,30 +211,74 @@ async function loadRouteToday() {
     await loadRoute(`/histories/route?imei=${IMEI}`);
 }
 
+// async function loadRoute(url) {
+//     clearMap();
+//     showLoading();
+
+//     const res = await fetch(url);
+//     const json = await res.json();
+
+//     if (!json.route?.length) {
+//         hideLoading();
+//         return alert('Route kosong');
+//     }
+
+//     parseRoute(json.route);
+//     drawRoute();
+//     addStartEndMarker();
+//     initMovingMarker();
+//     initSpeedChart();
+
+//     hideLoading();
+
+//     progressBar.max = routeLatLngs.length - 1;
+//     progressBar.value = 0;
+
+// }
+
 async function loadRoute(url) {
     clearMap();
     showLoading();
 
-    const res = await fetch(url);
-    const json = await res.json();
+    try {
+        const res = await fetch(url);
+        const json = await res.json();
 
-    // if (!json.route?.length) {
-    //     hideLoading();
-    //     return alert('Route kosong');
-    // }
+        // JIKA DATA KOSONG
+        if (!json.route || json.route.length === 0) {
+            hideLoading();
 
-    parseRoute(json.route);
-    drawRoute();
-    addStartEndMarker();
-    initMovingMarker();
-    initSpeedChart();
+            // reset UI
+            progressBar.value = 0;
+            progressBar.max = 0;
 
-    hideLoading();
+            // optional info
+            showEmptyInfo();
 
-    progressBar.max = routeLatLngs.length - 1;
-    progressBar.value = 0;
+            // ❌ JANGAN return sebelum map siap
+            console.warn('Route kosong');
 
+            return; // keluar fungsi TANPA alert blocking
+        }
+
+        // JIKA ADA DATA
+        parseRoute(json.route);
+        drawRoute();
+        addStartEndMarker();
+        initMovingMarker();
+        initSpeedChart();
+
+        progressBar.max = routeLatLngs.length - 1;
+        progressBar.value = 0;
+
+    } catch (err) {
+        console.error(err);
+        alert('Gagal load route');
+    } finally {
+        hideLoading();
+    }
 }
+
 
 /* =========================
    PARSE ROUTE
