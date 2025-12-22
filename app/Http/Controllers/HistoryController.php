@@ -158,63 +158,35 @@ class HistoryController extends Controller
     }
     
     public function getRoute(Request $request)
-    { 
+    {
         $imei = $request->query('imei');
 
         if (!$imei) {
-            return response()->json([
-                'status' => false,
-                'message' => 'IMEI tidak ditemukan'
-            ], 400);
+            return response()->json(['status' => false], 400);
         }
 
-        // $startDate = Carbon::now()->startOfMonth()->format('Y-m-d 00:00:01');
-        // $endDate   = Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+        // DEFAULT: HARI INI
+        $startDate = $request->query('start')
+            ? Carbon::parse($request->query('start'))->startOfDay()
+            : Carbon::today()->startOfDay();
 
-        $startDate = Carbon::today()->format('Y-m-d 00:00:01');
-        $endDate   = Carbon::now()->format('Y-m-d H:i:s');
+        $endDate = $request->query('end')
+            ? Carbon::parse($request->query('end'))->endOfDay()
+            : Carbon::now();
 
-        
         $response = Http::timeout(20)->get(
             'https://www.speedotrack.pro/api/api.php',
             [
                 'api' => 'user',
                 'ver' => '1.0',
-                // 'key' => env('SPEEDOTRACK_API_KEY'),
                 'key' => '767C31DD0734097600A75E0712FF7C5F',
-                'cmd' => "OBJECT_GET_ROUTE,$imei,$startDate,$endDate,1"
+                'cmd' => "OBJECT_GET_ROUTE,$imei,{$startDate->format('Y-m-d H:i:s')},{$endDate->format('Y-m-d H:i:s')},1"
             ]
         );
 
-        // dd([
-        //     'status' => $response->status(),
-        //     'headers' => $response->headers(),
-        //     'body' => $response->body(),
-        // ]);
-
-
-        // 🔥 CEK APAKAH RESPONSE VALID
-        if (!$response->ok()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'API Speedotrack error',
-                'http_code' => $response->status(),
-                'body' => $response->body()
-            ], 500);
-        }
-
-        $json = $response->json();
-
-        if (!$json) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Response API kosong / bukan JSON',
-                'raw' => $response->body()
-            ], 500);
-        }
-
-        return response()->json($json);
+        return response()->json($response->json());
     }
+
 
 }
 

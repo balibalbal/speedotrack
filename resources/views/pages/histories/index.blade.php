@@ -7,9 +7,27 @@
 @extends('layouts.admin')
 @section('title', 'History Perjalanan')
 @section('content')
-    <div class="container-fluid">    
+    <div class="container-fluid">
         <div class="card shadow mb-3">
-            <div id="map" style="height: 500px;"></div>
+            <div class="card-body">
+
+                {{-- Toolbar --}}
+                <div class="d-flex gap-2 align-items-center mb-3">
+                    <input type="date" id="startDate" class="form-control form-control-sm" style="max-width:180px">
+                    <input type="date" id="endDate" class="form-control form-control-sm" style="max-width:180px">
+
+                    <button class="btn btn-sm btn-primary" onclick="reloadRoute()">
+                        Tampilkan
+                    </button>
+
+                    <button class="btn btn-sm btn-success" onclick="playRoute()">
+                        ▶ Play
+                    </button>
+                </div>
+
+                <div id="map" style="height: 500px;"></div>
+            </div>
+
         </div>
     </div>
 
