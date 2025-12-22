@@ -54,16 +54,16 @@
                                 title="Playback Speed" class="form-range" style="width:100%; accent-color: #dc3545"> --}}
 
                             <input type="range"
-                                class="form-range"
-                                min="1"
-                                max="5"
-                                value="3"
-                                id="speedRange"
-                                oninput="setSpeedLevel(this.value)">
+       id="speedRange"
+       class="form-range"
+       min="1"
+       max="5"
+       step="1"
+       value="3"
+       oninput="setSpeedLevel(this.value)">
 
-                            <span id="speedLabel" class="badge bg-danger">
-                                1x
-                            </span>
+<span id="speedLabel">1x</span>
+
                         </div>
                     </div>
 
