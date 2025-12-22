@@ -168,8 +168,12 @@ class HistoryController extends Controller
             ], 400);
         }
 
-        $startDate = Carbon::now()->startOfMonth()->format('Y-m-d 00:00:01');
-        $endDate   = Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+        // $startDate = Carbon::now()->startOfMonth()->format('Y-m-d 00:00:01');
+        // $endDate   = Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+
+        $startDate = Carbon::today()->format('Y-m-d 00:00:01');
+        $endDate   = Carbon::now()->format('Y-m-d H:i:s');
+
         
         $response = Http::timeout(20)->get(
             'https://www.speedotrack.pro/api/api.php',
