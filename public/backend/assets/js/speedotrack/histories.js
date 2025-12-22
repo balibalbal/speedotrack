@@ -240,6 +240,7 @@ function animateMove(fromIndex, toIndex) {
         movingMarker.setRotationAngle(meta.angle || 0);
 
         updateInfo(meta, toIndex);
+        updateSpeedChart(meta, toIndex);
 
         if (followMode) {
             map.panTo([lat, lng], { animate: false });
@@ -262,6 +263,16 @@ function updateInfo(meta, index) {
         <b>Time:</b> ${meta.time}
     `;
 }
+
+function updateSpeedChart(meta, index) {
+    if (!speedChart) return;
+
+    speedLabels.push(index + 1);
+    speedData.push(meta.speed || 0);
+
+    speedChart.update('none');
+}
+
 
 function toggleFollow() {
     followMode = !followMode;
@@ -302,6 +313,11 @@ function clearMap() {
     if (movingMarker) map.removeLayer(movingMarker);
     if (startMarker) map.removeLayer(startMarker);
     if (endMarker) map.removeLayer(endMarker);
+    
+    if (speedChart) {
+        speedChart.destroy();
+        speedChart = null;
+    }
 
     routeLatLngs = [];
     routeMeta = [];
