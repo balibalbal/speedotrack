@@ -1,6 +1,7 @@
 let map;
 let routeLatLngs = [];
 let routeMeta = [];
+let routeSegments = [];
 let routePolyline;
 let movingMarker;
 let startMarker;
@@ -13,11 +14,15 @@ let playSpeed = 500;
 let smoothStep = 10;
 let isPlaying = false;
 let followMode = true;
+let currentAngle = 0;
 
 /* ===== CHART ===== */
 let speedChart;
 let speedData = [];
 let speedLabels = [];
+
+/* ===== LOADING ===== */
+let loadingEl;
 
 /* =========================
    INIT MAP
@@ -28,7 +33,28 @@ function initMap() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19
     }).addTo(map);
+
+    initLoading();
 }
+
+/* =========================
+   LOADING SPINNER
+========================= */
+function initLoading() {
+    loadingEl = document.createElement('div');
+    loadingEl.innerHTML = `
+        <div style="
+            position:absolute;inset:0;
+            background:rgba(255,255,255,.7);
+            display:flex;align-items:center;justify-content:center;
+            z-index:9999">
+            <div class="spinner-border text-primary"></div>
+        </div>`;
+    document.getElementById('map').appendChild(loadingEl);
+    hideLoading();
+}
+const showLoading = () => loadingEl.style.display = 'flex';
+const hideLoading = () => loadingEl.style.display = 'none';
 
 /* =========================
    SPEED CHART
@@ -37,12 +63,10 @@ function initSpeedChart() {
     const canvas = document.getElementById('speedChart');
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-
-    speedData = routeMeta.map(m => m.speed || 0);
+    speedData = routeMeta.map(m => m.speed);
     speedLabels = routeMeta.map((_, i) => i + 1);
 
-    speedChart = new Chart(ctx, {
+    speedChart = new Chart(canvas, {
         type: 'line',
         data: {
             labels: speedLabels,
@@ -51,58 +75,32 @@ function initSpeedChart() {
                 borderWidth: 2,
                 tension: 0.3,
                 pointRadius: 0,
-                borderColor: '#0d6efd',
-                fill: false
+                borderColor: '#0d6efd'
             }]
         },
         options: {
-            responsive: true,
             animation: false,
-
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
-
+            interaction: { mode: 'index', intersect: false },
             scales: {
                 x: { display: false },
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 10 }
-                }
+                y: { beginAtZero: true }
             },
-
             plugins: {
-                legend: { display: false },
-                tooltip: {
-                    enabled: true,
-                    callbacks: {
-                        label: ctx => {
-                            const i = ctx.dataIndex;
-                            const m = routeMeta[i];
-                            return `Speed ${m.speed} km/h | ${m.time}`;
-                        }
-                    }
-                }
+                legend: { display: false }
             }
         }
     });
 
-    // 🔥 SCRUB HOVER HANDLER (INI KUNCI NYA)
     canvas.addEventListener('mousemove', e => {
         const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-
-        const percent = x / rect.width;
+        const percent = (e.clientX - rect.left) / rect.width;
         const index = Math.round(percent * (routeLatLngs.length - 1));
-
-        if (index < 0 || index >= routeLatLngs.length) return;
-
-        pauseRoute();          // stop animation
-        jumpToPoint(index);    // marker lompat
+        if (index >= 0 && index < routeLatLngs.length) {
+            pauseRoute();
+            jumpToPoint(index);
+        }
     });
 }
-
 
 /* =========================
    LOAD ROUTE
@@ -113,22 +111,23 @@ async function loadRouteToday() {
 
 async function loadRoute(url) {
     clearMap();
+    showLoading();
 
     const res = await fetch(url);
-    const text = await res.text();
-    if (!text) return alert('Response kosong');
+    const json = await res.json();
 
-    let json;
-    try { json = JSON.parse(text); }
-    catch { return alert('Response bukan JSON'); }
-
-    if (!json.route?.length) return alert('Route kosong');
+    if (!json.route?.length) {
+        hideLoading();
+        return alert('Route kosong');
+    }
 
     parseRoute(json.route);
-    drawRoute();
+    drawGradientRoute();
     addStartEndMarker();
     initMovingMarker();
     initSpeedChart();
+
+    hideLoading();
 }
 
 /* =========================
@@ -139,8 +138,7 @@ function parseRoute(route) {
     routeMeta = [];
 
     route.forEach(r => {
-        const lat = parseFloat(r[1]);
-        const lng = parseFloat(r[2]);
+        const lat = +r[1], lng = +r[2];
         if (isNaN(lat) || isNaN(lng)) return;
 
         routeLatLngs.push([lat, lng]);
@@ -153,40 +151,52 @@ function parseRoute(route) {
 }
 
 /* =========================
-   MAP DRAW
+   SPEED GRADIENT POLYLINE
 ========================= */
-function drawRoute() {
-    routePolyline = L.polyline(routeLatLngs, {
-        color: '#007bff',
-        weight: 4
-    }).addTo(map);
+function drawGradientRoute() {
+    routeSegments = [];
 
-    map.fitBounds(routePolyline.getBounds());
+    for (let i = 0; i < routeLatLngs.length - 1; i++) {
+        const speed = routeMeta[i].speed;
+        const color =
+            speed < 20 ? '#0d6efd' :
+            speed < 60 ? '#ffc107' :
+            '#dc3545';
+
+        const seg = L.polyline(
+            [routeLatLngs[i], routeLatLngs[i + 1]],
+            { color, weight: 4, opacity: 0.9 }
+        ).addTo(map);
+
+        routeSegments.push(seg);
+    }
+
+    map.fitBounds(routeSegments[0].getBounds());
 }
 
+/* =========================
+   MARKERS
+========================= */
 function addStartEndMarker() {
-    startMarker = L.marker(routeLatLngs[0], {
-        icon: greenIcon()
-    }).addTo(map).bindPopup('🟢 Start');
-
-    endMarker = L.marker(routeLatLngs.at(-1), {
-        icon: redIcon()
-    }).addTo(map).bindPopup('🔴 End');
+    startMarker = L.marker(routeLatLngs[0], { icon: greenIcon() }).addTo(map);
+    endMarker = L.marker(routeLatLngs.at(-1), { icon: redIcon() }).addTo(map);
 }
 
 function initMovingMarker() {
+    currentAngle = routeMeta[0].angle;
+
     movingMarker = L.marker(routeLatLngs[0], {
-        rotationAngle: routeMeta[0].angle,
-        rotationOrigin: 'center',
-        icon: blueIcon()
+        icon: blueIcon(),
+        rotationAngle: currentAngle,
+        rotationOrigin: 'center'
     }).addTo(map);
 }
 
 /* =========================
-   PLAY CONTROL
+   PLAYBACK
 ========================= */
 function playRoute() {
-    if (isPlaying || !routeLatLngs.length) return;
+    if (isPlaying) return;
     isPlaying = true;
 
     playInterval = setInterval(() => {
@@ -194,7 +204,6 @@ function playRoute() {
             pauseRoute();
             return;
         }
-
         animateMove(playIndex, playIndex + 1);
         playIndex++;
     }, playSpeed);
@@ -209,7 +218,6 @@ function animateMove(fromIndex, toIndex) {
     const from = L.latLng(routeLatLngs[fromIndex]);
     const to = L.latLng(routeLatLngs[toIndex]);
     const meta = routeMeta[toIndex];
-
     let step = 0;
 
     const interval = setInterval(() => {
@@ -217,8 +225,9 @@ function animateMove(fromIndex, toIndex) {
         const lat = from.lat + (to.lat - from.lat) * step / smoothStep;
         const lng = from.lng + (to.lng - from.lng) * step / smoothStep;
 
+        currentAngle = smoothAngle(currentAngle, meta.angle);
         movingMarker.setLatLng([lat, lng]);
-        movingMarker.setRotationAngle(meta.angle);
+        movingMarker.setRotationAngle(currentAngle);
 
         updateInfo(meta, toIndex);
         highlightChart(toIndex);
@@ -229,37 +238,40 @@ function animateMove(fromIndex, toIndex) {
 }
 
 /* =========================
-   JUMP (HOVER CHART)
+   SMOOTH ANGLE
 ========================= */
-function jumpToPoint(index) {
-    playIndex = index;
-
-    const latlng = routeLatLngs[index];
-    const meta = routeMeta[index];
-
-    movingMarker.setLatLng(latlng);
-    movingMarker.setRotationAngle(meta.angle);
-
-    updateInfo(meta, index);
-    highlightChart(index);
-
-    if (followMode) map.panTo(latlng);
+function smoothAngle(prev, next, factor = 0.25) {
+    let diff = ((next - prev + 540) % 360) - 180;
+    return prev + diff * factor;
 }
 
 /* =========================
-   UI UPDATE
+   JUMP
+========================= */
+function jumpToPoint(index) {
+    playIndex = index;
+    const meta = routeMeta[index];
+
+    currentAngle = meta.angle;
+    movingMarker.setLatLng(routeLatLngs[index]);
+    movingMarker.setRotationAngle(currentAngle);
+
+    updateInfo(meta, index);
+    highlightChart(index);
+}
+
+/* =========================
+   UI
 ========================= */
 function updateInfo(meta, index) {
-    document.getElementById('infoPanel').innerHTML = `
-        <b>IMEI:</b> ${IMEI}<br>
-        <b>Point:</b> ${index + 1}/${routeLatLngs.length}<br>
+    infoPanel.innerHTML = `
         <b>Speed:</b> ${meta.speed} km/h<br>
-        <b>Time:</b> ${meta.time}
+        <b>Time:</b> ${meta.time}<br>
+        <b>Point:</b> ${index + 1}/${routeLatLngs.length}
     `;
 }
 
 function highlightChart(index) {
-    if (!speedChart) return;
     speedChart.setActiveElements([{ datasetIndex: 0, index }]);
     speedChart.update('none');
 }
@@ -269,34 +281,20 @@ function highlightChart(index) {
 ========================= */
 function toggleFollow() {
     followMode = !followMode;
-    document.getElementById('followBtn').innerText =
-        followMode ? '📍 Follow ON' : '📍 Follow OFF';
+    followBtn.innerText = followMode ? '📍 Follow ON' : '📍 Follow OFF';
 }
-
-function setSpeed(val) {
-    playSpeed = parseInt(val);
-}
-
+function setSpeed(v) { playSpeed = +v; }
 function reloadRoute() {
-    const s = startDate.value;
-    const e = endDate.value;
-    if (!s || !e) return alert('Pilih tanggal');
-
-    loadRoute(`/histories/route?imei=${IMEI}&start=${s}&end=${e}`);
+    loadRoute(`/histories/route?imei=${IMEI}&start=${startDate.value}&end=${endDate.value}`);
 }
-
 function clearMap() {
-    [routePolyline, movingMarker, startMarker, endMarker]
+    [...routeSegments, routePolyline, movingMarker, startMarker, endMarker]
         .forEach(l => l && map.removeLayer(l));
-
+    routeSegments = [];
     if (speedChart) speedChart.destroy();
-
-    routeLatLngs = [];
-    routeMeta = [];
     playIndex = 0;
     pauseRoute();
 }
-
 function toJakartaTime(ts) {
     return new Date(ts.replace(' ', 'T') + 'Z')
         .toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
@@ -317,9 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setDefaultDates();
     if (IMEI) loadRouteToday();
 });
-
 function setDefaultDates() {
-    const today = new Date().toISOString().split('T')[0];
-    startDate.value = today;
-    endDate.value = today;
+    const t = new Date().toISOString().split('T')[0];
+    startDate.value = t;
+    endDate.value = t;
 }
