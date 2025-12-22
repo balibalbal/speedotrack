@@ -158,7 +158,7 @@ class HistoryController extends Controller
     }
     
     public function getRoute(Request $request)
-    {
+    { dd('helo');
         $imei = $request->query('imei');
 
         if (!$imei) {
