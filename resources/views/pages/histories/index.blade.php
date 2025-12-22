@@ -13,6 +13,17 @@
 
                 {{-- Toolbar --}}
                 <div class="d-flex gap-2 align-items-center mb-3">
+                    <div class="d-flex gap-2 mb-2 align-items-center">
+                        <input type="date" id="startDate" class="form-control form-control-sm" style="max-width:170px">
+                        <input type="date" id="endDate" class="form-control form-control-sm" style="max-width:170px">
+
+                        <button class="btn btn-sm btn-primary" onclick="reloadRoute()">Tampilkan</button>
+                        <button class="btn btn-sm btn-success" onclick="playRoute()">▶ Play</button>
+
+                        <input type="range" min="100" max="1500" step="100" value="500"
+                            oninput="setSpeed(this.value)">
+                    </div>
+
                     <input type="date" id="startDate" class="form-control form-control-sm" style="max-width:180px">
                     <input type="date" id="endDate" class="form-control form-control-sm" style="max-width:180px">
 

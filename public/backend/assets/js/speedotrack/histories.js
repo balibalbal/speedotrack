@@ -1,5 +1,18 @@
 let map;
+let routeLatLngs = [];
+let routeMeta = [];
+let routePolyline;
+let movingMarker;
+let startMarker;
+let endMarker;
 
+let playIndex = 0;
+let playInterval = null;
+let playSpeed = 500; // ms
+
+/* =========================
+   INIT MAP
+========================= */
 function initMap() {
     map = L.map('map').setView([-6.2, 106.8], 10);
 
@@ -8,63 +21,210 @@ function initMap() {
     }).addTo(map);
 }
 
-async function loadRouteHistory() {
-    console.log('Loading route for:', IMEI);
+/* =========================
+   AUTO LOAD HARI INI
+========================= */
+async function loadRouteToday() {
+    console.log('Load route hari ini:', IMEI);
+    await loadRoute(`/histories/route?imei=${IMEI}`);
+}
 
-    const res = await fetch(`/histories/route?imei=${IMEI}`);
+/* =========================
+   LOAD ROUTE GENERIC
+========================= */
+async function loadRoute(url) {
+    clearMap();
 
-    const text = await res.text(); // 👈 ambil mentah dulu
-    console.log('Raw response:', text);
+    const res = await fetch(url);
+    const text = await res.text();
 
-    // if (!text) {
-    //     alert('Response kosong dari server');
-    //     return;
-    // }
+    if (!text) {
+        alert('Response kosong');
+        return;
+    }
 
     let json;
     try {
         json = JSON.parse(text);
     } catch (e) {
-        console.error('JSON parse error:', e);
+        console.error(text);
         alert('Response bukan JSON');
         return;
     }
 
-    if (!json.route || json.route.length === 0) {
-        alert('Data route tidak tersedia');
+    if (!json.route || !json.route.length) {
+        alert('Data route kosong');
         return;
     }
 
-    drawRoute(json.route);
+    parseRoute(json.route);
+    drawRoute();
+    addStartEndMarker();
+    initMovingMarker();
 }
 
+/* =========================
+   PARSE ROUTE
+   row:
+   [timestamp, lat, lng, speed, angle]
+========================= */
+function parseRoute(route) {
+    routeLatLngs = [];
+    routeMeta = [];
 
-function drawRoute(routeData) {
-    const latlngs = [];
-
-    routeData.forEach(row => {
-        const lat = parseFloat(row[1]);
-        const lng = parseFloat(row[2]);
+    route.forEach(r => {
+        const lat = parseFloat(r[1]);
+        const lng = parseFloat(r[2]);
 
         if (!isNaN(lat) && !isNaN(lng)) {
-            latlngs.push([lat, lng]);
+            routeLatLngs.push([lat, lng]);
+            routeMeta.push({
+                time: r[0],
+                speed: r[3] || 0,
+                angle: r[4] || 0
+            });
         }
     });
+}
 
-    if (!latlngs.length) return;
-
-    const polyline = L.polyline(latlngs, {
+/* =========================
+   DRAW POLYLINE
+========================= */
+function drawRoute() {
+    routePolyline = L.polyline(routeLatLngs, {
+        color: '#007bff',
         weight: 4,
         opacity: 0.9
     }).addTo(map);
 
-    map.fitBounds(polyline.getBounds());
+    map.fitBounds(routePolyline.getBounds());
 }
 
+/* =========================
+   START & END MARKER
+========================= */
+function addStartEndMarker() {
+    startMarker = L.marker(routeLatLngs[0], {
+        icon: L.icon({
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        })
+    }).addTo(map).bindPopup('🟢 Start');
+
+    endMarker = L.marker(routeLatLngs[routeLatLngs.length - 1], {
+        icon: L.icon({
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        })
+    }).addTo(map).bindPopup('🔴 End');
+}
+
+/* =========================
+   MOVING MARKER
+========================= */
+function initMovingMarker() {
+    movingMarker = L.marker(routeLatLngs[0], {
+        rotationAngle: routeMeta[0].angle,
+        rotationOrigin: 'center',
+        icon: L.icon({
+            iconUrl: '/images/car.png', // 🔥 pastikan ada
+            iconSize: [32, 32],
+            iconAnchor: [16, 16]
+        })
+    }).addTo(map);
+
+    movingMarker.bindTooltip('', {
+        permanent: false,
+        direction: 'top'
+    });
+}
+
+/* =========================
+   PLAY ANIMATION
+========================= */
+function playRoute() {
+    if (!routeLatLngs.length) return;
+
+    clearInterval(playInterval);
+    playIndex = 0;
+
+    playInterval = setInterval(() => {
+        if (playIndex >= routeLatLngs.length) {
+            clearInterval(playInterval);
+            return;
+        }
+
+        const pos = routeLatLngs[playIndex];
+        const meta = routeMeta[playIndex];
+
+        movingMarker.setLatLng(pos);
+        movingMarker.setRotationAngle(meta.angle || 0);
+
+        movingMarker.setTooltipContent(`
+            🕒 ${meta.time}<br>
+            🚗 ${meta.speed} km/h
+        `);
+
+        playIndex++;
+    }, playSpeed);
+}
+
+/* =========================
+   SPEED SLIDER
+========================= */
+function setSpeed(val) {
+    playSpeed = parseInt(val);
+}
+
+/* =========================
+   RELOAD BY DATE
+========================= */
+async function reloadRoute() {
+    const start = document.getElementById('startDate').value;
+    const end = document.getElementById('endDate').value;
+
+    if (!start || !end) {
+        alert('Pilih tanggal');
+        return;
+    }
+
+    await loadRoute(
+        `/histories/route?imei=${IMEI}&start=${start}&end=${end}`
+    );
+}
+
+/* =========================
+   CLEAR MAP
+========================= */
+function clearMap() {
+    if (routePolyline) map.removeLayer(routePolyline);
+    if (movingMarker) map.removeLayer(movingMarker);
+    if (startMarker) map.removeLayer(startMarker);
+    if (endMarker) map.removeLayer(endMarker);
+
+    routeLatLngs = [];
+    routeMeta = [];
+}
+
+/* =========================
+   INIT
+========================= */
 document.addEventListener('DOMContentLoaded', () => {
     initMap();
+    setDefaultDates();
 
     if (typeof IMEI !== 'undefined' && IMEI) {
-        loadRouteHistory();
+        loadRouteToday();
     }
 });
+
+/* =========================
+   DEFAULT DATE
+========================= */
+function setDefaultDates() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('startDate').value = today;
+    document.getElementById('endDate').value = today;
+}
