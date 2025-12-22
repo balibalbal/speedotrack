@@ -528,10 +528,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setDefaultDates() {
-    const t = new Date().toISOString().split('T')[0];
-    startDate.value = t;
-    endDate.value = t;
+    const now = new Date();
+
+    // format tanggal ke "YYYY-MM-DD" dengan timezone Jakarta
+    const jakartaDate = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
+
+    startDate.value = jakartaDate;
+    endDate.value = jakartaDate;
 }
+
 
 function goStart() {
     pauseRoute();
