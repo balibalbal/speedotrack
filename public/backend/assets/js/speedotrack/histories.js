@@ -84,10 +84,11 @@ function parseRoute(route) {
         if (!isNaN(lat) && !isNaN(lng)) {
             routeLatLngs.push([lat, lng]);
             routeMeta.push({
-                time: r[0],
+                time: toJakartaTime(r[0]),
                 speed: r[3] || 0,
                 angle: r[4] || 0
             });
+
         }
     });
 }
@@ -278,3 +279,19 @@ function setDefaultDates() {
     document.getElementById('startDate').value = today;
     document.getElementById('endDate').value = today;
 }
+
+function toJakartaTime(timestamp) {
+    // contoh timestamp: "2025-12-20 03:12:45"
+    const utcDate = new Date(timestamp.replace(' ', 'T') + 'Z');
+
+    return utcDate.toLocaleString('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+}
+
