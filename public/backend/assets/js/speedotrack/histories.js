@@ -43,12 +43,20 @@ function initSpeedChart() {
         data: {
             labels: speedLabels,
             datasets: [{
-                label: 'Speed (km/h)',
+                label: 'Speed',
                 data: speedData,
                 borderWidth: 2,
-                tension: 0.3,
-                pointRadius: 0
+                pointRadius: 0,
+                segment: {
+                    borderColor: ctx => {
+                        const s = ctx.p0.parsed.y;
+                        if (s < 20) return '#28a745';   // hijau
+                        if (s < 60) return '#ffc107';   // kuning
+                        return '#dc3545';              // merah
+                    }
+                }
             }]
+
         },
         options: {
             responsive: true,
