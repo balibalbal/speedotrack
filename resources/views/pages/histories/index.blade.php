@@ -8,47 +8,47 @@
 @section('title', 'History Perjalanan')
 @section('content')
     <div class="container-fluid">
-        {{-- <div class="card shadow mb-3"> --}}
+        <div class="col-md-12">
             <div class="history-layout">
 
-            {{-- MAP --}}
-            <div class="history-map">
-                <div id="map"></div>
-            </div>
-
-            {{-- RIGHT PANEL --}}
-            <div class="history-side">
-                {{-- TOOLBAR --}}
-                <div class="side-box">
-                    <input type="date" id="startDate" class="form-control form-control-sm mb-1">
-                    <input type="date" id="endDate" class="form-control form-control-sm mb-2">
-
-                    <button class="btn btn-sm btn-primary w-100 mb-1" onclick="reloadRoute()">Tampilkan</button>
-
-                    <div class="d-flex gap-1 mb-2">
-                        <button class="btn btn-sm btn-success flex-fill" onclick="playRoute()">▶</button>
-                        <button class="btn btn-sm btn-warning flex-fill" onclick="pauseRoute()">⏸</button>
-                    </div>
-
-                    <button id="followBtn" class="btn btn-sm btn-secondary w-100 mb-2"
-                        onclick="toggleFollow()">📍 Follow ON</button>
-
-                    <label class="small">Speed</label>
-                    <input type="range" min="100" max="1500" step="100" value="500"
-                        oninput="setSpeed(this.value)">
+                {{-- MAP --}}
+                <div class="history-map">
+                    <div id="map"></div>
                 </div>
 
-                {{-- INFO --}}
-                <div id="infoPanel" class="side-box small"></div>
+                {{-- RIGHT PANEL --}}
+                <div class="history-side">
+                    {{-- TOOLBAR --}}
+                    <div class="side-box">
+                        <input type="date" id="startDate" class="form-control form-control-sm mb-1">
+                        <input type="date" id="endDate" class="form-control form-control-sm mb-2">
+
+                        <button class="btn btn-sm btn-primary w-100 mb-1" onclick="reloadRoute()">Tampilkan</button>
+
+                        <div class="d-flex gap-1 mb-2">
+                            <button class="btn btn-sm btn-success flex-fill" onclick="playRoute()">▶</button>
+                            <button class="btn btn-sm btn-warning flex-fill" onclick="pauseRoute()">⏸</button>
+                        </div>
+
+                        <button id="followBtn" class="btn btn-sm btn-secondary w-100 mb-2"
+                            onclick="toggleFollow()">📍 Follow ON</button>
+
+                        <label class="small">Speed</label>
+                        <input type="range" min="100" max="1500" step="100" value="500"
+                            oninput="setSpeed(this.value)">
+                    </div>
+
+                    {{-- INFO --}}
+                    <div id="infoPanel" class="side-box small"></div>
+                </div>
+
             </div>
-
-        {{-- </div> --}}
-
-        {{-- SPEED CHART --}}
-        <div class="speed-chart-wrapper">
-            <canvas id="speedChart" height="40"></canvas>
         </div>
-
+        <div class="col-md-12">
+        {{-- SPEED CHART --}}
+            <div class="speed-chart-wrapper">
+                <canvas id="speedChart" height="40"></canvas>
+            </div>
         </div>
     </div>
 
