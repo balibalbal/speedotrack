@@ -185,7 +185,8 @@ function initMovingMarker() {
         rotationAngle: routeMeta[0].angle,
         rotationOrigin: 'center',
         icon: L.icon({
-            iconUrl: '/images/car.png', // 🔥 pastikan ada
+            // iconUrl: '/images/car.png', // 🔥 pastikan ada
+            iconUrl: '🔴',
             iconSize: [32, 32],
             iconAnchor: [16, 16]
         })
