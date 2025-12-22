@@ -257,9 +257,8 @@ function updateInfo(meta, index) {
     if (!info) return;
 
     info.innerHTML = `
-        <b>IMEI:</b> ${IMEI}<br>
-        <b>Index:</b> ${index + 1} / ${routeLatLngs.length}<br>
-        <b>Speed:</b> ${meta.speed} km/h<br>
+        <b>IMEI:</b> ${IMEI} - <b>Index:</b> ${index + 1} / ${routeLatLngs.length} - 
+        <b>Speed:</b> ${meta.speed} km/h - 
         <b>Time:</b> ${meta.time}
     `;
 }

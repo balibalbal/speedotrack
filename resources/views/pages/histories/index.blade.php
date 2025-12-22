@@ -30,7 +30,7 @@
                 <div id="infoPanel" class="p-2 mb-2 bg-light rounded small shadow-sm"></div>
                 <div class="card shadow-sm mb-2">
                     <div class="card-body p-2">
-                        <canvas id="speedChart" height="60"></canvas>
+                        <canvas id="speedChart" height="30"></canvas>
                     </div>
                 </div>
 
