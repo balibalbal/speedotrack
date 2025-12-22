@@ -88,7 +88,13 @@ function initSpeedChart() {
                 data: speedData,
                 borderWidth: 2,
                 tension: 0.3,
-                pointRadius: 0,
+
+                pointRadius: 0,              // default: hidden
+                pointHoverRadius: 0,
+
+                pointBackgroundColor: '#dc3545',
+                pointBorderColor: '#dc3545',
+
                 borderColor: '#0d6efd'
             }]
         },
