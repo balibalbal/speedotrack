@@ -286,8 +286,8 @@ async function loadRoute(url) {
 function showEmptyInfo() {
     document.getElementById('infoPanel').innerHTML = `
         <div class="text-muted text-center">
-            Tidak ada data perjalanan<br>
-            Silakan pilih tanggal lain
+            No data available.<br>
+            Please select another date.
         </div>
     `;
 }
