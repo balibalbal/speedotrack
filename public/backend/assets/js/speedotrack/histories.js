@@ -323,6 +323,16 @@ function pauseRoute() {
     if (animationRAF) cancelAnimationFrame(animationRAF);
 }
 
+/* =========================
+   SMOOTH ANGLE
+========================= */
+function smoothAngle(prev, next, factor = 0.25) {
+    // normalisasi selisih angle ke [-180, 180]
+    let diff = ((next - prev + 540) % 360) - 180;
+    // pindahkan sebagian dari diff untuk rotasi halus
+    return prev + diff * factor;
+}
+
 
 /* =========================
    JUMP
