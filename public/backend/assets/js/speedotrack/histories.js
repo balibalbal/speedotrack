@@ -98,7 +98,7 @@ function initSpeedChart() {
 
             // ✨ glow effect
             ctx.beginPath();
-            ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
+            ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
 
             ctx.fillStyle = '#dc3545';       // merah
             ctx.shadowColor = '#dc3545';
@@ -260,20 +260,6 @@ function initMovingMarker() {
 /* =========================
    PLAYBACK
 ========================= */
-// function playRoute() {
-//     if (isPlaying) return;
-//     isPlaying = true;
-
-//     playInterval = setInterval(() => {
-//         if (playIndex >= routeLatLngs.length - 1) {
-//             pauseRoute();
-//             return;
-//         }
-//         animateMove(playIndex, playIndex + 1);
-//         playIndex++;
-//     }, playSpeed);
-// }
-
 function playRoute() {
     if (isPlaying || !routeLatLngs.length) return;
 
