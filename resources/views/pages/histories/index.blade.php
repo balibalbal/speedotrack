@@ -47,12 +47,6 @@
 
                         <div class="d-flex align-items-center gap-2">
                             <span class="small">Speed</span>
-
-                            {{-- <input type="range"
-                                min="1" max="5" value="3"
-                                oninput="setSpeedLevel(this.value)"
-                                title="Playback Speed" class="form-range" style="width:100%; accent-color: #dc3545"> --}}
-
                             <input type="range"
                                 id="speedRange"
                                 class="form-range"

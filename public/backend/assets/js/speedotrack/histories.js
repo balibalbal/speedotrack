@@ -5,6 +5,10 @@ let routePolyline;
 let movingMarker;
 let startMarker;
 let endMarker;
+let pulseScale = 1;
+let pulseDir = 1;
+let pulseRAF = null;
+
 
 /* ===== PLAY STATE ===== */
 let playIndex = 0;
@@ -73,42 +77,112 @@ const hideLoading = () => loadingEl && (loadingEl.style.display = 'none');
 /* =========================
    SPEED CHART
 ========================= */
+// function initSpeedChart() {
+//     const canvas = document.getElementById('speedChart');
+//     if (!canvas) return;
+
+//     speedData = routeMeta.map(m => m.speed);
+//     speedLabels = routeMeta.map((_, i) => i + 1);
+
+//     const glowPointPlugin = {
+//         id: 'glowPoint',
+//         afterDatasetDraw(chart, args) {
+//             const { ctx } = chart;
+//             const active = chart.getActiveElements();
+
+//             if (!active.length) return;
+
+//             const { datasetIndex, index } = active[0];
+//             const meta = chart.getDatasetMeta(datasetIndex);
+//             const point = meta.data[index];
+
+//             if (!point) return;
+
+//             ctx.save();
+
+//             // ✨ glow effect
+//             ctx.beginPath();
+//             ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
+
+//             ctx.fillStyle = '#dc3545';   
+//             ctx.shadowColor = '#dc3545';
+//             ctx.shadowBlur = 15;
+//             ctx.fill();
+
+//             ctx.restore();
+//         }
+//     };
+
+
+//     speedChart = new Chart(canvas, {
+//         type: 'line',
+//         data: {
+//             labels: speedLabels,
+//             datasets: [{
+//                 data: speedData,
+//                 borderWidth: 2,
+//                 tension: 0.3,
+
+//                 pointRadius: 0,
+//                 pointHoverRadius: 0,
+
+//                 borderColor: '#0d6efd'
+//             }]
+
+//         },
+//         options: {
+//             animation: false,
+//             interaction: { mode: 'index', intersect: false },
+//             scales: {
+//                 x: { display: false },
+//                 y: { beginAtZero: true }
+//             },
+//             plugins: {
+//                 legend: { display: false }
+//             }
+//         },
+//         plugins: [glowPointPlugin]
+//     });
+
+//     canvas.addEventListener('mousedown', e => {
+//         isScrubbing = true;
+//         allowHoverJump = true;
+//         pauseRoute();
+
+//         const index = getIndexFromEvent(e, canvas);
+//         if (index !== null) jumpToPoint(index);
+//     });
+
+//     canvas.addEventListener('mousemove', e => {
+//         if (!isScrubbing) return;
+//         if (!allowHoverJump) return;
+
+//         const index = getIndexFromEvent(e, canvas);
+//         if (index !== null) jumpToPoint(index);
+//     });
+
+//     document.addEventListener('mouseup', () => {
+//         isScrubbing = false;
+//     });
+
+//     canvas.addEventListener('click', e => {
+//         const index = getIndexFromEvent(e, canvas);
+//         if (index === null) return;
+
+//         pauseRoute();
+//         jumpToPoint(index);
+//         playRoute(); // ▶ auto play dari titik klik
+//     });
+
+
+// }
+
 function initSpeedChart() {
     const canvas = document.getElementById('speedChart');
     if (!canvas) return;
 
     speedData = routeMeta.map(m => m.speed);
     speedLabels = routeMeta.map((_, i) => i + 1);
-
-    const glowPointPlugin = {
-        id: 'glowPoint',
-        afterDatasetDraw(chart, args) {
-            const { ctx } = chart;
-            const active = chart.getActiveElements();
-
-            if (!active.length) return;
-
-            const { datasetIndex, index } = active[0];
-            const meta = chart.getDatasetMeta(datasetIndex);
-            const point = meta.data[index];
-
-            if (!point) return;
-
-            ctx.save();
-
-            // ✨ glow effect
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
-
-            ctx.fillStyle = '#dc3545';   
-            ctx.shadowColor = '#dc3545';
-            ctx.shadowBlur = 15;
-            ctx.fill();
-
-            ctx.restore();
-        }
-    };
-
 
     speedChart = new Chart(canvas, {
         type: 'line',
@@ -118,13 +192,14 @@ function initSpeedChart() {
                 data: speedData,
                 borderWidth: 2,
                 tension: 0.3,
-
-                pointRadius: 0,
-                pointHoverRadius: 0,
-
+                pointRadius: ctx => ctx.dataIndex === playIndex ? 6 * pulseScale : 0,
+                pointBackgroundColor: ctx =>
+                    ctx.dataIndex === playIndex ? 'rgba(255,0,0,1)' : 'transparent',
+                pointBorderColor: ctx =>
+                    ctx.dataIndex === playIndex ? 'rgba(255,0,0,0.8)' : 'transparent',
+                pointBorderWidth: 2,
                 borderColor: '#0d6efd'
             }]
-
         },
         options: {
             animation: false,
@@ -136,42 +211,31 @@ function initSpeedChart() {
             plugins: {
                 legend: { display: false }
             }
-        },
-        plugins: [glowPointPlugin]
+        }
     });
 
-    canvas.addEventListener('mousedown', e => {
-        isScrubbing = true;
-        allowHoverJump = true;
-        pauseRoute();
-
-        const index = getIndexFromEvent(e, canvas);
-        if (index !== null) jumpToPoint(index);
-    });
-
-    canvas.addEventListener('mousemove', e => {
-        if (!isScrubbing) return;
-        if (!allowHoverJump) return;
-
-        const index = getIndexFromEvent(e, canvas);
-        if (index !== null) jumpToPoint(index);
-    });
-
-    document.addEventListener('mouseup', () => {
-        isScrubbing = false;
-    });
-
-    canvas.addEventListener('click', e => {
-        const index = getIndexFromEvent(e, canvas);
-        if (index === null) return;
-
-        pauseRoute();
-        jumpToPoint(index);
-        playRoute(); // ▶ auto play dari titik klik
-    });
-
-
+    startPulse();
 }
+
+function startPulse() {
+    if (pulseRAF) cancelAnimationFrame(pulseRAF);
+
+    function animate() {
+        pulseScale += pulseDir * 0.03;
+
+        if (pulseScale >= 1.4) pulseDir = -1;
+        if (pulseScale <= 1.0) pulseDir = 1;
+
+        if (speedChart) {
+            speedChart.update('none');
+        }
+
+        pulseRAF = requestAnimationFrame(animate);
+    }
+
+    animate();
+}
+
 
 /* =========================
    LOAD ROUTE
@@ -355,13 +419,23 @@ function updateInfo(meta, index) {
     `;
 }
 
+// function highlightChart(index) {
+//     if (!speedChart) return;
+
+//     speedChart.setActiveElements([
+//         { datasetIndex: 0, index }
+//     ]);
+//     speedChart.update('none');
+// }
+
 function highlightChart(index) {
+    playIndex = index;
+
     if (!speedChart) return;
 
     speedChart.setActiveElements([
         { datasetIndex: 0, index }
     ]);
-    speedChart.update('none');
 }
 
 
