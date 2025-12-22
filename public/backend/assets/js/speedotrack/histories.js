@@ -26,6 +26,12 @@ let loadingEl;
 let isScrubbing = false;     // mouse sedang geser chart
 let allowHoverJump = true;  // disable saat play
 
+const infoPanel = document.getElementById('infoPanel');
+const followBtn = document.getElementById('followBtn');
+const startDate = document.getElementById('startDate');
+const endDate = document.getElementById('endDate');
+
+
 
 /* =========================
    INIT MAP
@@ -56,8 +62,10 @@ function initLoading() {
     document.getElementById('map').appendChild(loadingEl);
     hideLoading();
 }
-const showLoading = () => loadingEl.style.display = 'flex';
-const hideLoading = () => loadingEl.style.display = 'none';
+
+const showLoading = () => loadingEl && (loadingEl.style.display = 'flex');
+const hideLoading = () => loadingEl && (loadingEl.style.display = 'none');
+
 
 /* =========================
    SPEED CHART
@@ -94,26 +102,6 @@ function initSpeedChart() {
         }
     });
 
-    // canvas.addEventListener('mousemove', e => {
-    //     const rect = canvas.getBoundingClientRect();
-    //     const percent = (e.clientX - rect.left) / rect.width;
-    //     const index = Math.round(percent * (routeLatLngs.length - 1));
-    //     if (index >= 0 && index < routeLatLngs.length) {
-    //         pauseRoute();
-    //         jumpToPoint(index);
-    //     }
-    // });
-
-    canvas.addEventListener('mousemove', e => {
-        if (!isScrubbing) return;
-        if (!allowHoverJump) return;
-
-        const index = getIndexFromEvent(e, canvas);
-        if (index === null) return;
-
-        jumpToPoint(index);
-    });
-
     canvas.addEventListener('mousedown', e => {
         isScrubbing = true;
         allowHoverJump = true;
@@ -123,23 +111,27 @@ function initSpeedChart() {
         if (index !== null) jumpToPoint(index);
     });
 
+    canvas.addEventListener('mousemove', e => {
+        if (!isScrubbing) return;
+        if (!allowHoverJump) return;
+
+        const index = getIndexFromEvent(e, canvas);
+        if (index !== null) jumpToPoint(index);
+    });
+
     document.addEventListener('mouseup', () => {
         isScrubbing = false;
     });
 
-
-
     canvas.addEventListener('click', e => {
-        const rect = canvas.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
-        const index = Math.round(percent * (routeLatLngs.length - 1));
+        const index = getIndexFromEvent(e, canvas);
+        if (index === null) return;
 
-        if (index < 0 || index >= routeLatLngs.length) return;
-
-        pauseRoute();        // reset playback
-        jumpToPoint(index);  // lompat ke titik
-        playRoute();         // ▶ auto play dari situ
+        pauseRoute();
+        jumpToPoint(index);
+        playRoute(); // ▶ auto play dari titik klik
     });
+
 
 }
 
@@ -332,9 +324,14 @@ function updateInfo(meta, index) {
 }
 
 function highlightChart(index) {
-    speedChart.setActiveElements([{ datasetIndex: 0, index }]);
+    if (!speedChart) return;
+
+    speedChart.setActiveElements([
+        { datasetIndex: 0, index }
+    ]);
     speedChart.update('none');
 }
+
 
 /* =========================
    UTIL
@@ -348,7 +345,7 @@ function reloadRoute() {
     loadRoute(`/histories/route?imei=${IMEI}&start=${startDate.value}&end=${endDate.value}`);
 }
 function clearMap() {
-    [...routePolyline, movingMarker, startMarker, endMarker]
+    [routePolyline, movingMarker, startMarker, endMarker]
         .forEach(l => l && map.removeLayer(l));
     if (speedChart) speedChart.destroy();
     playIndex = 0;
