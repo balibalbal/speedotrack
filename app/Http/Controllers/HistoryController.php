@@ -170,7 +170,7 @@ class HistoryController extends Controller
 
         $startDate = Carbon::now()->startOfMonth()->format('Y-m-d 00:00:01');
         $endDate   = Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
-
+        dd($startDate); 
         $response = Http::timeout(20)->get(
             'https://www.speedotrack.pro/api/api.php',
             [
