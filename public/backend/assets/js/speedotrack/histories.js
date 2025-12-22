@@ -354,14 +354,17 @@ function toggleFollow() {
 
 function setSpeedLevel(level) {
     const map = {
-        1: 2000, // sangat lambat
-        2: 1200,
-        3: 600,  // normal
-        4: 300,
-        5: 150   // sangat cepat
+        1: { delay: 2000, label: '0.5x' },
+        2: { delay: 1200, label: '0.75x' },
+        3: { delay: 600,  label: '1x' },
+        4: { delay: 300,  label: '1.5x' },
+        5: { delay: 150,  label: '2x' }
     };
 
-    playSpeed = map[level] || 600;
+    const cfg = map[level];
+    playSpeed = cfg.delay;
+
+    document.getElementById('speedLabel').innerText = cfg.label;
 
     if (isPlaying) {
         pauseRoute();
