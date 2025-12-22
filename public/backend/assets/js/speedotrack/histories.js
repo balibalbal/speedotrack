@@ -290,6 +290,13 @@ function showEmptyInfo() {
             Please select another date.
         </div>
     `;
+
+    document.getElementById('speedChart').innerHTML = `
+        <div class="text-muted text-center">
+            No data available.<br>
+            Please select another date.
+        </div>
+    `;
 }
 
 
