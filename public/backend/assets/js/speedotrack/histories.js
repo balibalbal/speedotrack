@@ -10,6 +10,11 @@ let playIndex = 0;
 let playInterval = null;
 let playSpeed = 500; // ms
 
+let isPlaying = false;
+let followMode = true;
+let smoothStep = 10; // makin besar makin halus
+
+
 /* =========================
    INIT MAP
 ========================= */
@@ -147,29 +152,72 @@ function initMovingMarker() {
 function playRoute() {
     if (!routeLatLngs.length) return;
 
-    clearInterval(playInterval);
-    playIndex = 0;
+    if (isPlaying) return;
+
+    isPlaying = true;
 
     playInterval = setInterval(() => {
-        if (playIndex >= routeLatLngs.length) {
-            clearInterval(playInterval);
+        if (playIndex >= routeLatLngs.length - 1) {
+            pauseRoute();
             return;
         }
 
-        const pos = routeLatLngs[playIndex];
-        const meta = routeMeta[playIndex];
-
-        movingMarker.setLatLng(pos);
-        movingMarker.setRotationAngle(meta.angle || 0);
-
-        movingMarker.setTooltipContent(`
-            🕒 ${meta.time}<br>
-            🚗 ${meta.speed} km/h
-        `);
-
+        animateMove(playIndex, playIndex + 1);
         playIndex++;
     }, playSpeed);
 }
+
+function pauseRoute() {
+    isPlaying = false;
+    clearInterval(playInterval);
+}
+
+function animateMove(fromIndex, toIndex) {
+    const from = L.latLng(routeLatLngs[fromIndex]);
+    const to = L.latLng(routeLatLngs[toIndex]);
+    const meta = routeMeta[toIndex];
+
+    let step = 0;
+
+    const interval = setInterval(() => {
+        step++;
+
+        const lat = from.lat + ((to.lat - from.lat) * step / smoothStep);
+        const lng = from.lng + ((to.lng - from.lng) * step / smoothStep);
+
+        movingMarker.setLatLng([lat, lng]);
+        movingMarker.setRotationAngle(meta.angle || 0);
+
+        updateInfo(meta, toIndex);
+
+        if (followMode) {
+            map.panTo([lat, lng], { animate: false });
+        }
+
+        if (step >= smoothStep) {
+            clearInterval(interval);
+        }
+    }, playSpeed / smoothStep);
+}
+
+function updateInfo(meta, index) {
+    const info = document.getElementById('infoPanel');
+    if (!info) return;
+
+    info.innerHTML = `
+        <b>IMEI:</b> ${IMEI}<br>
+        <b>Index:</b> ${index + 1} / ${routeLatLngs.length}<br>
+        <b>Speed:</b> ${meta.speed} km/h<br>
+        <b>Time:</b> ${meta.time}
+    `;
+}
+
+function toggleFollow() {
+    followMode = !followMode;
+    document.getElementById('followBtn').innerText =
+        followMode ? '📍 Follow ON' : '📍 Follow OFF';
+}
+
 
 /* =========================
    SPEED SLIDER
@@ -206,6 +254,8 @@ function clearMap() {
 
     routeLatLngs = [];
     routeMeta = [];
+    playIndex = 0;
+    pauseRoute();
 }
 
 /* =========================

@@ -12,18 +12,22 @@
             <div class="card-body">
 
                 {{-- Toolbar --}}
-                <div class="d-flex gap-2 align-items-center mb-3">
-                    <div class="d-flex gap-2 mb-2 align-items-center">
-                        <input type="date" id="startDate" class="form-control form-control-sm" style="max-width:170px">
-                        <input type="date" id="endDate" class="form-control form-control-sm" style="max-width:170px">
+                <div class="d-flex gap-2 mb-2 align-items-center flex-wrap">
+                    <input type="date" id="startDate" class="form-control form-control-sm" style="max-width:160px">
+                    <input type="date" id="endDate" class="form-control form-control-sm" style="max-width:160px">
 
-                        <button class="btn btn-sm btn-primary" onclick="reloadRoute()">Tampilkan</button>
-                        <button class="btn btn-sm btn-success" onclick="playRoute()">▶ Play</button>
+                    <button class="btn btn-sm btn-primary" onclick="reloadRoute()">Tampilkan</button>
 
-                        <input type="range" min="100" max="1500" step="100" value="500"
-                            oninput="setSpeed(this.value)">
-                    </div>
+                    <button class="btn btn-sm btn-success" onclick="playRoute()">▶ Play</button>
+                    <button class="btn btn-sm btn-warning" onclick="pauseRoute()">⏸ Pause</button>
+
+                    <button id="followBtn" class="btn btn-sm btn-secondary" onclick="toggleFollow()">📍 Follow ON</button>
+
+                    <input type="range" min="100" max="1500" step="100" value="500"
+                        oninput="setSpeed(this.value)">
                 </div>
+
+                <div id="infoPanel" class="p-2 mb-2 bg-light rounded small shadow-sm"></div>
 
                 <div id="map" style="height: 500px;"></div>
             </div>
