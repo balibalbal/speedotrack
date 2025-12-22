@@ -503,7 +503,7 @@ function toJakartaTime(ts) {
 ========================= */
 const greenIcon = () => L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png', iconSize: [32,32] });
 const redIcon = () => L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png', iconSize: [32,32] });
-const blueIcon = () => L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png', iconSize: [32,32] });
+const blueIcon = () => L.icon({ iconUrl: 'backend/assets/img/illustrations/on-mtr.png', iconSize: [32,32] });
 
 /* =========================
    INIT
