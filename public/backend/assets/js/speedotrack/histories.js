@@ -77,77 +77,6 @@ const hideLoading = () => loadingEl && (loadingEl.style.display = 'none');
 /* =========================
    SPEED CHART
 ========================= */
-// function initSpeedChart() {
-//     const canvas = document.getElementById('speedChart');
-//     if (!canvas) return;
-
-//     speedData = routeMeta.map(m => m.speed);
-//     speedLabels = routeMeta.map((_, i) => i + 1);
-
-//     const glowPointPlugin = {
-//         id: 'glowPoint',
-//         afterDatasetDraw(chart, args) {
-//             const { ctx } = chart;
-//             const active = chart.getActiveElements();
-
-//             if (!active.length) return;
-
-//             const { datasetIndex, index } = active[0];
-//             const meta = chart.getDatasetMeta(datasetIndex);
-//             const point = meta.data[index];
-
-//             if (!point) return;
-
-//             ctx.save();
-
-//             // ✨ glow effect
-//             ctx.beginPath();
-//             ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
-
-//             ctx.fillStyle = '#dc3545';   
-//             ctx.shadowColor = '#dc3545';
-//             ctx.shadowBlur = 15;
-//             ctx.fill();
-
-//             ctx.restore();
-//         }
-//     };
-
-
-//     speedChart = new Chart(canvas, {
-//         type: 'line',
-//         data: {
-//             labels: speedLabels,
-//             datasets: [{
-//                 data: speedData,
-//                 borderWidth: 2,
-//                 tension: 0.3,
-
-//                 pointRadius: 0,
-//                 pointHoverRadius: 0,
-
-//                 borderColor: '#0d6efd'
-//             }]
-
-//         },
-//         options: {
-//             animation: false,
-//             interaction: { mode: 'index', intersect: false },
-//             scales: {
-//                 x: { display: false },
-//                 y: { beginAtZero: true }
-//             },
-//             plugins: {
-//                 legend: { display: false }
-//             }
-//         },
-//         plugins: [glowPointPlugin]
-//     });
-
-    
-
-
-// }
 
 function initSpeedChart() {
     const canvas = document.getElementById('speedChart');
@@ -436,24 +365,6 @@ function updateInfo(meta, index) {
 function highlightChart(index) {
     playIndex = index;
 }
-
-
-
-// function highlightChart(index) {
-//     if (!speedChart) return;
-
-//     speedChart.setActiveElements([
-//         { datasetIndex: 0, index }
-//     ]);
-
-//     // 🔥 paksa redraw point aktif
-//     speedChart.tooltip.setActiveElements(
-//         [{ datasetIndex: 0, index }],
-//         { x: 0, y: 0 }
-//     );
-
-//     speedChart.update('none');
-// }
 
 
 /* =========================
