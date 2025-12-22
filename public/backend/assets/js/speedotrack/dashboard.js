@@ -321,7 +321,7 @@ function showDetail(d) {
                 <button onclick="selectRouteDeviceFromMap('${d.imei}')" 
                     style="margin-top: 8px; padding: 4px 12px; font-size: 12px;"
                     class="btn btn-sm btn-success w-100">
-                    Historical
+                    <span class="mdi mdi-map-clock"></span>&nbsp;Historical
                 </button>
             </div>
             
