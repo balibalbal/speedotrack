@@ -340,12 +340,28 @@ function updateInfo(meta, index) {
     `;
 }
 
+// function highlightChart(index) {
+//     if (!speedChart) return;
+
+//     speedChart.setActiveElements([
+//         { datasetIndex: 0, index }
+//     ]);
+//     speedChart.update('none');
+// }
+
 function highlightChart(index) {
     if (!speedChart) return;
 
     speedChart.setActiveElements([
         { datasetIndex: 0, index }
     ]);
+
+    // 🔥 paksa redraw point aktif
+    speedChart.tooltip.setActiveElements(
+        [{ datasetIndex: 0, index }],
+        { x: 0, y: 0 }
+    );
+
     speedChart.update('none');
 }
 

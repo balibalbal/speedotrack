@@ -13,6 +13,11 @@
     border-radius: 8px;
 }
 
+#speedChart {
+    cursor: pointer;
+}
+
+
 /* RIGHT PANEL */
 .history-side {
     width: 300px;
