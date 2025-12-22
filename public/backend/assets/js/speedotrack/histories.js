@@ -279,6 +279,15 @@ async function loadRoute(url) {
     }
 }
 
+function showEmptyInfo() {
+    document.getElementById('infoPanel').innerHTML = `
+        <div class="text-muted text-center">
+            Tidak ada data perjalanan<br>
+            Silakan pilih tanggal lain
+        </div>
+    `;
+}
+
 
 /* =========================
    PARSE ROUTE
