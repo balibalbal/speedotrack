@@ -135,7 +135,7 @@ function parseRoute(route) {
             routeLatLngs.push([lat, lng]);
             routeMeta.push({
                 time: toJakartaTime(r[0]),
-                speed: r[3] || 0,
+                speed: r[5] || 0,
                 angle: r[4] || 0
             });
 
