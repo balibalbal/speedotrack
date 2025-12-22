@@ -51,10 +51,10 @@
                             <input type="range"
                                 min="1" max="5" value="3"
                                 oninput="setSpeedLevel(this.value)"
-                                title="Playback Speed" class="form-range" style="width:100%">
+                                title="Playback Speed" class="form-range" style="width:100%; accent-color: #dc3545">
 
 
-                            <span id="speedLabel" class="badge bg-primary">
+                            <span id="speedLabel" class="badge bg-danger">
                                 1x
                             </span>
                         </div>
