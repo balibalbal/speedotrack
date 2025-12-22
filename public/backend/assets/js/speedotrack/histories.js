@@ -1,4 +1,5 @@
 let map;
+let baseLayers;
 let routeLatLngs = [];
 let routeMeta = [];
 let routePolyline;
@@ -44,14 +45,47 @@ const endDate = document.getElementById('endDate');
    INIT MAP
 ========================= */
 function initMap() {
-    map = L.map('map').setView([-6.2, 106.8], 10);
+    map = L.map('map', {
+        center: [-6.2, 106.8],
+        zoom: 10
+    });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19
+    // OSM
+    const osm = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        { maxZoom: 19 }
+    ).addTo(map);
+
+    // Google Roadmap
+    const googleRoadmap = L.gridLayer.googleMutant({
+        type: 'roadmap'
+    });
+
+    // Google Satellite
+    const googleSatellite = L.gridLayer.googleMutant({
+        type: 'satellite'
+    });
+
+    // Google Hybrid
+    const googleHybrid = L.gridLayer.googleMutant({
+        type: 'hybrid'
+    });
+
+    baseLayers = {
+        "OpenStreetMap": osm,
+        "Google Roadmap": googleRoadmap,
+        "Google Satellite": googleSatellite,
+        "Google Hybrid": googleHybrid
+    };
+
+    // Layer switcher
+    L.control.layers(baseLayers, null, {
+        position: 'topright'
     }).addTo(map);
 
     initLoading();
 }
+
 
 /* =========================
    LOADING SPINNER

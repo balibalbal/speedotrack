@@ -83,8 +83,8 @@
 @endsection
 
 @push('scripts')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_map.api_key') }}"></script>
+<script src="https://unpkg.com/leaflet.gridlayer.googlemutant@0.14.1/Leaflet.GoogleMutant.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker/leaflet.rotatedMarker.js"></script>
 <script src="{{ asset('backend/assets/js/speedotrack/histories.js') }}"></script>
