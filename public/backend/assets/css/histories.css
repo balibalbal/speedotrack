@@ -57,3 +57,40 @@
         height: 420px;
     }
 }
+
+.speed-range {
+    --range-color: #0d6efd;
+}
+
+/* Chrome / Edge */
+.speed-range::-webkit-slider-runnable-track {
+    height: 6px;
+    background: var(--range-color);
+    border-radius: 4px;
+}
+
+.speed-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border: 3px solid var(--range-color);
+    border-radius: 50%;
+    margin-top: -5px;
+}
+
+/* Firefox */
+.speed-range::-moz-range-track {
+    height: 6px;
+    background: var(--range-color);
+    border-radius: 4px;
+}
+
+.speed-range::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border: 3px solid var(--range-color);
+    border-radius: 50%;
+}
+
