@@ -262,33 +262,59 @@ function playRoute() {
     isPlaying = true;
     allowHoverJump = false;
 
+    // Step sampling untuk performa
     const stepSize = routeLatLngs.length > 1000 ? 5 : 1;
 
-    function step() {
+    function moveToNext() {
         if (playIndex >= routeLatLngs.length - 1) {
             isPlaying = false;
             return;
         }
 
-        const nextIndex = Math.min(playIndex + stepSize, routeLatLngs.length - 1);
+        const fromIndex = playIndex;
+        const toIndex = Math.min(playIndex + stepSize, routeLatLngs.length - 1);
 
-        const latLng = L.latLng(routeLatLngs[nextIndex]);
-        movingMarker.setLatLng(latLng);
-        movingMarker.setRotationAngle(routeMeta[nextIndex].angle);
-        currentAngle = routeMeta[nextIndex].angle;
+        const from = L.latLng(routeLatLngs[fromIndex]);
+        const to = L.latLng(routeLatLngs[toIndex]);
+        const metaTo = routeMeta[toIndex];
 
-        if (followMode && (nextIndex % 10 === 0 || nextIndex === routeLatLngs.length - 1)) {
-            map.panTo(latLng, { animate: false });
+        const frames = 10; // jumlah interpolasi antar titik
+        let frame = 0;
+
+        function animateFrame() {
+            frame++;
+            const lat = from.lat + (to.lat - from.lat) * (frame / frames);
+            const lng = from.lng + (to.lng - from.lng) * (frame / frames);
+
+            // Smooth angle
+            currentAngle = smoothAngle(currentAngle, metaTo.angle);
+
+            movingMarker.setLatLng([lat, lng]);
+            movingMarker.setRotationAngle(currentAngle);
+
+            if (followMode && frame === frames) {
+                map.panTo([lat, lng], { animate: false });
+            }
+
+            // Update info & progress bar
+            if (frame === frames) {
+                playIndex = toIndex;
+                progressBar.value = playIndex;
+                updateInfo(metaTo, playIndex);
+            }
+
+            if (frame < frames) {
+                animationRAF = requestAnimationFrame(animateFrame);
+            } else {
+                // Lanjut ke segment berikutnya
+                animationRAF = requestAnimationFrame(moveToNext);
+            }
         }
 
-        updateInfo(routeMeta[nextIndex], nextIndex);
-        progressBar.value = nextIndex;
-
-        playIndex = nextIndex;
-        animationRAF = requestAnimationFrame(step);
+        animateFrame();
     }
 
-    animationRAF = requestAnimationFrame(step);
+    moveToNext();
 }
 
 function pauseRoute() {
@@ -296,6 +322,7 @@ function pauseRoute() {
     allowHoverJump = true;
     if (animationRAF) cancelAnimationFrame(animationRAF);
 }
+
 
 /* =========================
    JUMP
