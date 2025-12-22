@@ -47,16 +47,22 @@
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        <span class="small text-muted">Speed</span>
+                        <span class="small">Speed</span>
 
-                        <input type="range"
+                        {{-- <input type="range"
                             min="1"
                             max="5"
                             step="1"
                             value="3"
                             oninput="setSpeedLevel(this.value)"
                             class="form-range"
-                            style="width:140px">
+                            style="width:140px"> --}}
+
+                        <input type="range"
+                            min="1" max="5" value="3"
+                            oninput="setSpeedLevel(this.value)"
+                            title="Playback Speed" style="width:100%">
+
 
                         <span id="speedLabel" class="badge bg-primary">
                             1x
