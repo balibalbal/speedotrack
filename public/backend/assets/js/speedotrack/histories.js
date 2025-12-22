@@ -100,7 +100,7 @@ function initSpeedChart() {
             ctx.beginPath();
             ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
 
-            ctx.fillStyle = '#dc3545';       // merah
+            ctx.fillStyle = '#dc3545';   
             ctx.shadowColor = '#dc3545';
             ctx.shadowBlur = 15;
             ctx.fill();
