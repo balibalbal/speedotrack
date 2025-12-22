@@ -46,7 +46,7 @@
 
         {{-- SPEED CHART --}}
         <div class="speed-chart-wrapper">
-            <canvas id="speedChart" height="120"></canvas>
+            <canvas id="speedChart" height="40"></canvas>
         </div>
 
         </div>

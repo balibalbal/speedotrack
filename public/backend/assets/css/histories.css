@@ -9,13 +9,13 @@
 }
 
 #map {
-    height: 520px;
+    height: 420px;
     border-radius: 8px;
 }
 
 /* RIGHT PANEL */
 .history-side {
-    width: 260px;
+    width: 360px;
     display: flex;
     flex-direction: column;
     gap: 10px;
