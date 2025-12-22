@@ -84,17 +84,11 @@
 
 @push('scripts')
 
-<!-- 1️⃣ Leaflet JS (HARUS PERTAMA) -->
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<!-- 2️⃣ Google Maps JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_map.api_key') }}"></script>
+<script src="https://unpkg.com/leaflet.gridlayer.googlemutant/dist/Leaflet.GoogleMutant.js"></script>
 
-<!-- 3️⃣ Google Mutant (SETELAH Leaflet + Google Maps) -->
-<script src="https://unpkg.com/leaflet.gridlayer.googlemutant@0.14.1/Leaflet.GoogleMutant.js"></script>
-
-<!-- 4️⃣ Plugin lain -->
-<script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker/leaflet.rotatedMarker.js"></script>
+<script src="https://rawcdn.githack.com/bbecquet/Leaflet.RotatedMarker/master/leaflet.rotatedMarker.js"></script>
 
 <!-- 5️⃣ App JS kamu -->
 <script src="{{ asset('backend/assets/js/speedotrack/histories.js') }}"></script>
