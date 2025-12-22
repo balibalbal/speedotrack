@@ -265,6 +265,7 @@ async function loadRoute(url) {
         }
 
         // kalau ada data
+        hideEmptyInfo();
         disableControls(false);
         parseRoute(json.route);
         drawRoute();
@@ -284,12 +285,24 @@ async function loadRoute(url) {
 }
 
 function showEmptyInfo() {
+    // Info panel
     document.getElementById('infoPanel').innerHTML = `
         <div class="text-muted text-center">
-            No data available.<br>
+            No route data available.<br>
             Please select another date.
         </div>
     `;
+
+    // Destroy chart jika ada
+    if (speedChart) {
+        speedChart.destroy();
+        speedChart = null;
+    }
+
+    // Kosongkan canvas
+    const canvas = document.getElementById('speedChart');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 
