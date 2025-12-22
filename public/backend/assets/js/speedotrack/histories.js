@@ -89,7 +89,7 @@ function initSpeedChart() {
                 borderWidth: 2,
                 tension: 0.3,
 
-                pointRadius: 0,
+                pointRadius: 5,
                 pointHoverRadius: 0,
 
                 borderColor: '#0d6efd'
