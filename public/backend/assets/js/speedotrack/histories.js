@@ -177,6 +177,42 @@ const hideLoading = () => loadingEl && (loadingEl.style.display = 'none');
 
 // }
 
+const playheadPlugin = {
+    id: 'playhead',
+
+    afterDraw(chart) {
+        if (!chart || playIndex == null) return;
+
+        const { ctx, chartArea, scales } = chart;
+        const xScale = scales.x;
+
+        if (!xScale) return;
+
+        const x = xScale.getPixelForValue(playIndex + 1);
+        if (x < chartArea.left || x > chartArea.right) return;
+
+        ctx.save();
+
+        // garis vertikal
+        ctx.strokeStyle = 'rgba(220,53,69,0.9)'; // bootstrap red
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]); // dashed
+        ctx.beginPath();
+        ctx.moveTo(x, chartArea.top);
+        ctx.lineTo(x, chartArea.bottom);
+        ctx.stroke();
+
+        // bulatan di atas (opsional, cakep)
+        ctx.fillStyle = '#dc3545';
+        ctx.beginPath();
+        ctx.arc(x, chartArea.top - 6, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+};
+
+
 function initSpeedChart() {
     const canvas = document.getElementById('speedChart');
     if (!canvas) return;
@@ -192,7 +228,7 @@ function initSpeedChart() {
                 data: speedData,
                 borderWidth: 2,
                 tension: 0.3,
-                pointRadius: ctx => ctx.dataIndex === playIndex ? 8 * pulseScale : 0,
+                pointRadius: ctx => ctx.dataIndex === playIndex ? 6 * pulseScale : 0,
                 pointBackgroundColor: ctx =>
                     ctx.dataIndex === playIndex ? 'rgba(255,0,0,1)' : 'transparent',
                 pointBorderColor: ctx =>
@@ -211,7 +247,8 @@ function initSpeedChart() {
             plugins: {
                 legend: { display: false }
             }
-        }
+        },
+        plugins: [playheadPlugin] 
     });
 
     startPulse();
@@ -376,6 +413,7 @@ function animateMove(fromIndex, toIndex) {
         updateInfo(meta, toIndex);
         // highlightChart(toIndex);
         playIndex = toIndex;
+        speedChart.update('none');
 
         if (followMode) map.panTo([lat, lng], { animate: false });
         if (step >= smoothStep) clearInterval(interval);
@@ -405,6 +443,9 @@ function jumpToPoint(index) {
 
     updateInfo(meta, index);
     highlightChart(index);
+    playIndex = index;
+    speedChart.update('none');
+
 
     progressBar.value = index;
 }
