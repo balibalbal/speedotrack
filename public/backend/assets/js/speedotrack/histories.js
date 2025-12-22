@@ -304,7 +304,7 @@ function parseRoute(route) {
         routeMeta.push({
             time: toJakartaTime(r[0]),
             speed: r[5] || 0,
-            angle: r[4] || 0
+            angle: r[5] || 0
         });
     });
 }
@@ -503,7 +503,7 @@ function toJakartaTime(ts) {
 ========================= */
 const greenIcon = () => L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png', iconSize: [32,32] });
 const redIcon = () => L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png', iconSize: [32,32] });
-const blueIcon = () => L.icon({ iconUrl: 'backend/assets/img/illustrations/on-mtr.png', iconSize: [32,32] });
+const blueIcon = () => L.icon({ iconUrl: 'backend/assets/img/illustrations/default.png', iconSize: [32,32] });
 
 /* =========================
    INIT
