@@ -192,11 +192,7 @@ function initSpeedChart() {
                 data: speedData,
                 borderWidth: 2,
                 tension: 0.3,
-                pointRadius: ctx =>
-                    ctx.dataIndex === playIndex
-                        ? (isPlaying ? 8 * pulseScale : 6)
-                        : 0,
-
+                pointRadius: ctx => ctx.dataIndex === playIndex ? 8 * pulseScale : 0,
                 pointBackgroundColor: ctx =>
                     ctx.dataIndex === playIndex ? 'rgba(255,0,0,1)' : 'transparent',
                 pointBorderColor: ctx =>
