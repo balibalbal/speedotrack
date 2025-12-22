@@ -252,6 +252,9 @@ async function loadRoute(url) {
             progressBar.value = 0;
             progressBar.max = 0;
 
+            // disable tombol control
+            disableControls(true);
+            
             // optional info
             showEmptyInfo();
 
@@ -261,7 +264,8 @@ async function loadRoute(url) {
             return; // keluar fungsi TANPA alert blocking
         }
 
-        // JIKA ADA DATA
+        // kalau ada data
+        disableControls(false);
         parseRoute(json.route);
         drawRoute();
         addStartEndMarker();
@@ -416,6 +420,8 @@ function smoothAngle(prev, next, factor = 0.25) {
    JUMP
 ========================= */
 function jumpToPoint(index) {
+    if (!routeLatLngs.length || !routeMeta[index]) return; // ❌ data kosong, stop
+
     playIndex = index;
     const meta = routeMeta[index];
 
@@ -547,4 +553,12 @@ function goEnd() {
     pauseRoute();
     jumpToPoint(routeLatLngs.length - 1);
 }
+
+function disableControls(disable = true) {
+    document.querySelectorAll('.side-box button').forEach(btn => {
+        // disable semua tombol kecuali input
+        btn.disabled = disable;
+    });
+}
+
 
