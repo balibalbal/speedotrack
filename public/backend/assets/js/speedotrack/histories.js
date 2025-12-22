@@ -144,35 +144,7 @@ const hideLoading = () => loadingEl && (loadingEl.style.display = 'none');
 //         plugins: [glowPointPlugin]
 //     });
 
-//     canvas.addEventListener('mousedown', e => {
-//         isScrubbing = true;
-//         allowHoverJump = true;
-//         pauseRoute();
-
-//         const index = getIndexFromEvent(e, canvas);
-//         if (index !== null) jumpToPoint(index);
-//     });
-
-//     canvas.addEventListener('mousemove', e => {
-//         if (!isScrubbing) return;
-//         if (!allowHoverJump) return;
-
-//         const index = getIndexFromEvent(e, canvas);
-//         if (index !== null) jumpToPoint(index);
-//     });
-
-//     document.addEventListener('mouseup', () => {
-//         isScrubbing = false;
-//     });
-
-//     canvas.addEventListener('click', e => {
-//         const index = getIndexFromEvent(e, canvas);
-//         if (index === null) return;
-
-//         pauseRoute();
-//         jumpToPoint(index);
-//         playRoute(); // ▶ auto play dari titik klik
-//     });
+    
 
 
 // }
@@ -212,6 +184,38 @@ function initSpeedChart() {
                 legend: { display: false }
             }
         }
+
+        
+    });
+
+    canvas.addEventListener('mousedown', e => {
+        isScrubbing = true;
+        allowHoverJump = true;
+        pauseRoute();
+
+        const index = getIndexFromEvent(e, canvas);
+        if (index !== null) jumpToPoint(index);
+    });
+
+    canvas.addEventListener('mousemove', e => {
+        if (!isScrubbing) return;
+        if (!allowHoverJump) return;
+
+        const index = getIndexFromEvent(e, canvas);
+        if (index !== null) jumpToPoint(index);
+    });
+
+    document.addEventListener('mouseup', () => {
+        isScrubbing = false;
+    });
+
+    canvas.addEventListener('click', e => {
+        const index = getIndexFromEvent(e, canvas);
+        if (index === null) return;
+
+        pauseRoute();
+        jumpToPoint(index);
+        playRoute(); // ▶ auto play dari titik klik
     });
 
     startPulse();
