@@ -12,7 +12,7 @@
             <div class="card-body">
 
                 {{-- Toolbar --}}
-                <div class="d-flex gap-2 mb-3 align-items-center flex-wrap">
+                <div class="d-flex gap-2 mb-2 align-items-center flex-wrap">
                     <input type="date" id="startDate" class="form-control form-control-sm" style="max-width:160px">
                     <input type="date" id="endDate" class="form-control form-control-sm" style="max-width:160px">
 
@@ -27,26 +27,16 @@
                         oninput="setSpeed(this.value)">
                 </div>
 
-                {{-- MAP + INFO --}}
-                <div class="history-layout">
-                    {{-- MAP --}}
-                    <div class="history-map">
-                        <div id="map"></div>
-                    </div>
-
-                    {{-- RIGHT PANEL --}}
-                    <div class="history-info">
-                        <div id="infoPanel" class="info-box"></div>
-
-                        <div class="card shadow-sm">
-                            <div class="card-body p-2">
-                                <canvas id="speedChart" height="140"></canvas>
-                            </div>
-                        </div>
+                <div id="infoPanel" class="p-2 mb-2 bg-light rounded small shadow-sm"></div>
+                <div class="card shadow-sm mb-2">
+                    <div class="card-body p-2">
+                        <canvas id="speedChart" height="30"></canvas>
                     </div>
                 </div>
 
+                <div id="map" style="height: 500px;"></div>
             </div>
+
         </div>
     </div>
 
