@@ -186,7 +186,7 @@ function initMovingMarker() {
         rotationOrigin: 'center',
         icon: L.icon({
             // iconUrl: '/images/car.png', // 🔥 pastikan ada
-            iconUrl: '🔴',
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
             iconSize: [32, 32],
             iconAnchor: [16, 16]
         })
