@@ -284,33 +284,13 @@ async function loadRoute(url) {
 }
 
 function showEmptyInfo() {
-    // Info panel
     document.getElementById('infoPanel').innerHTML = `
         <div class="text-muted text-center">
             No data available.<br>
             Please select another date.
         </div>
     `;
-
-    // Speed chart
-    const canvas = document.getElementById('speedChart');
-
-    // Hapus chart jika ada
-    if (speedChart) {
-        speedChart.destroy();
-        speedChart = null;
-    }
-
-    // Optional: tampilkan overlay teks di atas canvas
-    const wrapper = canvas.parentElement;
-    wrapper.innerHTML = `
-        <div class="text-muted text-center p-3">
-            No data available.<br>
-            Please select another date.
-        </div>
-    `;
 }
-
 
 
 /* =========================
