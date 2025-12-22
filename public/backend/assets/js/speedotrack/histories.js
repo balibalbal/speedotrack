@@ -351,7 +351,16 @@ function toggleFollow() {
     followMode = !followMode;
     followBtn.innerText = followMode ? '📍 Follow ON' : '📍 Follow OFF';
 }
-function setSpeed(v) { playSpeed = +v; }
+
+function setSpeed(v) {
+    playSpeed = Math.max(100, Math.min(2000, +v));
+
+    if (isPlaying) {
+        pauseRoute();
+        playRoute();
+    }
+}
+
 function reloadRoute() {
     loadRoute(`/histories/route?imei=${IMEI}&start=${startDate.value}&end=${endDate.value}`);
 }
