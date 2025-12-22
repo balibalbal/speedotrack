@@ -236,7 +236,7 @@ function createMarkerPopup(d) {
                 </tr>
                 <tr>
                     <td>Address:</td>
-                    <td>${formatTime(d.address)}</td>
+                    <td>${d.address}</td>
                 </tr>
             </table>
             <button onclick="selectRouteDeviceFromMap('${d.imei}')" 
