@@ -30,8 +30,9 @@
                             <button class="btn btn-sm btn-warning flex-fill" onclick="pauseRoute()">⏸</button>
                             <button class="btn btn-sm btn-secondary" onclick="goStart()">⏮</button>
                             <button class="btn btn-sm btn-secondary" onclick="goEnd()">⏭</button>
+                        </div>
 
-                            <input
+                        <input
                                 type="range"
                                 id="progressBar"
                                 min="0"
@@ -40,8 +41,6 @@
                                 class="form-range"
                                 style="width:200px"
                             >
-
-                        </div>
 
                         <button id="followBtn" class="btn btn-sm btn-secondary w-100 mb-2"
                             onclick="toggleFollow()">📍 Follow ON</button>
