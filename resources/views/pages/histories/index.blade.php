@@ -8,7 +8,7 @@
 @section('title', 'History Perjalanan')
 @section('content')
     <div class="container-fluid">
-        <div class="card shadow mb-3">
+        {{-- <div class="card shadow mb-3"> --}}
             <div class="history-layout">
 
             {{-- MAP --}}
@@ -42,7 +42,7 @@
                 <div id="infoPanel" class="side-box small"></div>
             </div>
 
-        </div>
+        {{-- </div> --}}
 
         {{-- SPEED CHART --}}
         <div class="speed-chart-wrapper">
