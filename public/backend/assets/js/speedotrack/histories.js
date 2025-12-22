@@ -374,7 +374,8 @@ function animateMove(fromIndex, toIndex) {
         movingMarker.setRotationAngle(currentAngle);
 
         updateInfo(meta, toIndex);
-        highlightChart(toIndex);
+        // highlightChart(toIndex);
+        playIndex = toIndex;
 
         if (followMode) map.panTo([lat, lng], { animate: false });
         if (step >= smoothStep) clearInterval(interval);
@@ -430,13 +431,8 @@ function updateInfo(meta, index) {
 
 function highlightChart(index) {
     playIndex = index;
-
-    if (!speedChart) return;
-
-    speedChart.setActiveElements([
-        { datasetIndex: 0, index }
-    ]);
 }
+
 
 
 // function highlightChart(index) {
