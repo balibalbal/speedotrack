@@ -352,14 +352,23 @@ function toggleFollow() {
     followBtn.innerText = followMode ? '📍 Follow ON' : '📍 Follow OFF';
 }
 
-function setSpeed(v) {
-    playSpeed = Math.max(100, Math.min(2000, +v));
+function setSpeedLevel(level) {
+    const map = {
+        1: 2000, // sangat lambat
+        2: 1200,
+        3: 600,  // normal
+        4: 300,
+        5: 150   // sangat cepat
+    };
+
+    playSpeed = map[level] || 600;
 
     if (isPlaying) {
         pauseRoute();
         playRoute();
     }
 }
+
 
 function reloadRoute() {
     loadRoute(`/histories/route?imei=${IMEI}&start=${startDate.value}&end=${endDate.value}`);

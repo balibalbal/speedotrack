@@ -46,8 +46,13 @@
                             onclick="toggleFollow()">📍 Follow ON</button>
 
                         <label class="small">Speed</label>
-                        <input type="range" min="100" max="1500" step="100" value="500"
-                            oninput="setSpeed(this.value)">
+                        <input type="range"
+                            min="1"
+                            max="5"
+                            step="1"
+                            value="3"
+                            oninput="setSpeedLevel(this.value)">
+
                     </div>
 
                     {{-- INFO --}}
