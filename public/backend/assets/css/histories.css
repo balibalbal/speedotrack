@@ -17,7 +17,7 @@
 
 /* INFO PANEL */
 .history-info {
-    width: 320px;
+    width: 330px;
     display: flex;
     flex-direction: column;
     gap: 10px;

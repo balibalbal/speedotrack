@@ -40,7 +40,7 @@
 
                         <div class="card shadow-sm">
                             <div class="card-body p-2">
-                                <canvas id="speedChart" height="420"></canvas>
+                                <canvas id="speedChart" height="425"></canvas>
                             </div>
                         </div>
                     </div>
