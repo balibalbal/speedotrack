@@ -364,9 +364,7 @@ function initMovingMarker() {
 /* =========================
    PLAYBACK OPTIMIZED
 ========================= */
-let playIndex = 0;
-let isPlaying = false;
-let followMode = true;
+
 let animationRAF = null;
 
 function playRoute() {
