@@ -34,8 +34,10 @@ function initMap() {
    SPEED CHART
 ========================= */
 function initSpeedChart() {
-    const ctx = document.getElementById('speedChart');
-    if (!ctx) return;
+    const canvas = document.getElementById('speedChart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
 
     speedData = routeMeta.map(m => m.speed || 0);
     speedLabels = routeMeta.map((_, i) => i + 1);
@@ -48,19 +50,32 @@ function initSpeedChart() {
                 data: speedData,
                 borderWidth: 2,
                 tension: 0.3,
-                pointRadius: 0
+                pointRadius: 0,
+                borderColor: '#0d6efd',
+                fill: false
             }]
         },
         options: {
             responsive: true,
             animation: false,
+
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+
             scales: {
                 x: { display: false },
-                y: { beginAtZero: true }
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 10 }
+                }
             },
+
             plugins: {
                 legend: { display: false },
                 tooltip: {
+                    enabled: true,
                     callbacks: {
                         label: ctx => {
                             const i = ctx.dataIndex;
@@ -69,15 +84,25 @@ function initSpeedChart() {
                         }
                     }
                 }
-            },
-            onHover: (_, elements) => {
-                if (!elements.length) return;
-                pauseRoute();
-                jumpToPoint(elements[0].index);
             }
         }
     });
+
+    // 🔥 SCRUB HOVER HANDLER (INI KUNCI NYA)
+    canvas.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+
+        const percent = x / rect.width;
+        const index = Math.round(percent * (routeLatLngs.length - 1));
+
+        if (index < 0 || index >= routeLatLngs.length) return;
+
+        pauseRoute();          // stop animation
+        jumpToPoint(index);    // marker lompat
+    });
 }
+
 
 /* =========================
    LOAD ROUTE
