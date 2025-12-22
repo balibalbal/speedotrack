@@ -158,51 +158,51 @@ class HistoryController extends Controller
     }
     
     public function getRoute(Request $request)
-{
-    $imei = $request->query('imei');
+    {
+        $imei = $request->query('imei');
 
-    if (!$imei) {
-        return response()->json([
-            'status' => false,
-            'message' => 'IMEI tidak ditemukan'
-        ], 400);
+        if (!$imei) {
+            return response()->json([
+                'status' => false,
+                'message' => 'IMEI tidak ditemukan'
+            ], 400);
+        }
+
+        $startDate = Carbon::now()->startOfMonth()->format('Y-m-d 00:00:01');
+        $endDate   = Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+
+        $response = Http::timeout(20)->get(
+            'https://www.speedotrack.pro/api/api.php',
+            [
+                'api' => 'mobile',
+                'ver' => '1.0',
+                'key' => env('SPEEDOTRACK_API_KEY'),
+                'cmd' => "OBJECT_GET_ROUTE,$imei,$startDate,$endDate,1"
+            ]
+        );
+
+        // 🔥 CEK APAKAH RESPONSE VALID
+        if (!$response->ok()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'API Speedotrack error',
+                'http_code' => $response->status(),
+                'body' => $response->body()
+            ], 500);
+        }
+
+        $json = $response->json();
+
+        if (!$json) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Response API kosong / bukan JSON',
+                'raw' => $response->body()
+            ], 500);
+        }
+
+        return response()->json($json);
     }
-
-    $startDate = Carbon::now()->startOfMonth()->format('Y-m-d 00:00:01');
-    $endDate   = Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
-
-    $response = Http::timeout(20)->get(
-        'https://www.speedotrack.pro/api/api.php',
-        [
-            'api' => 'user',
-            'ver' => '1.0',
-            'key' => env('SPEEDOTRACK_API_KEY'),
-            'cmd' => "OBJECT_GET_ROUTE,$imei,$startDate,$endDate,1"
-        ]
-    );
-
-    // 🔥 CEK APAKAH RESPONSE VALID
-    if (!$response->ok()) {
-        return response()->json([
-            'status' => false,
-            'message' => 'API Speedotrack error',
-            'http_code' => $response->status(),
-            'body' => $response->body()
-        ], 500);
-    }
-
-    $json = $response->json();
-
-    if (!$json) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Response API kosong / bukan JSON',
-            'raw' => $response->body()
-        ], 500);
-    }
-
-    return response()->json($json);
-}
 
 }
 
