@@ -181,7 +181,7 @@ class HistoryController extends Controller
         $endUtc   = $endWib->clone()->setTimezone('UTC')->format('Y-m-d H:i:s');
 
         $response = Http::timeout(20)->get(
-            'https://www.speedotrack.pro/api/api.php',
+            env('SPEEDOTRACK_API_URL'),
             [
                 'api' => 'user',
                 'ver' => '1.0',

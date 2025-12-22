@@ -36,14 +36,28 @@ class DashboardController extends Controller
 
     public function getObjects()
     {
-        $url = "https://www.speedotrack.pro/api/api.php?ver=1.0&api=mobile&key=767C31DD0734097600A75E0712FF7C5F&cmd=USER_GET_OBJECTS&page=1&rows=500";
+        // $url = "https://www.speedotrack.pro/api/api.php?ver=1.0&api=mobile&key=767C31DD0734097600A75E0712FF7C5F&cmd=USER_GET_OBJECTS&page=1&rows=500";
         // $url = "https://www.speedotrack.in/api/api.php?ver=1.0&api=mobile&key=C78395C59621DD6A3CADA87A497A6014&cmd=USER_GET_OBJECTS&page=1&rows=500";
 
-        $response = file_get_contents($url);
+        // $response = file_get_contents($url);
 
-        return response($response)
-            ->header('Content-Type', 'application/json')
-            ->header('Access-Control-Allow-Origin', '*');
+        // return response($response)
+        //     ->header('Content-Type', 'application/json')
+        //     ->header('Access-Control-Allow-Origin', '*');
+
+        $response = Http::timeout(20)->get(
+            env('SPEEDOTRACK_API_URL'),
+            [
+                'api' => 'mobile',
+                'ver' => '1.0',
+                'key' => env('SPEEDOTRACK_API_KEY'),
+                'cmd' => "USER_GET_OBJECTS",
+                'page' => 1,
+                'rows' => 500
+            ]
+        );
+
+        return response()->json($response->json());
     }
 
    
