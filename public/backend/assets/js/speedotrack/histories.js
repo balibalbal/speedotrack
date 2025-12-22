@@ -100,6 +100,19 @@ function initSpeedChart() {
             jumpToPoint(index);
         }
     });
+
+    canvas.addEventListener('click', e => {
+        const rect = canvas.getBoundingClientRect();
+        const percent = (e.clientX - rect.left) / rect.width;
+        const index = Math.round(percent * (routeLatLngs.length - 1));
+
+        if (index < 0 || index >= routeLatLngs.length) return;
+
+        pauseRoute();        // reset playback
+        jumpToPoint(index);  // lompat ke titik
+        playRoute();         // ▶ auto play dari situ
+    });
+
 }
 
 /* =========================
@@ -122,7 +135,7 @@ async function loadRoute(url) {
     }
 
     parseRoute(json.route);
-    drawGradientRoute();
+    drawRoute();
     addStartEndMarker();
     initMovingMarker();
     initSpeedChart();
@@ -151,28 +164,18 @@ function parseRoute(route) {
 }
 
 /* =========================
-   SPEED GRADIENT POLYLINE
+   Draw POLYLINE satu warna
 ========================= */
-function drawGradientRoute() {
-    routeSegments = [];
+function drawRoute() {
+    routePolyline = L.polyline(routeLatLngs, {
+        color: '#0d6efd',   // satu warna (bootstrap blue)
+        weight: 4,
+        opacity: 0.9
+    }).addTo(map);
 
-    for (let i = 0; i < routeLatLngs.length - 1; i++) {
-        const speed = routeMeta[i].speed;
-        const color =
-            speed < 20 ? '#0d6efd' :
-            speed < 60 ? '#ffc107' :
-            '#dc3545';
-
-        const seg = L.polyline(
-            [routeLatLngs[i], routeLatLngs[i + 1]],
-            { color, weight: 4, opacity: 0.9 }
-        ).addTo(map);
-
-        routeSegments.push(seg);
-    }
-
-    map.fitBounds(routeSegments[0].getBounds());
+    map.fitBounds(routePolyline.getBounds());
 }
+
 
 /* =========================
    MARKERS
