@@ -218,10 +218,10 @@ async function loadRoute(url) {
     const res = await fetch(url);
     const json = await res.json();
 
-    if (!json.route?.length) {
-        hideLoading();
-        return alert('Route kosong');
-    }
+    // if (!json.route?.length) {
+    //     hideLoading();
+    //     return alert('Route kosong');
+    // }
 
     parseRoute(json.route);
     drawRoute();
