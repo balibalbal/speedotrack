@@ -28,6 +28,19 @@
                         <div class="d-flex gap-1 mb-2">
                             <button class="btn btn-sm btn-success flex-fill" onclick="playRoute()">▶</button>
                             <button class="btn btn-sm btn-warning flex-fill" onclick="pauseRoute()">⏸</button>
+                            <button class="btn btn-sm btn-secondary" onclick="goStart()">⏮</button>
+                            <button class="btn btn-sm btn-secondary" onclick="goEnd()">⏭</button>
+
+                            <input
+                                type="range"
+                                id="progressBar"
+                                min="0"
+                                value="0"
+                                step="1"
+                                class="form-range"
+                                style="width:200px"
+                            >
+
                         </div>
 
                         <button id="followBtn" class="btn btn-sm btn-secondary w-100 mb-2"

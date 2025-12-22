@@ -25,6 +25,9 @@ let loadingEl;
 
 let isScrubbing = false;     // mouse sedang geser chart
 let allowHoverJump = true;  // disable saat play
+let progressBar;
+let isScrubbingProgress = false;
+
 
 const infoPanel = document.getElementById('infoPanel');
 const followBtn = document.getElementById('followBtn');
@@ -161,6 +164,10 @@ async function loadRoute(url) {
     initSpeedChart();
 
     hideLoading();
+
+    progressBar.max = routeLatLngs.length - 1;
+    progressBar.value = 0;
+
 }
 
 /* =========================
@@ -286,6 +293,8 @@ function animateMove(fromIndex, toIndex) {
 
         if (followMode) map.panTo([lat, lng], { animate: false });
         if (step >= smoothStep) clearInterval(interval);
+
+        progressBar.value = toIndex;
     }, playSpeed / smoothStep);
 }
 
@@ -310,6 +319,8 @@ function jumpToPoint(index) {
 
     updateInfo(meta, index);
     highlightChart(index);
+
+    progressBar.value = index;
 }
 
 /* =========================
@@ -369,10 +380,35 @@ const blueIcon = () => L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/ic
 document.addEventListener('DOMContentLoaded', () => {
     initMap();
     setDefaultDates();
+
+    progressBar = document.getElementById('progressBar');
+
+    progressBar.addEventListener('input', e => {
+        isScrubbingProgress = true;
+        pauseRoute();
+        jumpToPoint(+e.target.value);
+    });
+
+    progressBar.addEventListener('change', () => {
+        isScrubbingProgress = false;
+    });
+
     if (IMEI) loadRouteToday();
 });
+
 function setDefaultDates() {
     const t = new Date().toISOString().split('T')[0];
     startDate.value = t;
     endDate.value = t;
 }
+
+function goStart() {
+    pauseRoute();
+    jumpToPoint(0);
+}
+
+function goEnd() {
+    pauseRoute();
+    jumpToPoint(routeLatLngs.length - 1);
+}
+
