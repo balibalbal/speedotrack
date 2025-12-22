@@ -555,10 +555,14 @@ function goEnd() {
 }
 
 function disableControls(disable = true) {
-    document.querySelectorAll('.side-box button').forEach(btn => {
-        // disable semua tombol kecuali input
-        btn.disabled = disable;
+    const controlIds = ["playBtn", "pauseBtn", "goStartBtn", "goEndBtn"];
+    controlIds.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.disabled = disable;
     });
+
+    const progressBar = document.getElementById('progressBar');
+    if (progressBar) progressBar.disabled = disable;
 }
 
 

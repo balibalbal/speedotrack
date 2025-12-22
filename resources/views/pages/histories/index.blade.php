@@ -23,13 +23,13 @@
                         <input type="date" id="startDate" class="form-control form-control-sm mb-1">
                         <input type="date" id="endDate" class="form-control form-control-sm mb-2">
 
-                        <button class="btn btn-sm btn-primary w-100 mb-1" onclick="reloadRoute()">Tampilkan</button>
+                        <button id="showBtn" class="btn btn-sm btn-primary w-100 mb-1" onclick="reloadRoute()">Tampilkan</button>
 
                         <div class="d-flex gap-1 mb-2">
-                            <button class="btn btn-sm btn-success flex-fill" onclick="playRoute()">▶</button>
-                            <button class="btn btn-sm btn-warning flex-fill" onclick="pauseRoute()">⏸</button>
-                            <button class="btn btn-sm btn-secondary" onclick="goStart()">⏮</button>
-                            <button class="btn btn-sm btn-secondary" onclick="goEnd()">⏭</button>
+                            <button id="playBtn" class="btn btn-sm btn-success flex-fill" onclick="playRoute()">▶</button>
+                            <button id="pauseBtn" class="btn btn-sm btn-warning flex-fill" onclick="pauseRoute()">⏸</button>
+                            <button id="goStartBtn" class="btn btn-sm btn-secondary" onclick="goStart()">⏮</button>
+                            <button id="goEndBtn" class="btn btn-sm btn-secondary" onclick="goEnd()">⏭</button>
                         </div>
 
                         <input
