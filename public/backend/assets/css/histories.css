@@ -1,0 +1,47 @@
+/* ===== LAYOUT ===== */
+.history-layout {
+    display: flex;
+    gap: 12px;
+}
+
+/* MAP */
+.history-map {
+    flex: 1;
+    min-width: 0;
+}
+
+#map {
+    height: 520px;
+    border-radius: 8px;
+}
+
+/* INFO PANEL */
+.history-info {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.info-box {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .history-layout {
+        flex-direction: column;
+    }
+
+    .history-info {
+        width: 100%;
+    }
+
+    #map {
+        height: 400px;
+    }
+}
