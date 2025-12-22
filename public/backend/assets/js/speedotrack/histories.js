@@ -16,10 +16,10 @@ async function loadRouteHistory() {
     const text = await res.text(); // 👈 ambil mentah dulu
     console.log('Raw response:', text);
 
-    if (!text) {
-        alert('Response kosong dari server');
-        return;
-    }
+    // if (!text) {
+    //     alert('Response kosong dari server');
+    //     return;
+    // }
 
     let json;
     try {
