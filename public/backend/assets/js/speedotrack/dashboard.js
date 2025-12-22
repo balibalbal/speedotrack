@@ -316,6 +316,14 @@ function showDetail(d) {
                 </div>
                 <h6 class="mt-2">${d.name || 'Tidak ada nama'}</h6>
             </div>
+
+            <div class="detail-item">
+                <button onclick="selectRouteDeviceFromMap('${d.imei}')" 
+                    style="margin-top: 8px; padding: 4px 12px; font-size: 12px;"
+                    class="btn btn-sm btn-secondary w-100">
+                    Historical
+                </button>
+            </div>
             
             <div class="detail-item">
                 <div class="detail-label">IMEI</div>
@@ -365,14 +373,7 @@ function showDetail(d) {
                 <div class="detail-label">Koordinat</div>
                 <div class="detail-value">${d.lat}, ${d.lng}</div>
             </div>
-            <div class="detail-item">
-                <button onclick="selectRouteDeviceFromMap('${d.imei}')" 
-                    style="margin-top: 8px; padding: 4px 12px; font-size: 12px;"
-                    class="btn btn-sm btn-primary w-100">
-                    Historical
-                </button>
-            </div>
-
+            
         </div>
     `;
 }
