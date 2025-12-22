@@ -55,7 +55,7 @@
 
                             <input type="range"
                                 id="speedRange"
-                                class="form-range speed-range"
+                                class="speed-range"
                                 min="1"
                                 max="5"
                                 step="1"
