@@ -23,7 +23,7 @@
                         <input type="date" id="startDate" class="form-control form-control-sm mb-1">
                         <input type="date" id="endDate" class="form-control form-control-sm mb-2">
 
-                        <button id="showBtn" class="btn btn-sm btn-primary w-100 mb-1" onclick="reloadRoute()">Tampilkan</button>
+                        <button id="showBtn" class="btn btn-sm btn-primary w-100 mb-1" onclick="reloadRoute()"><span class="mdi mdi-map-marker-path"></span> Tracking Now</button>
 
                         <div class="d-flex gap-1 mb-2">
                             <button id="playBtn" class="btn btn-sm btn-success flex-fill" onclick="playRoute()">▶</button>
@@ -43,7 +43,7 @@
                             >
 
                         <button id="followBtn" class="btn btn-sm btn-secondary w-100 mb-2"
-                            onclick="toggleFollow()">📍 Follow ON</button>
+                            onclick="toggleFollow()"><span class="mdi mdi-transit-connection-variant"></span> Follow ON</button>
 
                         <div class="d-flex align-items-center gap-2">
                             <span class="small">Speed</span>
