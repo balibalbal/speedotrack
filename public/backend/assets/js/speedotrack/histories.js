@@ -6,19 +6,18 @@ let movingMarker;
 let startMarker;
 let endMarker;
 
+/* ===== PLAY STATE ===== */
 let playIndex = 0;
 let playInterval = null;
-let playSpeed = 500; // ms
-
+let playSpeed = 500;
+let smoothStep = 10;
 let isPlaying = false;
 let followMode = true;
-let smoothStep = 10; // makin besar makin halus
 
+/* ===== CHART ===== */
 let speedChart;
 let speedData = [];
 let speedLabels = [];
-
-
 
 /* =========================
    INIT MAP
@@ -31,105 +30,84 @@ function initMap() {
     }).addTo(map);
 }
 
+/* =========================
+   SPEED CHART
+========================= */
 function initSpeedChart() {
     const ctx = document.getElementById('speedChart');
     if (!ctx) return;
 
-    speedData = [];
-    speedLabels = [];
+    speedData = routeMeta.map(m => m.speed || 0);
+    speedLabels = routeMeta.map((_, i) => i + 1);
 
     speedChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: speedLabels,
             datasets: [{
-                label: 'Speed',
                 data: speedData,
                 borderWidth: 2,
-                pointRadius: 0,
-                segment: {
-                    borderColor: ctx => {
-                        const s = ctx.p0.parsed.y;
-                        if (s < 20) return '#28a745';   // hijau
-                        if (s < 60) return '#ffc107';   // kuning
-                        return '#dc3545';              // merah
-                    }
-                }
+                tension: 0.3,
+                pointRadius: 0
             }]
-
         },
         options: {
             responsive: true,
             animation: false,
             scales: {
-                x: {
-                    display: false
-                },
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'km/h'
+                x: { display: false },
+                y: { beginAtZero: true }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => {
+                            const i = ctx.dataIndex;
+                            const m = routeMeta[i];
+                            return `Speed ${m.speed} km/h | ${m.time}`;
+                        }
                     }
                 }
             },
-            plugins: {
-                legend: {
-                    display: false
-                }
+            onHover: (_, elements) => {
+                if (!elements.length) return;
+                pauseRoute();
+                jumpToPoint(elements[0].index);
             }
         }
     });
 }
 
-
 /* =========================
-   AUTO LOAD HARI INI
+   LOAD ROUTE
 ========================= */
 async function loadRouteToday() {
-    console.log('Load route hari ini:', IMEI);
     await loadRoute(`/histories/route?imei=${IMEI}`);
 }
 
-/* =========================
-   LOAD ROUTE GENERIC
-========================= */
 async function loadRoute(url) {
     clearMap();
 
     const res = await fetch(url);
     const text = await res.text();
-
-    if (!text) {
-        alert('Response kosong');
-        return;
-    }
+    if (!text) return alert('Response kosong');
 
     let json;
-    try {
-        json = JSON.parse(text);
-    } catch (e) {
-        console.error(text);
-        alert('Response bukan JSON');
-        return;
-    }
+    try { json = JSON.parse(text); }
+    catch { return alert('Response bukan JSON'); }
 
-    if (!json.route || !json.route.length) {
-        alert('Data route kosong');
-        return;
-    }
+    if (!json.route?.length) return alert('Route kosong');
 
     parseRoute(json.route);
-    initSpeedChart();
     drawRoute();
     addStartEndMarker();
     initMovingMarker();
+    initSpeedChart();
 }
 
 /* =========================
    PARSE ROUTE
-   row:
-   [timestamp, lat, lng, speed, angle]
 ========================= */
 function parseRoute(route) {
     routeLatLngs = [];
@@ -138,82 +116,52 @@ function parseRoute(route) {
     route.forEach(r => {
         const lat = parseFloat(r[1]);
         const lng = parseFloat(r[2]);
+        if (isNaN(lat) || isNaN(lng)) return;
 
-        if (!isNaN(lat) && !isNaN(lng)) {
-            routeLatLngs.push([lat, lng]);
-            routeMeta.push({
-                time: toJakartaTime(r[0]),
-                speed: r[5] || 0,
-                angle: r[4] || 0
-            });
-
-        }
+        routeLatLngs.push([lat, lng]);
+        routeMeta.push({
+            time: toJakartaTime(r[0]),
+            speed: r[5] || 0,
+            angle: r[4] || 0
+        });
     });
 }
 
 /* =========================
-   DRAW POLYLINE
+   MAP DRAW
 ========================= */
 function drawRoute() {
     routePolyline = L.polyline(routeLatLngs, {
         color: '#007bff',
-        weight: 4,
-        opacity: 0.9
+        weight: 4
     }).addTo(map);
 
     map.fitBounds(routePolyline.getBounds());
 }
 
-/* =========================
-   START & END MARKER
-========================= */
 function addStartEndMarker() {
     startMarker = L.marker(routeLatLngs[0], {
-        icon: L.icon({
-            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
-            iconSize: [32, 32],
-            iconAnchor: [16, 32]
-        })
+        icon: greenIcon()
     }).addTo(map).bindPopup('🟢 Start');
 
-    endMarker = L.marker(routeLatLngs[routeLatLngs.length - 1], {
-        icon: L.icon({
-            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-            iconSize: [32, 32],
-            iconAnchor: [16, 32]
-        })
+    endMarker = L.marker(routeLatLngs.at(-1), {
+        icon: redIcon()
     }).addTo(map).bindPopup('🔴 End');
 }
 
-/* =========================
-   MOVING MARKER
-========================= */
 function initMovingMarker() {
     movingMarker = L.marker(routeLatLngs[0], {
         rotationAngle: routeMeta[0].angle,
         rotationOrigin: 'center',
-        icon: L.icon({
-            // iconUrl: '/images/car.png', // 🔥 pastikan ada
-            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-            iconSize: [32, 32],
-            iconAnchor: [16, 16]
-        })
+        icon: blueIcon()
     }).addTo(map);
-
-    movingMarker.bindTooltip('', {
-        permanent: false,
-        direction: 'top'
-    });
 }
 
 /* =========================
-   PLAY ANIMATION
+   PLAY CONTROL
 ========================= */
 function playRoute() {
-    if (!routeLatLngs.length) return;
-
-    if (isPlaying) return;
-
+    if (isPlaying || !routeLatLngs.length) return;
     isPlaying = true;
 
     playInterval = setInterval(() => {
@@ -241,91 +189,82 @@ function animateMove(fromIndex, toIndex) {
 
     const interval = setInterval(() => {
         step++;
-
-        const lat = from.lat + ((to.lat - from.lat) * step / smoothStep);
-        const lng = from.lng + ((to.lng - from.lng) * step / smoothStep);
+        const lat = from.lat + (to.lat - from.lat) * step / smoothStep;
+        const lng = from.lng + (to.lng - from.lng) * step / smoothStep;
 
         movingMarker.setLatLng([lat, lng]);
-        movingMarker.setRotationAngle(meta.angle || 0);
+        movingMarker.setRotationAngle(meta.angle);
 
         updateInfo(meta, toIndex);
-        updateSpeedChart(meta, toIndex);
+        highlightChart(toIndex);
 
-        if (followMode) {
-            map.panTo([lat, lng], { animate: false });
-        }
-
-        if (step >= smoothStep) {
-            clearInterval(interval);
-        }
+        if (followMode) map.panTo([lat, lng], { animate: false });
+        if (step >= smoothStep) clearInterval(interval);
     }, playSpeed / smoothStep);
 }
 
-function updateInfo(meta, index) {
-    const info = document.getElementById('infoPanel');
-    if (!info) return;
+/* =========================
+   JUMP (HOVER CHART)
+========================= */
+function jumpToPoint(index) {
+    playIndex = index;
 
-    info.innerHTML = `
-        <b>IMEI:</b> ${IMEI} - <b>Index:</b> ${index + 1} / ${routeLatLngs.length} - 
-        <b>Speed:</b> ${meta.speed} km/h - 
+    const latlng = routeLatLngs[index];
+    const meta = routeMeta[index];
+
+    movingMarker.setLatLng(latlng);
+    movingMarker.setRotationAngle(meta.angle);
+
+    updateInfo(meta, index);
+    highlightChart(index);
+
+    if (followMode) map.panTo(latlng);
+}
+
+/* =========================
+   UI UPDATE
+========================= */
+function updateInfo(meta, index) {
+    document.getElementById('infoPanel').innerHTML = `
+        <b>IMEI:</b> ${IMEI}<br>
+        <b>Point:</b> ${index + 1}/${routeLatLngs.length}<br>
+        <b>Speed:</b> ${meta.speed} km/h<br>
         <b>Time:</b> ${meta.time}
     `;
 }
 
-function updateSpeedChart(meta, index) {
+function highlightChart(index) {
     if (!speedChart) return;
-
-    speedLabels.push(index + 1);
-    speedData.push(meta.speed || 0);
-
+    speedChart.setActiveElements([{ datasetIndex: 0, index }]);
     speedChart.update('none');
 }
 
-
+/* =========================
+   UTIL
+========================= */
 function toggleFollow() {
     followMode = !followMode;
     document.getElementById('followBtn').innerText =
         followMode ? '📍 Follow ON' : '📍 Follow OFF';
 }
 
-
-/* =========================
-   SPEED SLIDER
-========================= */
 function setSpeed(val) {
     playSpeed = parseInt(val);
 }
 
-/* =========================
-   RELOAD BY DATE
-========================= */
-async function reloadRoute() {
-    const start = document.getElementById('startDate').value;
-    const end = document.getElementById('endDate').value;
+function reloadRoute() {
+    const s = startDate.value;
+    const e = endDate.value;
+    if (!s || !e) return alert('Pilih tanggal');
 
-    if (!start || !end) {
-        alert('Pilih tanggal');
-        return;
-    }
-
-    await loadRoute(
-        `/histories/route?imei=${IMEI}&start=${start}&end=${end}`
-    );
+    loadRoute(`/histories/route?imei=${IMEI}&start=${s}&end=${e}`);
 }
 
-/* =========================
-   CLEAR MAP
-========================= */
 function clearMap() {
-    if (routePolyline) map.removeLayer(routePolyline);
-    if (movingMarker) map.removeLayer(movingMarker);
-    if (startMarker) map.removeLayer(startMarker);
-    if (endMarker) map.removeLayer(endMarker);
-    
-    if (speedChart) {
-        speedChart.destroy();
-        speedChart = null;
-    }
+    [routePolyline, movingMarker, startMarker, endMarker]
+        .forEach(l => l && map.removeLayer(l));
+
+    if (speedChart) speedChart.destroy();
 
     routeLatLngs = [];
     routeMeta = [];
@@ -333,39 +272,29 @@ function clearMap() {
     pauseRoute();
 }
 
+function toJakartaTime(ts) {
+    return new Date(ts.replace(' ', 'T') + 'Z')
+        .toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+}
+
+/* =========================
+   ICONS
+========================= */
+const greenIcon = () => L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png', iconSize: [32,32] });
+const redIcon = () => L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png', iconSize: [32,32] });
+const blueIcon = () => L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png', iconSize: [32,32] });
+
 /* =========================
    INIT
 ========================= */
 document.addEventListener('DOMContentLoaded', () => {
     initMap();
     setDefaultDates();
-
-    if (typeof IMEI !== 'undefined' && IMEI) {
-        loadRouteToday();
-    }
+    if (IMEI) loadRouteToday();
 });
 
-/* =========================
-   DEFAULT DATE
-========================= */
 function setDefaultDates() {
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('startDate').value = today;
-    document.getElementById('endDate').value = today;
+    startDate.value = today;
+    endDate.value = today;
 }
-
-function toJakartaTime(timestamp) {
-    // contoh timestamp: "2025-12-20 03:12:45"
-    const utcDate = new Date(timestamp.replace(' ', 'T') + 'Z');
-
-    return utcDate.toLocaleString('id-ID', {
-        timeZone: 'Asia/Jakarta',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-}
-
