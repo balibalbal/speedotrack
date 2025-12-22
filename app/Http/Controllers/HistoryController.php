@@ -158,40 +158,40 @@ class HistoryController extends Controller
     }
     
     public function getRoute(Request $request)
-{
-    $imei = $request->query('imei');
-    if (!$imei) {
-        return response()->json([
-            'status' => false,
-            'message' => 'IMEI tidak ditemukan'
-        ], 400);
+    {
+        $imei = $request->query('imei');
+        if (!$imei) {
+            return response()->json([
+                'status' => false,
+                'message' => 'IMEI tidak ditemukan'
+            ], 400);
+        }
+
+        // ⏱ WIB
+        $startWib = $request->start
+            ? Carbon::parse($request->start, 'Asia/Jakarta')->startOfDay()
+            : Carbon::now('Asia/Jakarta')->startOfDay();
+
+        $endWib = $request->end
+            ? Carbon::parse($request->end, 'Asia/Jakarta')->endOfDay()
+            : Carbon::now('Asia/Jakarta')->endOfDay();
+
+        // 🔄 KONVERSI KE UTC (INI KUNCI)
+        $startUtc = $startWib->clone()->setTimezone('UTC')->format('Y-m-d H:i:s');
+        $endUtc   = $endWib->clone()->setTimezone('UTC')->format('Y-m-d H:i:s');
+
+        $response = Http::timeout(20)->get(
+            'https://www.speedotrack.pro/api/api.php',
+            [
+                'api' => 'user',
+                'ver' => '1.0',
+                'key' => env('SPEEDOTRACK_API_KEY'),
+                'cmd' => "OBJECT_GET_ROUTE,$imei,$startUtc,$endUtc,1"
+            ]
+        );
+
+        return response()->json($response->json());
     }
-
-    // ⏱ WIB
-    $startWib = $request->start
-        ? Carbon::parse($request->start, 'Asia/Jakarta')->startOfDay()
-        : Carbon::now('Asia/Jakarta')->startOfDay();
-
-    $endWib = $request->end
-        ? Carbon::parse($request->end, 'Asia/Jakarta')->endOfDay()
-        : Carbon::now('Asia/Jakarta')->endOfDay();
-
-    // 🔄 KONVERSI KE UTC (INI KUNCI)
-    $startUtc = $startWib->clone()->setTimezone('UTC')->format('Y-m-d H:i:s');
-    $endUtc   = $endWib->clone()->setTimezone('UTC')->format('Y-m-d H:i:s');
-
-    $response = Http::timeout(20)->get(
-        'https://www.speedotrack.pro/api/api.php',
-        [
-            'api' => 'user',
-            'ver' => '1.0',
-            'key' => env('SPEEDOTRACK_API_KEY'),
-            'cmd' => "OBJECT_GET_ROUTE,$imei,$startUtc,$endUtc,1"
-        ]
-    );
-
-    return response()->json($response->json());
-}
 
 
 
