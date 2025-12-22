@@ -23,17 +23,6 @@
                         <input type="range" min="100" max="1500" step="100" value="500"
                             oninput="setSpeed(this.value)">
                     </div>
-
-                    <input type="date" id="startDate" class="form-control form-control-sm" style="max-width:180px">
-                    <input type="date" id="endDate" class="form-control form-control-sm" style="max-width:180px">
-
-                    <button class="btn btn-sm btn-primary" onclick="reloadRoute()">
-                        Tampilkan
-                    </button>
-
-                    <button class="btn btn-sm btn-success" onclick="playRoute()">
-                        ▶ Play
-                    </button>
                 </div>
 
                 <div id="map" style="height: 500px;"></div>
