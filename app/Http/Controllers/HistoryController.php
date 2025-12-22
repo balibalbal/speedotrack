@@ -174,9 +174,10 @@ class HistoryController extends Controller
         $response = Http::timeout(20)->get(
             'https://www.speedotrack.pro/api/api.php',
             [
-                'api' => 'mobile',
+                'api' => 'user',
                 'ver' => '1.0',
-                'key' => env('SPEEDOTRACK_API_KEY'),
+                // 'key' => env('SPEEDOTRACK_API_KEY'),
+                'key' => '767C31DD0734097600A75E0712FF7C5F',
                 'cmd' => "OBJECT_GET_ROUTE,$imei,$startDate,$endDate,1"
             ]
         );
