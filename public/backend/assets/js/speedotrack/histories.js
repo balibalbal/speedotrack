@@ -10,12 +10,15 @@ let pulseScale = 1;
 let pulseDir = 1;
 let pulseRAF = null;
 
+
 /* ===== PLAY STATE ===== */
 let playIndex = 0;
+let playInterval = null;
+let playSpeed = 500;
+let smoothStep = 10;
 let isPlaying = false;
 let followMode = true;
 let currentAngle = 0;
-let animationRAF = null;
 
 /* ===== CHART ===== */
 let speedChart;
@@ -25,29 +28,48 @@ let speedLabels = [];
 /* ===== LOADING ===== */
 let loadingEl;
 
-let isScrubbing = false;
-let allowHoverJump = true;
+let isScrubbing = false;     // mouse sedang geser chart
+let allowHoverJump = true;  // disable saat play
 let progressBar;
 let isScrubbingProgress = false;
+
 
 const infoPanel = document.getElementById('infoPanel');
 const followBtn = document.getElementById('followBtn');
 const startDate = document.getElementById('startDate');
 const endDate = document.getElementById('endDate');
 
+
+
 /* =========================
    INIT MAP
 ========================= */
 function initMap() {
-    map = L.map('map', { center: [-6.2, 106.8], zoom: 10 });
+    map = L.map('map', {
+        center: [-6.2, 106.8],
+        zoom: 10
+    });
 
     // OSM
-    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+    const osm = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        { maxZoom: 19 }
+    ).addTo(map);
 
-    // Google Layers
-    const googleRoadmap = L.gridLayer.googleMutant({ type: 'roadmap' });
-    const googleSatellite = L.gridLayer.googleMutant({ type: 'satellite' });
-    const googleHybrid = L.gridLayer.googleMutant({ type: 'hybrid' });
+    // Google Roadmap
+    const googleRoadmap = L.gridLayer.googleMutant({
+        type: 'roadmap'
+    });
+
+    // Google Satellite
+    const googleSatellite = L.gridLayer.googleMutant({
+        type: 'satellite'
+    });
+
+    // Google Hybrid
+    const googleHybrid = L.gridLayer.googleMutant({
+        type: 'hybrid'
+    });
 
     baseLayers = {
         "OpenStreetMap": osm,
@@ -57,10 +79,13 @@ function initMap() {
     };
 
     // Layer switcher
-    L.control.layers(baseLayers, null, { position: 'topright' }).addTo(map);
+    L.control.layers(baseLayers, null, {
+        position: 'topright'
+    }).addTo(map);
 
     initLoading();
 }
+
 
 /* =========================
    LOADING SPINNER
@@ -78,12 +103,15 @@ function initLoading() {
     document.getElementById('map').appendChild(loadingEl);
     hideLoading();
 }
+
 const showLoading = () => loadingEl && (loadingEl.style.display = 'flex');
 const hideLoading = () => loadingEl && (loadingEl.style.display = 'none');
+
 
 /* =========================
    SPEED CHART
 ========================= */
+
 function initSpeedChart() {
     const canvas = document.getElementById('speedChart');
     if (!canvas) return;
@@ -111,9 +139,16 @@ function initSpeedChart() {
         options: {
             animation: false,
             interaction: { mode: 'index', intersect: false },
-            scales: { x: { display: false }, y: { beginAtZero: true } },
-            plugins: { legend: { display: false } }
+            scales: {
+                x: { display: false },
+                y: { beginAtZero: true }
+            },
+            plugins: {
+                legend: { display: false }
+            }
         }
+
+        
     });
 
     canvas.addEventListener('mousedown', e => {
@@ -126,13 +161,16 @@ function initSpeedChart() {
     });
 
     canvas.addEventListener('mousemove', e => {
-        if (!isScrubbing || !allowHoverJump) return;
+        if (!isScrubbing) return;
+        if (!allowHoverJump) return;
 
         const index = getIndexFromEvent(e, canvas);
         if (index !== null) jumpToPoint(index);
     });
 
-    document.addEventListener('mouseup', () => isScrubbing = false);
+    document.addEventListener('mouseup', () => {
+        isScrubbing = false;
+    });
 
     canvas.addEventListener('click', e => {
         const index = getIndexFromEvent(e, canvas);
@@ -151,10 +189,13 @@ function startPulse() {
 
     function animate() {
         pulseScale += pulseDir * 0.03;
+
         if (pulseScale >= 1.4) pulseDir = -1;
         if (pulseScale <= 1.0) pulseDir = 1;
 
-        if (speedChart) speedChart.update('none');
+        if (speedChart) {
+            speedChart.update('none');
+        }
 
         pulseRAF = requestAnimationFrame(animate);
     }
@@ -162,9 +203,39 @@ function startPulse() {
     animate();
 }
 
+
 /* =========================
    LOAD ROUTE
 ========================= */
+async function loadRouteToday() {
+    await loadRoute(`/histories/route?imei=${IMEI}`);
+}
+
+// async function loadRoute(url) {
+//     clearMap();
+//     showLoading();
+
+//     const res = await fetch(url);
+//     const json = await res.json();
+
+//     if (!json.route?.length) {
+//         hideLoading();
+//         return alert('Route kosong');
+//     }
+
+//     parseRoute(json.route);
+//     drawRoute();
+//     addStartEndMarker();
+//     initMovingMarker();
+//     initSpeedChart();
+
+//     hideLoading();
+
+//     progressBar.max = routeLatLngs.length - 1;
+//     progressBar.value = 0;
+
+// }
+
 async function loadRoute(url) {
     clearMap();
     showLoading();
@@ -173,15 +244,24 @@ async function loadRoute(url) {
         const res = await fetch(url);
         const json = await res.json();
 
+        // JIKA DATA KOSONG
         if (!json.route || json.route.length === 0) {
             hideLoading();
+
+            // reset UI
             progressBar.value = 0;
             progressBar.max = 0;
+
+            // optional info
             showEmptyInfo();
+
+            // ❌ JANGAN return sebelum map siap
             console.warn('Route kosong');
-            return;
+
+            return; // keluar fungsi TANPA alert blocking
         }
 
+        // JIKA ADA DATA
         parseRoute(json.route);
         drawRoute();
         addStartEndMarker();
@@ -199,18 +279,15 @@ async function loadRoute(url) {
     }
 }
 
-function loadRouteToday() {
-    return loadRoute(`/histories/route?imei=${IMEI}`);
-}
-
 function showEmptyInfo() {
-    infoPanel.innerHTML = `
+    document.getElementById('infoPanel').innerHTML = `
         <div class="text-muted text-center">
             Tidak ada data perjalanan<br>
             Silakan pilih tanggal lain
         </div>
     `;
 }
+
 
 /* =========================
    PARSE ROUTE
@@ -233,12 +310,18 @@ function parseRoute(route) {
 }
 
 /* =========================
-   DRAW POLYLINE
+   Draw POLYLINE satu warna
 ========================= */
 function drawRoute() {
-    routePolyline = L.polyline(routeLatLngs, { color: '#0d6efd', weight: 4, opacity: 0.9 }).addTo(map);
+    routePolyline = L.polyline(routeLatLngs, {
+        color: '#0d6efd',   // satu warna (bootstrap blue)
+        weight: 4,
+        opacity: 0.9
+    }).addTo(map);
+
     map.fitBounds(routePolyline.getBounds());
 }
+
 
 /* =========================
    MARKERS
@@ -250,89 +333,84 @@ function addStartEndMarker() {
 
 function initMovingMarker() {
     currentAngle = routeMeta[0].angle;
-    movingMarker = L.marker(routeLatLngs[0], { icon: blueIcon(), rotationAngle: currentAngle, rotationOrigin: 'center' }).addTo(map);
+
+    movingMarker = L.marker(routeLatLngs[0], {
+        icon: blueIcon(),
+        rotationAngle: currentAngle,
+        rotationOrigin: 'center'
+    }).addTo(map);
 }
 
 /* =========================
-   PLAYBACK OPTIMIZED
+   PLAYBACK
 ========================= */
 function playRoute() {
     if (isPlaying || !routeLatLngs.length) return;
 
     isPlaying = true;
-    allowHoverJump = false;
+    allowHoverJump = false; // 🔥 MATIKAN HOVER
 
-    // Step sampling untuk performa
-    const stepSize = routeLatLngs.length > 1000 ? 5 : 1;
-
-    function moveToNext() {
+    playInterval = setInterval(() => {
         if (playIndex >= routeLatLngs.length - 1) {
-            isPlaying = false;
+            pauseRoute();
             return;
         }
 
-        const fromIndex = playIndex;
-        const toIndex = Math.min(playIndex + stepSize, routeLatLngs.length - 1);
-
-        const from = L.latLng(routeLatLngs[fromIndex]);
-        const to = L.latLng(routeLatLngs[toIndex]);
-        const metaTo = routeMeta[toIndex];
-
-        const frames = 10; // jumlah interpolasi antar titik
-        let frame = 0;
-
-        function animateFrame() {
-            frame++;
-            const lat = from.lat + (to.lat - from.lat) * (frame / frames);
-            const lng = from.lng + (to.lng - from.lng) * (frame / frames);
-
-            // Smooth angle
-            currentAngle = smoothAngle(currentAngle, metaTo.angle);
-
-            movingMarker.setLatLng([lat, lng]);
-            movingMarker.setRotationAngle(currentAngle);
-
-            if (followMode && frame === frames) {
-                map.panTo([lat, lng], { animate: false });
-            }
-
-            // Update info & progress bar
-            if (frame === frames) {
-                playIndex = toIndex;
-                progressBar.value = playIndex;
-                updateInfo(metaTo, playIndex);
-            }
-
-            if (frame < frames) {
-                animationRAF = requestAnimationFrame(animateFrame);
-            } else {
-                // Lanjut ke segment berikutnya
-                animationRAF = requestAnimationFrame(moveToNext);
-            }
-        }
-
-        animateFrame();
-    }
-
-    moveToNext();
+        animateMove(playIndex, playIndex + 1);
+        playIndex++;
+    }, playSpeed);
 }
 
 function pauseRoute() {
     isPlaying = false;
-    allowHoverJump = true;
-    if (animationRAF) cancelAnimationFrame(animationRAF);
+    allowHoverJump = true; // hidupkan lagi
+    clearInterval(playInterval);
+}
+
+function getIndexFromEvent(e, canvas) {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+
+    const percent = x / rect.width;
+    if (percent < 0 || percent > 1) return null;
+
+    return Math.round(percent * (routeLatLngs.length - 1));
+}
+
+
+function animateMove(fromIndex, toIndex) {
+    const from = L.latLng(routeLatLngs[fromIndex]);
+    const to = L.latLng(routeLatLngs[toIndex]);
+    const meta = routeMeta[toIndex];
+    let step = 0;
+
+    const interval = setInterval(() => {
+        step++;
+        const lat = from.lat + (to.lat - from.lat) * step / smoothStep;
+        const lng = from.lng + (to.lng - from.lng) * step / smoothStep;
+
+        currentAngle = smoothAngle(currentAngle, meta.angle);
+        movingMarker.setLatLng([lat, lng]);
+        movingMarker.setRotationAngle(currentAngle);
+
+        updateInfo(meta, toIndex);
+        // highlightChart(toIndex);
+        playIndex = toIndex;
+
+        if (followMode) map.panTo([lat, lng], { animate: false });
+        if (step >= smoothStep) clearInterval(interval);
+
+        progressBar.value = toIndex;
+    }, playSpeed / smoothStep);
 }
 
 /* =========================
    SMOOTH ANGLE
 ========================= */
 function smoothAngle(prev, next, factor = 0.25) {
-    // normalisasi selisih angle ke [-180, 180]
     let diff = ((next - prev + 540) % 360) - 180;
-    // pindahkan sebagian dari diff untuk rotasi halus
     return prev + diff * factor;
 }
-
 
 /* =========================
    JUMP
@@ -352,7 +430,7 @@ function jumpToPoint(index) {
 }
 
 /* =========================
-   UI / INFO
+   UI
 ========================= */
 function updateInfo(meta, index) {
     infoPanel.innerHTML = `
@@ -362,9 +440,19 @@ function updateInfo(meta, index) {
     `;
 }
 
+// function highlightChart(index) {
+//     if (!speedChart) return;
+
+//     speedChart.setActiveElements([
+//         { datasetIndex: 0, index }
+//     ]);
+//     speedChart.update('none');
+// }
+
 function highlightChart(index) {
     playIndex = index;
 }
+
 
 /* =========================
    UTIL
@@ -375,27 +463,39 @@ function toggleFollow() {
 }
 
 function setSpeedLevel(level) {
-    const map = { 1: { delay: 2000, label: '0.5x' }, 2: { delay: 1200, label: '0.75x' }, 3: { delay: 600, label: '1x' }, 4: { delay: 300, label: '1.5x' }, 5: { delay: 150, label: '2x' } };
+    const map = {
+        1: { delay: 2000, label: '0.5x' },
+        2: { delay: 1200, label: '0.75x' },
+        3: { delay: 600,  label: '1x' },
+        4: { delay: 300,  label: '1.5x' },
+        5: { delay: 150,  label: '2x' }
+    };
+
     const cfg = map[level];
+    playSpeed = cfg.delay;
+
     document.getElementById('speedLabel').innerText = cfg.label;
+
+    if (isPlaying) {
+        pauseRoute();
+        playRoute();
+    }
 }
 
-/* =========================
-   ROUTE CONTROL
-========================= */
+
 function reloadRoute() {
     loadRoute(`/histories/route?imei=${IMEI}&start=${startDate.value}&end=${endDate.value}`);
 }
-
 function clearMap() {
-    [routePolyline, movingMarker, startMarker, endMarker].forEach(l => l && map.removeLayer(l));
+    [routePolyline, movingMarker, startMarker, endMarker]
+        .forEach(l => l && map.removeLayer(l));
     if (speedChart) speedChart.destroy();
     playIndex = 0;
     pauseRoute();
 }
-
 function toJakartaTime(ts) {
-    return new Date(ts.replace(' ', 'T') + 'Z').toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+    return new Date(ts.replace(' ', 'T') + 'Z')
+        .toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
 }
 
 /* =========================
@@ -413,8 +513,16 @@ document.addEventListener('DOMContentLoaded', () => {
     setDefaultDates();
 
     progressBar = document.getElementById('progressBar');
-    progressBar.addEventListener('input', e => { isScrubbingProgress = true; pauseRoute(); jumpToPoint(+e.target.value); });
-    progressBar.addEventListener('change', () => isScrubbingProgress = false);
+
+    progressBar.addEventListener('input', e => {
+        isScrubbingProgress = true;
+        pauseRoute();
+        jumpToPoint(+e.target.value);
+    });
+
+    progressBar.addEventListener('change', () => {
+        isScrubbingProgress = false;
+    });
 
     if (IMEI) loadRouteToday();
 });
@@ -425,13 +533,13 @@ function setDefaultDates() {
     endDate.value = t;
 }
 
-function goStart() { pauseRoute(); jumpToPoint(0); }
-function goEnd() { pauseRoute(); jumpToPoint(routeLatLngs.length - 1); }
-
-function getIndexFromEvent(e, canvas) {
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const percent = x / rect.width;
-    if (percent < 0 || percent > 1) return null;
-    return Math.round(percent * (routeLatLngs.length - 1));
+function goStart() {
+    pauseRoute();
+    jumpToPoint(0);
 }
+
+function goEnd() {
+    pauseRoute();
+    jumpToPoint(routeLatLngs.length - 1);
+}
+
