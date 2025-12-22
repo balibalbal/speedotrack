@@ -95,6 +95,9 @@ function renderList(devices) {
         html += `
             <div class="vehicle-item ${isActive ? 'active' : ''}" onclick="selectDevice('${d.imei}')">
                 <div class="vehicle-name">${d.name || d.plate_number || d.imei}</div>
+                <div class="vehicle-location">
+                    ${d.ststr}
+                </div>
                 <div class="vehicle-status">
                     <span class="badge ${getStatusBadge(status)}">
                         ${status.toUpperCase()}
@@ -231,6 +234,10 @@ function createMarkerPopup(d) {
                     <td>Terakhir:</td>
                     <td>${formatTime(d.dt_tracker)}</td>
                 </tr>
+                <tr>
+                    <td>Address:</td>
+                    <td>${formatTime(d.address)}</td>
+                </tr>
             </table>
             <button onclick="selectRouteDeviceFromMap('${d.imei}')" 
                     style="margin-top: 8px; padding: 4px 12px; font-size: 12px;"
@@ -358,6 +365,14 @@ function showDetail(d) {
                 <div class="detail-label">Koordinat</div>
                 <div class="detail-value">${d.lat}, ${d.lng}</div>
             </div>
+            <div class="detail-item">
+                <button onclick="selectRouteDeviceFromMap('${d.imei}')" 
+                    style="margin-top: 8px; padding: 4px 12px; font-size: 12px;"
+                    class="btn btn-sm btn-primary w-100">
+                    Historical
+                </button>
+            </div>
+
         </div>
     `;
 }
