@@ -320,7 +320,7 @@ function showDetail(d) {
             <div class="detail-item">
                 <button onclick="selectRouteDeviceFromMap('${d.imei}')" 
                     style="margin-top: 8px; padding: 4px 12px; font-size: 12px;"
-                    class="btn btn-sm btn-secondary w-100">
+                    class="btn btn-sm btn-success w-100">
                     Historical
                 </button>
             </div>
