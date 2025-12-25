@@ -391,8 +391,24 @@ function showDetail(d) {
                 <div class="detail-value">${formatDateTime(d.dt_server)}</div>
             </div>
             <div class="detail-item">
-                <div class="detail-label">Time Tracker/Device</div>
+                <div class="detail-label">Time Tracker(Position)</div>
                 <div class="detail-value">${formatDateTime(d.dt_tracker)}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">SIM Number</div>
+                <div class="detail-value">${d.sim_number}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Model</div>
+                <div class="detail-value">${d.model}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Ignition</div>
+                <div class="detail-value">${d.ignition}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Status</div>
+                <div class="detail-value">${d.st}</div>
             </div>
             
         </div>
