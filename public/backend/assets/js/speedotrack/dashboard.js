@@ -98,7 +98,7 @@ function renderList(devices) {
                 
                 <div class="vehicle-status">
                     <span class="badge ${getStatusBadge(d.st)}">
-                        ${ststr.toUpperCase()}
+                        ${d.ststr}
                     </span>
                     ${d.speed ? `<span class="ms-2">${d.speed} km/h</span>` : ''}
                 </div>
