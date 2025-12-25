@@ -46,7 +46,7 @@
 
         <!-- Tombol toggle sidebar kiri -->
         <button class="toggle-btn left" id="toggleSidebarLeft" onclick="toggleSidebarLeft()">
-            <span id="leftArrow"><span class="mdi mdi-chevron-double-left"></span></span>
+            <span id="leftArrow" class="mdi mdi-chevron-double-left"></span>
         </button>
 
         <!-- Peta -->
@@ -74,7 +74,7 @@
 
         <!-- Tombol toggle sidebar kanan -->
         <button class="toggle-btn right" id="toggleSidebarRight" onclick="toggleSidebarRight()">
-            <span id="rightArrow"><span class="mdi mdi-chevron-double-right"></span></span>
+            <span id="rightArrow" class="mdi mdi-chevron-double-right"></span>
         </button>
     </div>
 </div>

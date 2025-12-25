@@ -398,17 +398,15 @@ function formatDateTime(dt) {
 function toggleSidebarLeft() {
     const sidebar = document.getElementById("sidebar");
     const arrow = document.getElementById("leftArrow");
-    
+
     sidebar.classList.toggle("hidden");
-    
-    if (detailPanel.classList.contains("hidden")) {
-        arrow.classList.remove("mdi-chevron-double-right");
-        arrow.classList.add("mdi-chevron-double-left");
+
+    if (sidebar.classList.contains("hidden")) {
+        arrow.className = "mdi mdi-chevron-double-right";
     } else {
-        arrow.classList.remove("mdi-chevron-double-left");
-        arrow.classList.add("mdi-chevron-double-right");
+        arrow.className = "mdi mdi-chevron-double-left";
     }
-    
+
     setTimeout(() => map.invalidateSize(), 300);
 }
 
@@ -417,18 +415,12 @@ function toggleSidebarRight() {
     const arrow = document.getElementById("rightArrow");
     
     detailPanel.classList.toggle("hidden");
-    
-    // if (detailPanel.classList.contains("hidden")) {
-    //     arrow.innerHTML = "◀";
-    // } else {
-    //     arrow.innerHTML = "▶";
-    // }
 
     if (detailPanel.classList.contains("hidden")) {
-        // arrow.classList.remove("mdi-chevron-double-right");
+        arrow.classList.remove("mdi-chevron-double-right");
         arrow.classList.add("mdi-chevron-double-left");
     } else {
-        // arrow.classList.remove("mdi-chevron-double-left");
+        arrow.classList.remove("mdi-chevron-double-left");
         arrow.classList.add("mdi-chevron-double-right");
     }
 
