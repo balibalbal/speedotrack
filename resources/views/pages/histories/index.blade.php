@@ -63,7 +63,6 @@
                     
                     {{-- INFO --}}
                     <div id="infoPanel" class="side-box small"></div>
-                    {{-- <div id="summaryPanel" class="side-box small mt-2"></div> --}}
 
                     <div>
                         <button id="downloadExcel" class="btn btn-sm btn-success w-100 mb-1" onclick="reloadRoute()"><span class="mdi mdi-file-excel-outline"></span>&nbsp;Download To Excel/CSV</button>
@@ -92,6 +91,10 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_map.api_key') }}"></script>
 <script src="https://unpkg.com/leaflet.gridlayer.googlemutant/dist/Leaflet.GoogleMutant.js"></script>
+
+{{-- <script src="https://rawcdn.githack.com/bbecquet/Leaflet.RotatedMarker/master/leaflet.rotatedMarker.js"></script> --}}
+<script src="https://unpkg.com/leaflet-rotatedmarker/leaflet.rotatedMarker.js"></script>
+
 
 <!-- 5️⃣ App JS kamu -->
 <script src="{{ asset('backend/assets/js/speedotrack/histories.js') }}"></script>

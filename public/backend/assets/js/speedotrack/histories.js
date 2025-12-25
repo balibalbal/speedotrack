@@ -398,7 +398,7 @@ function animateMove(fromIndex, toIndex) {
         const lng = from.lng + (to.lng - from.lng) * t;
 
         movingMarker.setLatLng([lat, lng]);
-        // movingMarker.setRotationAngle(angle);
+        movingMarker.setRotationAngle(angle);
 
         if (followMode) map.panTo([lat, lng], { animate: false });
 
@@ -422,20 +422,20 @@ function smoothAngle(prev, next, factor = 0.25) {
    JUMP
 ========================= */
 function jumpToPoint(index) {
-    if (index <= 0) return;
+    if (!routeLatLngs.length || !routeMeta[index]) return; // ❌ data kosong, stop
 
-    const from = L.latLng(routeLatLngs[index - 1]);
-    const to   = L.latLng(routeLatLngs[index]);
+    playIndex = index;
+    const meta = routeMeta[index];
 
-    const angle = bearing(from, to);
-
+    currentAngle = meta.angle;
     movingMarker.setLatLng(routeLatLngs[index]);
-    // movingMarker.setRotationAngle(angle);
+    movingMarker.setRotationAngle(currentAngle);
 
-    currentAngle = angle;
+    updateInfo(meta, index);
+    highlightChart(index);
+
     progressBar.value = index;
 }
-
 
 /* =========================
    UI
