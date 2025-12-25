@@ -97,9 +97,7 @@ function renderList(devices) {
                 <div class="vehicle-name">${d.name || d.plate_number || d.imei}</div>
                 
                 <div class="vehicle-status">
-                    <span class="badge ${getStatusBadge(d.st)}">
-                        ${d.ststr}
-                    </span>
+                    <span class="badge ${getStatusBadge(d.st)}">${d.ststr}</span>
                     ${d.speed ? `<span class="ms-2">${d.speed} km/h</span>` : ''}
                 </div>
                 <div class="vehicle-location">
