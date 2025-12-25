@@ -95,12 +95,10 @@ function renderList(devices) {
         html += `
             <div class="vehicle-item ${isActive ? 'active' : ''}" onclick="selectDevice('${d.imei}')">
                 <div class="vehicle-name">${d.name || d.plate_number || d.imei}</div>
-                <div class="vehicle-location">
-                    ${d.ststr}
-                </div>
+                
                 <div class="vehicle-status">
                     <span class="badge ${getStatusBadge(status)}">
-                        ${status.toUpperCase()}
+                        ${ststr.toUpperCase()}
                     </span>
                     ${d.speed ? `<span class="ms-2">${d.speed} km/h</span>` : ''}
                 </div>
