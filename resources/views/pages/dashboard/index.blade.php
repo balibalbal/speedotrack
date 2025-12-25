@@ -4,7 +4,7 @@
 @endpush
 
 @extends('layouts.admin')
-@section('title', 'Speedotrack - GPS Monitoring System')
+@section('title', 'GPS Monitoring System')
 @section('content')
 
 <div class="container-fluid p-0">

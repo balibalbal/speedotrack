@@ -226,9 +226,9 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: white;
-            color: #667eea;
-            border: 2px solid #3B4953;
+            background: #628141;
+            color: #0D4715;
+            border: 2px solid #0D4715;
             width: 25px;
             height: 70px;
             cursor: pointer;
@@ -242,7 +242,7 @@
         }
 
         .toggle-btn:hover {
-            background: #667eea;
+            background: #0D4715;
             color: white;
             width: 28px;
         }
