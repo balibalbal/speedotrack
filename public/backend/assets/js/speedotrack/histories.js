@@ -348,28 +348,54 @@ function initMovingMarker() {
 /* =========================
    PLAYBACK
 ========================= */
+// function playRoute() {
+//     if (isPlaying || !routeLatLngs.length) return;
+
+//     isPlaying = true;
+//     allowHoverJump = false; // 🔥 MATIKAN HOVER
+
+//     playInterval = setInterval(() => {
+//         if (playIndex >= routeLatLngs.length - 1) {
+//             pauseRoute();
+//             return;
+//         }
+
+//         animateMove(playIndex, playIndex + 1);
+//         playIndex++;
+//     }, playSpeed);
+// }
+
 function playRoute() {
     if (isPlaying || !routeLatLngs.length) return;
 
     isPlaying = true;
-    allowHoverJump = false; // 🔥 MATIKAN HOVER
+    allowHoverJump = false;
 
-    playInterval = setInterval(() => {
-        if (playIndex >= routeLatLngs.length - 1) {
-            pauseRoute();
-            return;
-        }
-
-        animateMove(playIndex, playIndex + 1);
-        playIndex++;
-    }, playSpeed);
+    playNext();
 }
+
+function playNext() {
+    if (!isPlaying) return;
+
+    if (playIndex >= routeLatLngs.length - 1) {
+        pauseRoute();
+        return;
+    }
+
+    animateMove(playIndex, playIndex + 1, () => {
+        playIndex++;
+        playNext(); // ⛓️ LANJUT SETELAH SELESAI
+    });
+}
+
+
 
 function pauseRoute() {
     isPlaying = false;
     allowHoverJump = true; // hidupkan lagi
     clearInterval(playInterval);
 }
+
 
 function getIndexFromEvent(e, canvas) {
     const rect = canvas.getBoundingClientRect();
@@ -408,7 +434,7 @@ function getIndexFromEvent(e, canvas) {
 //     }, playSpeed / smoothStep);
 // }
 
-function animateMove(fromIndex, toIndex) {
+function animateMove(fromIndex, toIndex, done) {
     const from = L.latLng(routeLatLngs[fromIndex]);
     const to   = L.latLng(routeLatLngs[toIndex]);
     const meta = routeMeta[toIndex];
@@ -433,21 +459,19 @@ function animateMove(fromIndex, toIndex) {
 
         movingMarker.setLatLng([lat, lng]);
 
-        if (followMode) {
-            map.panTo([lat, lng], { animate: false });
-        }
+        if (followMode) map.panTo([lat, lng], { animate: false });
 
-        // 🧠 ROTASI SELALU TERAKHIR
         movingMarker.setRotationAngle(angle);
         currentAngle = angle;
 
         updateInfo(meta, toIndex);
         progressBar.value = toIndex;
 
-        if (t < 1) {
+        if (t < 1 && isPlaying) {
             requestAnimationFrame(frame);
         } else {
             currentAngle = targetAngle;
+            done && done(); // 🔥 NEXT MOVE
         }
     }
 
