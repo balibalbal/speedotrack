@@ -425,10 +425,10 @@ function toggleSidebarRight() {
     // }
 
     if (detailPanel.classList.contains("hidden")) {
-        arrow.classList.remove("mdi-chevron-double-right");
+        // arrow.classList.remove("mdi-chevron-double-right");
         arrow.classList.add("mdi-chevron-double-left");
     } else {
-        arrow.classList.remove("mdi-chevron-double-left");
+        // arrow.classList.remove("mdi-chevron-double-left");
         arrow.classList.add("mdi-chevron-double-right");
     }
 
