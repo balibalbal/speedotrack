@@ -228,11 +228,11 @@ function createMarkerPopup(d) {
                 </tr>
                 <tr>
                     <td>Odometer:</td>
-                    <td><b>${d.odometer || 0} km/h</b></td>
+                    <td><b>${d.odometer || 0} km</b></td>
                 </tr>
                 <tr>
                     <td>Last Update:</td>
-                    <td>${formatTime(d.dt_tracker)}</td>
+                    <td>${formatDateTime(d.dt_tracker)}</td>
                 </tr>
                 <tr>
                     <td>Address:</td>
@@ -258,15 +258,6 @@ function selectRouteDeviceFromMap(imei) {
     window.location.href = `/histories?imei=${encodeURIComponent(imei)}`;
 }
 
-
-function formatTime(dt) {
-    if (!dt) return '-';
-    const date = new Date(dt);
-    return date.toLocaleTimeString('id-ID', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-    });
-}
 
 /* ============================
    KLIK LIST → MAP + DETAIL

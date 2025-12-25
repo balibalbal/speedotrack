@@ -308,7 +308,7 @@ function parseRoute(route) {
         routeMeta.push({
             time: toJakartaTime(r[0]),
             speed: r[5] || 0,
-            angle: r[3] || 0
+            angle: r[4] || 0
         });
     });
 }
