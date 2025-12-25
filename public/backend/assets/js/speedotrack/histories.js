@@ -413,50 +413,47 @@ function animateMove(fromIndex, toIndex) {
     const to   = L.latLng(routeLatLngs[toIndex]);
     const meta = routeMeta[toIndex];
 
-    // 🎯 TARGET ANGLE (HYBRID)
     const targetAngle =
         meta.angle && meta.angle !== 0
             ? meta.angle
             : bearing(from, to);
 
     const startAngle = currentAngle;
-    let step = 0;
+    const startTime = performance.now();
+    const duration = playSpeed;
 
-    const interval = setInterval(() => {
-        step++;
+    function frame(now) {
+        const t = Math.min((now - startTime) / duration, 1);
 
-        const t = step / smoothStep;
-
-        // posisi
         const lat = from.lat + (to.lat - from.lat) * t;
         const lng = from.lng + (to.lng - from.lng) * t;
 
-        // angle interpolasi (ANTI BALIK UTARA)
         const diff = ((targetAngle - startAngle + 540) % 360) - 180;
         const angle = startAngle + diff * t;
 
         movingMarker.setLatLng([lat, lng]);
-        movingMarker.setRotationAngle(angle);
 
+        if (followMode) {
+            map.panTo([lat, lng], { animate: false });
+        }
+
+        // 🧠 ROTASI SELALU TERAKHIR
+        movingMarker.setRotationAngle(angle);
         currentAngle = angle;
 
         updateInfo(meta, toIndex);
         progressBar.value = toIndex;
 
-        if (followMode) map.panTo([lat, lng], { animate: false });
-
-        // ⚠️ PAKSA ROTASI SETELAH PAN
-        requestAnimationFrame(() => {
-            movingMarker.setRotationAngle(angle);
-        });
-
-        if (step >= smoothStep) {
-            clearInterval(interval);
-            currentAngle = targetAngle; // kunci angle
+        if (t < 1) {
+            requestAnimationFrame(frame);
+        } else {
+            currentAngle = targetAngle;
         }
+    }
 
-    }, playSpeed / smoothStep);
+    requestAnimationFrame(frame);
 }
+
 
 
 /* =========================
