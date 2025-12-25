@@ -422,20 +422,20 @@ function smoothAngle(prev, next, factor = 0.25) {
    JUMP
 ========================= */
 function jumpToPoint(index) {
-    if (!routeLatLngs.length || !routeMeta[index]) return; // ❌ data kosong, stop
+    if (index <= 0) return;
 
-    playIndex = index;
-    const meta = routeMeta[index];
+    const from = L.latLng(routeLatLngs[index - 1]);
+    const to   = L.latLng(routeLatLngs[index]);
 
-    currentAngle = meta.angle;
+    const angle = bearing(from, to);
+
     movingMarker.setLatLng(routeLatLngs[index]);
-    movingMarker.setRotationAngle(currentAngle);
+    movingMarker.setRotationAngle(angle);
 
-    updateInfo(meta, index);
-    highlightChart(index);
-
+    currentAngle = angle;
     progressBar.value = index;
 }
+
 
 /* =========================
    UI
