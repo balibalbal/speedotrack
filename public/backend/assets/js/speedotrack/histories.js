@@ -413,34 +413,43 @@ function animateMove(fromIndex, toIndex) {
     const to   = L.latLng(routeLatLngs[toIndex]);
     const meta = routeMeta[toIndex];
 
-    // 🔥 HYBRID TARGET ANGLE
+    // 🎯 TARGET ANGLE (HYBRID)
     const targetAngle =
-        meta.angle !== null &&
-        meta.angle !== undefined &&
-        meta.angle !== 0
+        meta.angle && meta.angle !== 0
             ? meta.angle
             : bearing(from, to);
 
+    const startAngle = currentAngle;
     let step = 0;
 
     const interval = setInterval(() => {
         step++;
 
-        const lat = from.lat + (to.lat - from.lat) * step / smoothStep;
-        const lng = from.lng + (to.lng - from.lng) * step / smoothStep;
+        const t = step / smoothStep;
 
-        currentAngle = smoothAngle(currentAngle, targetAngle);
+        // posisi
+        const lat = from.lat + (to.lat - from.lat) * t;
+        const lng = from.lng + (to.lng - from.lng) * t;
+
+        // angle interpolasi (ANTI BALIK UTARA)
+        const diff = ((targetAngle - startAngle + 540) % 360) - 180;
+        const angle = startAngle + diff * t;
 
         movingMarker.setLatLng([lat, lng]);
-        movingMarker.setRotationAngle(currentAngle);
+        movingMarker.setRotationAngle(angle);
+
+        currentAngle = angle;
 
         updateInfo(meta, toIndex);
-        playIndex = toIndex;
+        progressBar.value = toIndex;
 
         if (followMode) map.panTo([lat, lng], { animate: false });
-        if (step >= smoothStep) clearInterval(interval);
 
-        progressBar.value = toIndex;
+        if (step >= smoothStep) {
+            clearInterval(interval);
+            currentAngle = targetAngle; // kunci angle
+        }
+
     }, playSpeed / smoothStep);
 }
 
