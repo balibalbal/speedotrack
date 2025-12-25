@@ -227,6 +227,10 @@ function createMarkerPopup(d) {
                     <td><b>${d.speed || 0} km/h</b></td>
                 </tr>
                 <tr>
+                    <td>Odometer:</td>
+                    <td><b>${d.odometer || 0} km/h</b></td>
+                </tr>
+                <tr>
                     <td>Last Update:</td>
                     <td>${formatTime(d.dt_tracker)}</td>
                 </tr>
