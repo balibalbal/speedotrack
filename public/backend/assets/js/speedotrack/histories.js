@@ -336,7 +336,7 @@ function addStartEndMarker() {
 }
 
 function initMovingMarker() {
-    currentAngle = routeMeta[0].angle;
+    currentAngle = routeMeta[4].angle;
 
     movingMarker = L.marker(routeLatLngs[0], {
         icon: blueIcon(),
