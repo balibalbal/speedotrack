@@ -247,6 +247,7 @@ async function loadRoute(url) {
         // JIKA DATA KOSONG
         if (!json.route || json.route.length === 0) {
             hideLoading();
+            updateInfo(meta, index);
 
             // reset UI
             progressBar.value = 0;
@@ -387,6 +388,7 @@ function animateMove(fromIndex, toIndex) {
     const to   = L.latLng(routeLatLngs[toIndex]);
 
     const angle = bearing(from, to); // 🔥 ARAH DARI RUTE
+    updateInfo(meta, index);
 
     let step = 0;
 
