@@ -306,7 +306,7 @@ function showDetail(d) {
     if (!detailContent) return;
     
     // Dapatkan URL marker untuk ditampilkan di detail
-    const markerUrl = d.marker || getDefaultMarkerByStatus(d.st);
+    const markerUrl = d.icon || getDefaultMarkerByStatus(d.st);
     
     detailContent.innerHTML = `
         <div class="detail-section">
@@ -372,6 +372,11 @@ function showDetail(d) {
             <div class="detail-item">
                 <div class="detail-label">Koordinat</div>
                 <div class="detail-value">${d.lat}, ${d.lng}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">Device</div>
+                <div class="detail-value">${d.device}</div>
             </div>
             
         </div>
