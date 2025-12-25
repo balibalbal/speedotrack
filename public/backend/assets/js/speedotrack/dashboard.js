@@ -360,8 +360,8 @@ function showDetail(d) {
             </div>
             
             <div class="detail-item">
-                <div class="detail-label">Last Update</div>
-                <div class="detail-value">${formatDateTime(d.dt_tracker)}</div>
+                <div class="detail-label">Last Stop</div>
+                <div class="detail-value">${formatDateTime(d.dt_last_stop)}</div>
             </div>
             
             <div class="detail-item">
@@ -375,8 +375,24 @@ function showDetail(d) {
             </div>
 
             <div class="detail-item">
+                <div class="detail-label">Odometer</div>
+                <div class="detail-value">${d.odometer} Km</div>
+            </div>
+            <div class="detail-item">
                 <div class="detail-label">Device</div>
                 <div class="detail-value">${d.device}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Protocol</div>
+                <div class="detail-value">${d.protocol}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Time Server</div>
+                <div class="detail-value">${formatDateTime(d.dt_server)}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Time Tracker/Device</div>
+                <div class="detail-value">${formatDateTime(d.dt_tracker)}</div>
             </div>
             
         </div>
