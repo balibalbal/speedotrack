@@ -228,7 +228,7 @@
             transform: translateY(-50%);
             background: white;
             color: #667eea;
-            border: 2px solid #667eea;
+            border: 2px solid #3B4953;
             width: 25px;
             height: 70px;
             cursor: pointer;
@@ -329,50 +329,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        /* ===============================
-   TOGGLE ARROW ANIMATION
-================================ */
-
-.toggle-btn span {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 22px;
-    color: #3b82f6;
-
-    transition:
-        transform 0.25s ease,
-        color 0.2s ease,
-        box-shadow 0.25s ease;
-}
-
-/* Hover glow ala video editor */
-.toggle-btn:hover span {
-    color: #60a5fa;
-    box-shadow:
-        0 0 8px rgba(96, 165, 250, 0.8),
-        0 0 16px rgba(96, 165, 250, 0.5);
-}
-
-/* Aktif (sidebar terbuka) */
-.toggle-btn.active span {
-    color: #2563eb;
-    box-shadow:
-        0 0 10px rgba(37, 99, 235, 0.9),
-        0 0 20px rgba(37, 99, 235, 0.6);
-}
-
-/* Optional: tombolnya juga agak glow */
-.toggle-btn {
-    transition: box-shadow 0.2s ease;
-}
-
-.toggle-btn:hover {
-    box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
-}
-
 
         /* Marker Status Indicator */
         .marker-status {

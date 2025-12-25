@@ -398,40 +398,35 @@ function formatDateTime(dt) {
 function toggleSidebarLeft() {
     const sidebar = document.getElementById("sidebar");
     const arrow = document.getElementById("leftArrow");
-    const btn = document.getElementById("toggleSidebarLeft");
 
     sidebar.classList.toggle("hidden");
 
     if (sidebar.classList.contains("hidden")) {
-        arrow.style.transform = "rotate(180deg)";
-        btn.classList.remove("active");
+        arrow.className = "mdi mdi-chevron-double-right";
     } else {
-        arrow.style.transform = "rotate(0deg)";
-        btn.classList.add("active");
+        arrow.className = "mdi mdi-chevron-double-left";
     }
 
     setTimeout(() => map.invalidateSize(), 300);
 }
-
 
 function toggleSidebarRight() {
-    const panel = document.getElementById("detailPanel");
+    const detailPanel = document.getElementById("detailPanel");
     const arrow = document.getElementById("rightArrow");
-    const btn = document.getElementById("toggleSidebarRight");
+    
+    detailPanel.classList.toggle("hidden");
 
-    panel.classList.toggle("hidden");
-
-    if (panel.classList.contains("hidden")) {
-        arrow.style.transform = "rotate(180deg)";
-        btn.classList.remove("active");
+    if (detailPanel.classList.contains("hidden")) {
+        arrow.classList.remove("mdi-chevron-double-right");
+        arrow.classList.add("mdi-chevron-double-left");
     } else {
-        arrow.style.transform = "rotate(0deg)";
-        btn.classList.add("active");
+        arrow.classList.remove("mdi-chevron-double-left");
+        arrow.classList.add("mdi-chevron-double-right");
     }
 
+    
     setTimeout(() => map.invalidateSize(), 300);
 }
-
 
 function normalizeStatus(d) {
     if (d.st === 'moving' || d.speed > 3) return 'moving';
