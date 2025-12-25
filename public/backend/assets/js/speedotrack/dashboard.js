@@ -227,11 +227,11 @@ function createMarkerPopup(d) {
                     <td><b>${d.ststr}</b></td>
                 </tr>
                 <tr>
-                    <td>Kecepatan:</td>
+                    <td>Speed:</td>
                     <td><b>${d.speed || 0} km/h</b></td>
                 </tr>
                 <tr>
-                    <td>Terakhir:</td>
+                    <td>Last Update:</td>
                     <td>${formatTime(d.dt_tracker)}</td>
                 </tr>
                 <tr>
@@ -331,7 +331,7 @@ function showDetail(d) {
             </div>
             
             <div class="detail-item">
-                <div class="detail-label">Nomor Polisi</div>
+                <div class="detail-label">Plat Number/ID</div>
                 <div class="detail-value">${d.plate_number || '-'}</div>
             </div>
             
@@ -343,12 +343,12 @@ function showDetail(d) {
             </div>
             
             <div class="detail-item">
-                <div class="detail-label">Kecepatan</div>
+                <div class="detail-label">Speed</div>
                 <div class="detail-value">${d.speed || 0} km/h</div>
             </div>
             
             <div class="detail-item">
-                <div class="detail-label">Arah</div>
+                <div class="detail-label">Direction</div>
                 <div class="detail-value">
                     <div style="display: flex; align-items: center;">
                         <div style="transform: rotate(${d.angle || 0}deg); margin-right: 8px;">
@@ -360,12 +360,12 @@ function showDetail(d) {
             </div>
             
             <div class="detail-item">
-                <div class="detail-label">Update Terakhir</div>
+                <div class="detail-label">Last Update</div>
                 <div class="detail-value">${formatDateTime(d.dt_tracker)}</div>
             </div>
             
             <div class="detail-item">
-                <div class="detail-label">Alamat</div>
+                <div class="detail-label">Address</div>
                 <div class="detail-value">${d.address || '-'}</div>
             </div>
             
