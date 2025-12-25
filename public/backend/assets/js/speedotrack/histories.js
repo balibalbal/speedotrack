@@ -33,6 +33,7 @@ let allowHoverJump = true;  // disable saat play
 let progressBar;
 let isScrubbingProgress = false;
 
+let tripSummary = null;
 
 const infoPanel = document.getElementById('infoPanel');
 const followBtn = document.getElementById('followBtn');
@@ -243,6 +244,10 @@ async function loadRoute(url) {
     try {
         const res = await fetch(url);
         const json = await res.json();
+
+        tripSummary = json;
+//renderSummaryContent(json);
+
 
         // 👉 render summary SELALU, walaupun route kosong
         renderSummary(json);
