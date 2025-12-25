@@ -647,3 +647,12 @@ function renderSummary(data) {
         </div>
     `;
 }
+
+function openSummary() {
+    if (!tripSummary) return;
+    document.getElementById('summaryModal').classList.remove('hidden');
+}
+
+function closeSummary() {
+    document.getElementById('summaryModal').classList.add('hidden');
+}
