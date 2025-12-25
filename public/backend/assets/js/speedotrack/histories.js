@@ -308,7 +308,7 @@ function parseRoute(route) {
         routeMeta.push({
             time: toJakartaTime(r[0]),
             speed: r[5] || 0,
-            angle: r[3] || 0
+            angle: r[4] || 0
         });
     });
 }
@@ -348,54 +348,28 @@ function initMovingMarker() {
 /* =========================
    PLAYBACK
 ========================= */
-// function playRoute() {
-//     if (isPlaying || !routeLatLngs.length) return;
-
-//     isPlaying = true;
-//     allowHoverJump = false; // 🔥 MATIKAN HOVER
-
-//     playInterval = setInterval(() => {
-//         if (playIndex >= routeLatLngs.length - 1) {
-//             pauseRoute();
-//             return;
-//         }
-
-//         animateMove(playIndex, playIndex + 1);
-//         playIndex++;
-//     }, playSpeed);
-// }
-
 function playRoute() {
     if (isPlaying || !routeLatLngs.length) return;
 
     isPlaying = true;
-    allowHoverJump = false;
+    allowHoverJump = false; // 🔥 MATIKAN HOVER
 
-    playNext();
-}
+    playInterval = setInterval(() => {
+        if (playIndex >= routeLatLngs.length - 1) {
+            pauseRoute();
+            return;
+        }
 
-function playNext() {
-    if (!isPlaying) return;
-
-    if (playIndex >= routeLatLngs.length - 1) {
-        pauseRoute();
-        return;
-    }
-
-    animateMove(playIndex, playIndex + 1, () => {
+        animateMove(playIndex, playIndex + 1);
         playIndex++;
-        playNext(); // ⛓️ LANJUT SETELAH SELESAI
-    });
+    }, playSpeed);
 }
-
-
 
 function pauseRoute() {
     isPlaying = false;
     allowHoverJump = true; // hidupkan lagi
     clearInterval(playInterval);
 }
-
 
 function getIndexFromEvent(e, canvas) {
     const rect = canvas.getBoundingClientRect();
@@ -408,76 +382,32 @@ function getIndexFromEvent(e, canvas) {
 }
 
 
-// function animateMove(fromIndex, toIndex) {
-//     const from = L.latLng(routeLatLngs[fromIndex]);
-//     const to = L.latLng(routeLatLngs[toIndex]);
-//     const meta = routeMeta[toIndex];
-//     let step = 0;
-
-//     const interval = setInterval(() => {
-//         step++;
-//         const lat = from.lat + (to.lat - from.lat) * step / smoothStep;
-//         const lng = from.lng + (to.lng - from.lng) * step / smoothStep;
-
-//         currentAngle = smoothAngle(currentAngle, meta.angle);
-//         movingMarker.setLatLng([lat, lng]);
-//         movingMarker.setRotationAngle(currentAngle);
-
-//         updateInfo(meta, toIndex);
-//         // highlightChart(toIndex);
-//         playIndex = toIndex;
-
-//         if (followMode) map.panTo([lat, lng], { animate: false });
-//         if (step >= smoothStep) clearInterval(interval);
-
-//         progressBar.value = toIndex;
-//     }, playSpeed / smoothStep);
-// }
-
-function animateMove(fromIndex, toIndex, done) {
+function animateMove(fromIndex, toIndex) {
     const from = L.latLng(routeLatLngs[fromIndex]);
     const to   = L.latLng(routeLatLngs[toIndex]);
-    const meta = routeMeta[toIndex];
 
-    const targetAngle =
-        meta.angle && meta.angle !== 0
-            ? meta.angle
-            : bearing(from, to);
+    const angle = bearing(from, to); // 🔥 ARAH DARI RUTE
 
-    const startAngle = currentAngle;
-    const startTime = performance.now();
-    const duration = playSpeed;
+    let step = 0;
 
-    function frame(now) {
-        const t = Math.min((now - startTime) / duration, 1);
+    const interval = setInterval(() => {
+        step++;
+        const t = step / smoothStep;
 
         const lat = from.lat + (to.lat - from.lat) * t;
         const lng = from.lng + (to.lng - from.lng) * t;
 
-        const diff = ((targetAngle - startAngle + 540) % 360) - 180;
-        const angle = startAngle + diff * t;
-
         movingMarker.setLatLng([lat, lng]);
+        movingMarker.setRotationAngle(angle);
 
         if (followMode) map.panTo([lat, lng], { animate: false });
 
-        movingMarker.setRotationAngle(angle);
         currentAngle = angle;
-
-        updateInfo(meta, toIndex);
         progressBar.value = toIndex;
 
-        if (t < 1 && isPlaying) {
-            requestAnimationFrame(frame);
-        } else {
-            currentAngle = targetAngle;
-            done && done(); // 🔥 NEXT MOVE
-        }
-    }
-
-    requestAnimationFrame(frame);
+        if (step >= smoothStep) clearInterval(interval);
+    }, playSpeed / smoothStep);
 }
-
 
 
 /* =========================
@@ -636,7 +566,6 @@ function disableControls(disable = true) {
     const progressBar = document.getElementById('progressBar');
     if (progressBar) progressBar.disabled = disable;
 }
-
 
 function bearing(from, to) {
     const lat1 = from.lat * Math.PI / 180;
