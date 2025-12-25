@@ -382,23 +382,59 @@ function getIndexFromEvent(e, canvas) {
 }
 
 
+// function animateMove(fromIndex, toIndex) {
+//     const from = L.latLng(routeLatLngs[fromIndex]);
+//     const to = L.latLng(routeLatLngs[toIndex]);
+//     const meta = routeMeta[toIndex];
+//     let step = 0;
+
+//     const interval = setInterval(() => {
+//         step++;
+//         const lat = from.lat + (to.lat - from.lat) * step / smoothStep;
+//         const lng = from.lng + (to.lng - from.lng) * step / smoothStep;
+
+//         currentAngle = smoothAngle(currentAngle, meta.angle);
+//         movingMarker.setLatLng([lat, lng]);
+//         movingMarker.setRotationAngle(currentAngle);
+
+//         updateInfo(meta, toIndex);
+//         // highlightChart(toIndex);
+//         playIndex = toIndex;
+
+//         if (followMode) map.panTo([lat, lng], { animate: false });
+//         if (step >= smoothStep) clearInterval(interval);
+
+//         progressBar.value = toIndex;
+//     }, playSpeed / smoothStep);
+// }
+
 function animateMove(fromIndex, toIndex) {
     const from = L.latLng(routeLatLngs[fromIndex]);
-    const to = L.latLng(routeLatLngs[toIndex]);
+    const to   = L.latLng(routeLatLngs[toIndex]);
     const meta = routeMeta[toIndex];
+
+    // 🔥 HYBRID TARGET ANGLE
+    const targetAngle =
+        meta.angle !== null &&
+        meta.angle !== undefined &&
+        meta.angle !== 0
+            ? meta.angle
+            : bearing(from, to);
+
     let step = 0;
 
     const interval = setInterval(() => {
         step++;
+
         const lat = from.lat + (to.lat - from.lat) * step / smoothStep;
         const lng = from.lng + (to.lng - from.lng) * step / smoothStep;
 
-        currentAngle = smoothAngle(currentAngle, meta.angle);
+        currentAngle = smoothAngle(currentAngle, targetAngle);
+
         movingMarker.setLatLng([lat, lng]);
         movingMarker.setRotationAngle(currentAngle);
 
         updateInfo(meta, toIndex);
-        // highlightChart(toIndex);
         playIndex = toIndex;
 
         if (followMode) map.panTo([lat, lng], { animate: false });
@@ -407,6 +443,7 @@ function animateMove(fromIndex, toIndex) {
         progressBar.value = toIndex;
     }, playSpeed / smoothStep);
 }
+
 
 /* =========================
    SMOOTH ANGLE
@@ -566,3 +603,15 @@ function disableControls(disable = true) {
 }
 
 
+function bearing(from, to) {
+    const lat1 = from.lat * Math.PI / 180;
+    const lat2 = to.lat * Math.PI / 180;
+    const dLng = (to.lng - from.lng) * Math.PI / 180;
+
+    const y = Math.sin(dLng) * Math.cos(lat2);
+    const x =
+        Math.cos(lat1) * Math.sin(lat2) -
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+
+    return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
