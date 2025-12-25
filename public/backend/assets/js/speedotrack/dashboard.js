@@ -504,15 +504,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
-function getStatusBadge(status) {
-    switch(status) {
-        case 'moving': return 'bg-success';
-        case 'idle': return 'bg-primary';
-        case 'stop': return 'bg-warning';
-        default: return 'bg-secondary';
-    }
-}
-
 function setFilter(filter) {
     activeFilter = filter;
 
