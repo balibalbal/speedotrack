@@ -445,6 +445,11 @@ function animateMove(fromIndex, toIndex) {
 
         if (followMode) map.panTo([lat, lng], { animate: false });
 
+        // ⚠️ PAKSA ROTASI SETELAH PAN
+        requestAnimationFrame(() => {
+            movingMarker.setRotationAngle(angle);
+        });
+
         if (step >= smoothStep) {
             clearInterval(interval);
             currentAngle = targetAngle; // kunci angle
