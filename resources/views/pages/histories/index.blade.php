@@ -63,7 +63,7 @@
                     
                     {{-- INFO --}}
                     <div id="infoPanel" class="side-box small"></div>
-                    <div id="summaryPanel" class="side-box small mt-2"></div>
+                    {{-- <div id="summaryPanel" class="side-box small mt-2"></div> --}}
 
                     <div>
                         <button id="downloadExcel" class="btn btn-sm btn-success w-100 mb-1" onclick="reloadRoute()"><span class="mdi mdi-file-excel-outline"></span>&nbsp;Download To Excel/CSV</button>
