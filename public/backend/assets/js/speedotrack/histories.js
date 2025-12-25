@@ -244,6 +244,9 @@ async function loadRoute(url) {
         const res = await fetch(url);
         const json = await res.json();
 
+        // 👉 render summary SELALU, walaupun route kosong
+        renderSummary(json);
+
         // JIKA DATA KOSONG
         if (!json.route || json.route.length === 0) {
             hideLoading();
@@ -387,7 +390,6 @@ function animateMove(fromIndex, toIndex) {
     const to   = L.latLng(routeLatLngs[toIndex]);
 
     const angle = bearing(from, to); // 🔥 ARAH DARI RUTE
-    updateInfo(meta, index);
 
     let step = 0;
 
@@ -579,4 +581,64 @@ function bearing(from, to) {
         Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
 
     return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+
+function renderSummary(data) {
+    const el = document.getElementById('summaryPanel');
+    if (!el) return;
+
+    el.innerHTML = `
+        <div class="mb-2"><b>📊 Trip Summary</b></div>
+
+        <div class="d-flex justify-content-between">
+            <span>Distance</span>
+            <b>${data.route_length ?? 0} km</b>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <span>Top Speed</span>
+            <b>${data.top_speed ?? 0} km/h</b>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <span>Average Speed</span>
+            <b>${data.avg_speed ?? 0} km/h</b>
+        </div>
+
+        <hr class="my-2">
+
+        <div class="d-flex justify-content-between">
+            <span>Driving Time</span>
+            <b>${data.drives_duration || '-'}</b>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <span>Stop Time</span>
+            <b>${data.stops_duration || '-'}</b>
+        </div>
+
+        <hr class="my-2">
+
+        <div class="d-flex justify-content-between">
+            <span>Engine Work</span>
+            <b>${data.engine_work || '0 s'}</b>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <span>Engine Idle</span>
+            <b>${data.engine_idle || '0 s'}</b>
+        </div>
+
+        <hr class="my-2">
+
+        <div class="d-flex justify-content-between">
+            <span>Fuel Used</span>
+            <b>${data.fuel_consumption ?? 0}</b>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <span>Fuel Cost</span>
+            <b>${data.fuel_cost ?? 0}</b>
+        </div>
+    `;
 }
