@@ -63,7 +63,12 @@
                     
                     {{-- INFO --}}
                     <div id="infoPanel" class="side-box small"></div>
-                    <div id="summaryPanel" class="side-box small mt-2"></div>
+                    <button class="btn btn-sm btn-info w-100 mt-2"
+                            onclick="openSummary()">
+                        <span class="mdi mdi-chart-box-outline"></span>
+                        Trip Summary
+                    </button>
+
 
                     <div>
                         <button id="downloadExcel" class="btn btn-sm btn-success w-100 mb-1" onclick="reloadRoute()"><span class="mdi mdi-file-excel-outline"></span>&nbsp;Download To Excel/CSV</button>
@@ -85,6 +90,17 @@
         const IMEI = "{{ $imei }}";
     </script>
     @endif
+
+    <div id="summaryModal" class="summary-modal hidden">
+        <div class="summary-dialog">
+            <div class="summary-header">
+                <b>📊 Trip Summary</b>
+                <button onclick="closeSummary()">✕</button>
+            </div>
+            <div id="summaryContent" class="summary-body"></div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
