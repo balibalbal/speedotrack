@@ -336,7 +336,7 @@ function addStartEndMarker() {
 }
 
 function initMovingMarker() {
-    currentAngle = routeMeta[4].angle;
+    currentAngle = routeMeta[0].angle;
 
     movingMarker = L.marker(routeLatLngs[0], {
         icon: blueIcon(),
@@ -440,7 +440,7 @@ function jumpToPoint(index) {
 ========================= */
 function updateInfo(meta, index) {
     infoPanel.innerHTML = `
-        <b>Speed:</b> ${meta.speed} km/h<br>
+        <b>Speed:</b> ${meta.speed} km/h - <b>Angle/Direction:</b> ${meta.angle} derajat<br>
         <b>Time:</b> ${meta.time}<br>
         <b>Point:</b> ${index + 1}/${routeLatLngs.length}
     `;
