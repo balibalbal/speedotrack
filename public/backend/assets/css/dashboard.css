@@ -226,7 +226,7 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: #fff;
+            background: #B8DB80;
             color: #628141;
             border: 2px solid #628141;
             width: 25px;
@@ -260,12 +260,12 @@
         /* Ketika sidebar tersembunyi */
         #sidebar.hidden ~ .toggle-btn.left {
             left: 0;
-            border-radius: 8px;
+            border-radius: 15px;
         }
 
         #detailPanel.hidden ~ .toggle-btn.right {
             right: 0;
-            border-radius: 8px;
+            border-radius: 15px;
         }
 
         /* ===== SCROLLBAR CUSTOM ===== */
