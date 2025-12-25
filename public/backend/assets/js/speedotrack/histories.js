@@ -398,7 +398,7 @@ function animateMove(fromIndex, toIndex) {
         const lng = from.lng + (to.lng - from.lng) * t;
 
         movingMarker.setLatLng([lat, lng]);
-        movingMarker.setRotationAngle(angle);
+        // movingMarker.setRotationAngle(angle);
 
         if (followMode) map.panTo([lat, lng], { animate: false });
 
@@ -430,7 +430,7 @@ function jumpToPoint(index) {
     const angle = bearing(from, to);
 
     movingMarker.setLatLng(routeLatLngs[index]);
-    movingMarker.setRotationAngle(angle);
+    // movingMarker.setRotationAngle(angle);
 
     currentAngle = angle;
     progressBar.value = index;
