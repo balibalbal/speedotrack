@@ -247,7 +247,6 @@ async function loadRoute(url) {
         // JIKA DATA KOSONG
         if (!json.route || json.route.length === 0) {
             hideLoading();
-            updateInfo(meta, index);
 
             // reset UI
             progressBar.value = 0;
