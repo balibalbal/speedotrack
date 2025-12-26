@@ -417,7 +417,7 @@ function showDetail(d) {
             ${ignition ? `
             <div class="detail-item">
                 <div class="detail-label">
-                    <img src="${ignition.icon}" width="16"> Fuel
+                    <img src="${ignition.icon}" width="16"> Ignition
                 </div>
                 <div class="detail-value">${ignition.value_full}</div>
             </div>
@@ -426,7 +426,7 @@ function showDetail(d) {
             ${battVehicle ? `
             <div class="detail-item">
                 <div class="detail-label">
-                    <img src="${battVehicle.icon}" width="16"> Fuel
+                    <img src="${battVehicle.icon}" width="16"> Battery Voltage
                 </div>
                 <div class="detail-value">${battVehicle.value_full}</div>
             </div>
@@ -438,6 +438,24 @@ function showDetail(d) {
                     <img src="${fuel.icon}" width="16"> Fuel
                 </div>
                 <div class="detail-value">${fuel.value_full}</div>
+            </div>
+            ` : ''}
+
+            ${gpsSignal ? `
+            <div class="detail-item">
+                <div class="detail-label">
+                    <img src="${gpsSignal.icon}" width="16"> GPS Signal
+                </div>
+                <div class="detail-value">${gpsSignal.value_full}</div>
+            </div>
+            ` : ''}
+
+            ${gsm ? `
+            <div class="detail-item">
+                <div class="detail-label">
+                    <img src="${gsm.icon}" width="16"> GSM Signal
+                </div>
+                <div class="detail-value">${gsm.value_full}</div>
             </div>
             ` : ''}
 
