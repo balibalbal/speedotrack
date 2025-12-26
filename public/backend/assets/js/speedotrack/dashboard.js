@@ -293,6 +293,12 @@ function selectDevice(imei) {
    TAMPILKAN DETAIL PANEL
 =============================== */
 function showDetail(d) {
+    const fuel = getSensor(d, 'fuel');
+    const ignition = getSensor(d, 'acc');
+    const gpsSignal = getSensor(d, 'gps');
+    const gsm = getSensor(d, 'gsm');
+    const battVehicle = getSensor(d, 'io66', 'param');
+
     const detailContent = document.getElementById("detailContent");
     if (!detailContent) return;
     
@@ -407,10 +413,47 @@ function showDetail(d) {
                 <div class="detail-label">Status</div>
                 <div class="detail-value">${d.st}</div>
             </div>
+
+            <div class="detail-item">
+                <div class="detail-label">Ignition</div>
+                <div class="detail-value">
+                    ${ignition ? ignition.value_full : '-'}
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">Fuel</div>
+                <div class="detail-value">
+                    ${fuel ? fuel.value_full : '-'}
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">Vehicle Battery</div>
+                <div class="detail-value">
+                    ${battVehicle ? battVehicle.value_full : '-'}
+                </div>
+            </div>
             
+            ${fuel ? `
+            <div class="detail-item">
+                <div class="detail-label">
+                    <img src="${fuel.icon}" width="16"> Fuel
+                </div>
+                <div class="detail-value">${fuel.value_full}</div>
+            </div>
+            ` : ''}
+
         </div>
     `;
 }
+
+function getSensor(d, key, by = 'type') {
+    if (!d.sensors || !Array.isArray(d.sensors)) return null;
+
+    return d.sensors.find(s => s[by] === key) || null;
+}
+
 
 function formatDateTime(dt) {
     if (!dt) return '-';
