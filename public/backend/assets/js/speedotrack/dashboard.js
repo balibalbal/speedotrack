@@ -228,7 +228,7 @@ function createMarkerPopup(d) {
                 </tr>
                 <tr>
                     <td>Odometer:</td>
-                    <td><b>${d.odometer || 0} km</b></td>
+                    <td><b>${Number(d.odometer || 0).toFixed(2)} km</b></td>
                 </tr>
                 <tr>
                     <td>Last Update:</td>
@@ -337,6 +337,11 @@ function showDetail(d) {
                 <div class="detail-label">Speed</div>
                 <div class="detail-value">${d.speed || 0} km/h</div>
             </div>
+
+            <div class="detail-item">
+                <div class="detail-label">Altitude</div>
+                <div class="detail-value">${d.altitude || 0} m</div>
+            </div>
             
             <div class="detail-item">
                 <div class="detail-label">Direction</div>
@@ -367,7 +372,8 @@ function showDetail(d) {
 
             <div class="detail-item">
                 <div class="detail-label">Odometer</div>
-                <div class="detail-value">${d.odometer} Km</div>
+                <div class="detail-value">${Number(d.odometer || 0).toFixed(2)} Km</div>
+
             </div>
             <div class="detail-item">
                 <div class="detail-label">Device</div>
