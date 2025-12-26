@@ -414,26 +414,23 @@ function showDetail(d) {
                 <div class="detail-value">${d.st}</div>
             </div>
 
+            ${ignition ? `
             <div class="detail-item">
-                <div class="detail-label">Ignition</div>
-                <div class="detail-value">
-                    ${ignition ? ignition.value_full : '-'}
+                <div class="detail-label">
+                    <img src="${ignition.icon}" width="16"> Fuel
                 </div>
+                <div class="detail-value">${ignition.value_full}</div>
             </div>
+            ` : ''}
 
+            ${battVehicle ? `
             <div class="detail-item">
-                <div class="detail-label">Fuel</div>
-                <div class="detail-value">
-                    ${fuel ? fuel.value_full : '-'}
+                <div class="detail-label">
+                    <img src="${battVehicle.icon}" width="16"> Fuel
                 </div>
+                <div class="detail-value">${battVehicle.value_full}</div>
             </div>
-
-            <div class="detail-item">
-                <div class="detail-label">Vehicle Battery</div>
-                <div class="detail-value">
-                    ${battVehicle ? battVehicle.value_full : '-'}
-                </div>
-            </div>
+            ` : ''}
             
             ${fuel ? `
             <div class="detail-item">
