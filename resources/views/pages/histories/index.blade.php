@@ -91,15 +91,26 @@
     </script>
     @endif
 
-    <div id="summaryModal" class="summary-modal hidden">
-        <div class="summary-dialog">
-            <div class="summary-header">
-                <span class="mdi mdi-chart-donut-variant"></span><b>Trip Summary</b>
-                <button onclick="closeSummary()">✕</button>
+    <div class="modal fade" id="summaryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm modal-dialog-scrollable">
+            <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                <span class="mdi mdi-chart-donut-variant"></span>
+                Trip Summary
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div id="summaryContent" class="summary-body"></div>
+
+            <div class="modal-body" id="summaryContent">
+                <!-- isi via JS -->
+            </div>
+
+            </div>
         </div>
     </div>
+
 
 @endsection
 
