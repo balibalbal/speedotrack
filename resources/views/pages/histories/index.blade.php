@@ -94,7 +94,7 @@
     <div id="summaryModal" class="summary-modal hidden">
         <div class="summary-dialog">
             <div class="summary-header">
-                <b>📊 Trip Summary</b>
+                <span class="mdi mdi-chart-donut-variant"></span><b>Trip Summary</b>
                 <button onclick="closeSummary()">✕</button>
             </div>
             <div id="summaryContent" class="summary-body"></div>

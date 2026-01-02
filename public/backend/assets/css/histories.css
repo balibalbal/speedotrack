@@ -3,20 +3,42 @@
     gap: 12px;
 }
 
-/* MAP */
+/* ================= MAP ================= */
 .history-map {
     flex: 1;
+    min-height: 300px;
 }
 
 #map {
     height: 420px;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
-#speedChart {
-    cursor: pointer;
+/* ================= RIGHT PANEL ================= */
+.history-side {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
+.side-box {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+/* ================= SPEED CHART ================= */
+.speed-chart-wrapper {
+    margin-top: 12px;
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+/* ================= SUMMARY ================= */
 .summary-modal {
     position: fixed;
     inset: 0;
@@ -34,79 +56,57 @@
 .summary-dialog {
     background: #fff;
     width: 320px;
-    border-radius: 10px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,.2);
     animation: pop .2s ease;
 }
 
-.summary-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 14px;
-    border-bottom: 1px solid #eee;
-}
-
-.summary-header button {
-    border: none;
-    background: none;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.summary-body {
-    padding: 12px 14px;
-    font-size: 13px;
-}
-
-@keyframes pop {
-    from { transform: scale(.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-
-
-/* RIGHT PANEL */
-.history-side {
-    width: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.side-box {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.08);
-}
-
-/* SPEED CHART */
-.speed-chart-wrapper {
-    margin-top: 12px;
-    background: #fff;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.08);
-}
-
-/* RESPONSIVE */
+/* ================= RESPONSIVE ================= */
 @media (max-width: 992px) {
+
     .history-layout {
         flex-direction: column;
     }
 
+    /* Map lebih pendek di mobile */
+    #map {
+        height: 45vh;
+        min-height: 260px;
+    }
+
+    /* Side panel full width & column */
     .history-side {
         width: 100%;
-        flex-direction: row;
+        flex-direction: column;
         gap: 8px;
     }
 
-    .side-box {
-        flex: 1;
+    /* Panel info bisa scroll */
+    #infoPanel {
+        max-height: 160px;
+        overflow-y: auto;
     }
 
-    #map {
-        height: 420px;
+    /* Speed chart tetap rapi */
+    .speed-chart-wrapper {
+        margin-top: 8px;
     }
 }
 
+/* ================= SMALL MOBILE ================= */
+@media (max-width: 576px) {
 
+    #map {
+        height: 40vh;
+    }
+
+    .side-box {
+        padding: 8px;
+    }
+
+    .history-side button {
+        font-size: 12px;
+    }
+}
