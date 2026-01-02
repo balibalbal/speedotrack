@@ -584,47 +584,54 @@ function bearing(from, to) {
     return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
 }
 
+let summaryModalInstance = null;
+
+function openSummary() {
+    if (!tripSummary) return;
+
+    const modalEl = document.getElementById('summaryModal');
+
+    if (!summaryModalInstance) {
+        summaryModalInstance = new bootstrap.Modal(modalEl, {
+            backdrop: true,
+            keyboard: true
+        });
+    }
+
+    summaryModalInstance.show();
+}
+
 function renderSummaryContent(data) {
     const el = document.getElementById('summaryContent');
     if (!el) return;
 
     el.innerHTML = `
-        <div class="d-flex justify-content-between">
-            <span>Distance</span><b>${data.route_length} km</b>
-        </div>
-        <div class="d-flex justify-content-between">
-            <span>Top Speed</span><b>${data.top_speed} km/h</b>
-        </div>
-        <div class="d-flex justify-content-between">
-            <span>Avg Speed</span><b>${data.avg_speed} km/h</b>
-        </div>
+        <div class="row g-2 small">
+            <div class="col-8">Distance</div>
+            <div class="col-4 text-end fw-bold">${data.route_length} km</div>
 
-        <hr>
+            <div class="col-8">Top Speed</div>
+            <div class="col-4 text-end fw-bold">${data.top_speed} km/h</div>
 
-        <div class="d-flex justify-content-between">
-            <span>Driving Time</span><b>${data.drives_duration}</b>
-        </div>
-        <div class="d-flex justify-content-between">
-            <span>Stop Time</span><b>${data.stops_duration}</b>
-        </div>
+            <div class="col-8">Avg Speed</div>
+            <div class="col-4 text-end fw-bold">${data.avg_speed} km/h</div>
 
-        <hr>
+            <hr class="my-2">
 
-        <div class="d-flex justify-content-between">
-            <span>Engine Work</span><b>${data.engine_work}</b>
-        </div>
-        <div class="d-flex justify-content-between">
-            <span>Engine Idle</span><b>${data.engine_idle}</b>
+            <div class="col-8">Driving Time</div>
+            <div class="col-4 text-end fw-bold">${data.drives_duration}</div>
+
+            <div class="col-8">Stop Time</div>
+            <div class="col-4 text-end fw-bold">${data.stops_duration}</div>
+
+            <hr class="my-2">
+
+            <div class="col-8">Engine Work</div>
+            <div class="col-4 text-end fw-bold">${data.engine_work}</div>
+
+            <div class="col-8">Engine Idle</div>
+            <div class="col-4 text-end fw-bold">${data.engine_idle}</div>
         </div>
     `;
 }
 
-
-function openSummary() {
-    if (!tripSummary) return;
-    document.getElementById('summaryModal').classList.remove('hidden');
-}
-
-function closeSummary() {
-    document.getElementById('summaryModal').classList.add('hidden');
-}
